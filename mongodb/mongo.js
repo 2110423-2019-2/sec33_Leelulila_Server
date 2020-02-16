@@ -11,7 +11,6 @@ var cors = require('cors');
 app.use(express.json());
 
 
-
 async function listDatabases(client){
     databasesList = await client.db().admin().listDatabases();
  
@@ -48,6 +47,24 @@ async function createMultipleUser(client, newUsers){
     console.log(`${result.insertedCount} new User(s) created with the following id(s):`);
     console.log(result.insertedIds);
 }
+
+
+async function createJob(client, newJob,res){
+    try{
+    const sequenceName = "jobid"
+    const id = await client.db("CUPartTime").collection("counters").findOne({ _id : sequenceName });
+    await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
+    // newJob._id = id.sequence_value
+    
+    var jobNo = "J" + id.sequence_value;
+    const result = await client.db("CUPartTime").collection("Job").insertOne({[jobNo]:newJob});
+    console.log(`New Job created with the following id: ${result.insertedId}`);
+    res.json(`New Job created with the following id: ${result.insertedId}`);
+    }catch(e){
+        console.error(e)
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //READ
@@ -140,7 +157,8 @@ async function main(){
     catch (e) {
         console.error(e);
     }
-    
+//USER
+/////////////////////////////////////////////////////////////////////////////////////////
     app.get('/user/:id', (req, res) => { //get all list of db
         var id = parseInt(req.params.id)
         findUserByID(client, id, res)
@@ -150,7 +168,8 @@ async function main(){
         findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
-        var payload = req.body
+        var payload = req.body;
+        console.log(payload)
         createUser(client, payload, res)
       })
     app.put('/user/:id', (req, res) => {
@@ -158,6 +177,28 @@ async function main(){
         var payload = req.body
         updateUserByID(client, id, payload, res)
       })
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//JOB
+/////////////////////////////////////////////////////////////////////////////////////////
+    // app.get('/user/:id', (req, res) => { //get all list of db
+    //     var id = parseInt(req.params.id)
+    //     //console.log(findUserByID(client, id))
+    //     findUserByID(client, id, res)
+    // })
+    app.post('/newjob', (req, res) => {
+        var payload = req.body;
+        console.log(payload)
+        createJob(client, payload, res)
+        //res.json(payload)
+    })
+    // app.put('/user/:id', (req, res) => {
+    //    var id = parseInt(req.params.id)
+    //     var payload = req.body
+    //     updateUserByID(client, id, payload, res)
+    // })
+/////////////////////////////////////////////////////////////////////////////////////////
+
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
     })    
