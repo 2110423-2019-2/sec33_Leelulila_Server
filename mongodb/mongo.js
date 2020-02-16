@@ -3,7 +3,13 @@
 const express = require('express')
 const app = express()
 
-app.use(express.json())
+var cors = require('cors');
+
+
+// app.use(cors);
+
+app.use(express.json());
+
 
 
 async function listDatabases(client){
@@ -61,6 +67,35 @@ async function findUserByID(client, id, res){
     return result;
     
 }   
+
+async function findUserByEmail(client, email, res){
+    result = await client.db("CUPartTime").collection("Users").findOne({ email: email }
+        );
+         
+    if (result) {
+        console.log(`Found user(s) with the name '${email}':`);
+        console.log(result);
+        res.json(result)
+    } 
+    else {
+        console.log(`No user found with the name '${email}'`);                   
+    }
+    return result;
+    
+}  
+
+async function findAllJob(client, res){
+    result = await client.db("CUPartTime").collection("Job").find({}).toArray();
+         
+    if (result) {
+        res.json(result);
+    } 
+    else {
+        console.log(`No user found with the nam`);                   
+    }
+
+
+}   
     
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +125,7 @@ async function main(){
     const uri = "mongodb+srv://admin:cuparttime2020@cluster0-rjut3.mongodb.net/test?retryWrites=true&w=majority";
     const client = new MongoClient(uri, { useNewUrlParser: true , useUnifiedTopology: true });
     
+    
     //connect to db eiei
     try {
         await client.connect();
@@ -107,13 +143,15 @@ async function main(){
     
     app.get('/user/:id', (req, res) => { //get all list of db
         var id = parseInt(req.params.id)
-        //console.log(findUserByID(client, id))
         findUserByID(client, id, res)
+    })
+    app.get('/useremail/:email', (req, res) => { //get all list of db
+        var email = req.params.email
+        findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
         var payload = req.body
         createUser(client, payload, res)
-        //res.json(payload)
       })
     app.put('/user/:id', (req, res) => {
         var id = parseInt(req.params.id)
@@ -125,6 +163,16 @@ async function main(){
     })    
     
     
+    
+    
+    ///////////getJobDetailByDrive/////
+    
+    app.get('/getalljob', (req, res) => { //get all list of db
+        //console.log(findUserByID(client, id))
+        res.header('Access-Control-Allow-Origin', "*");
+        findAllJob(client, res);
+
+    })
     
 }
 main().catch(console.error)
