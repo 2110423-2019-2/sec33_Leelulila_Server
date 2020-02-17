@@ -57,6 +57,7 @@ async function createJob(client, newJob,res){
     // newJob._id = id.sequence_value
     
     var jobNo = "J" + id.sequence_value;
+    newJob._id = id.sequence_value; 
     const result = await client.db("CUPartTime").collection("Job").insertOne({[jobNo]:newJob});
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
@@ -113,7 +114,26 @@ async function findAllJob(client, res){
 
 
 }   
-    
+async function findJByID(client, id,res){
+
+    var jID = "J"+id
+    try{
+        cursor = await client.db("CUPartTime").collection("Job").find({}, {_id : 1})
+        result = await cursor.toArray
+        if (result) {
+            res.json(result);
+            console.log(jID)
+        } 
+        else {
+            console.log(`No user found with the nam`);    
+                        
+        }
+    }catch(e){
+        console.error(e)
+    }
+
+
+}   
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //UPDATEl
@@ -146,7 +166,7 @@ async function main(){
     //connect to db eiei
     try {
         await client.connect();
-        await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
+        //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
 
         //await createUser(client,{name: "uouoeiei"});
@@ -181,11 +201,11 @@ async function main(){
 
 //JOB
 /////////////////////////////////////////////////////////////////////////////////////////
-    // app.get('/user/:id', (req, res) => { //get all list of db
-    //     var id = parseInt(req.params.id)
-    //     //console.log(findUserByID(client, id))
-    //     findUserByID(client, id, res)
-    // })
+     app.get('/job/:id', (req, res) => { //get all list of db
+        var id = parseInt(req.params.id)
+        
+        findJByID(client, id, res)
+    })
     app.post('/newjob', (req, res) => {
         var payload = req.body;
         console.log(payload)
