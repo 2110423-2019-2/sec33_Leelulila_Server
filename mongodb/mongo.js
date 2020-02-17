@@ -57,8 +57,7 @@ async function createJob(client, newJob,res){
     // newJob._id = id.sequence_value
     
     var jobNo = "J" + id.sequence_value;
-    newJob._id = id.sequence_value; 
-    const result = await client.db("CUPartTime").collection("Job").insertOne({[jobNo]:newJob});
+    const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, [jobNo]:newJob});
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
     }catch(e){
@@ -114,12 +113,12 @@ async function findAllJob(client, res){
 
 
 }   
-async function findJByID(client, id,res){
+async function findJobByID(client, id,res){
 
-    var jID = "J"+id
+    
     try{
-        cursor = await client.db("CUPartTime").collection("Job").find({}, {_id : 1})
-        result = await cursor.toArray
+        result = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+        
         if (result) {
             res.json(result);
             console.log(jID)
@@ -155,7 +154,20 @@ async function updateUserByID(client, id, updatedName, res) {
 
 //DELETE
 /////////////////////////////////////////////////////////////////////////////////////////
-
+async function deleteJobByID(client, id, res){
+    try{
+        result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
+        if(result){
+            console.log(`Deleted Job with the ID '${id}':`)
+            res.send("success")
+        }
+        else{
+            console.log(`No Job with the ID '${id}':`)
+        }
+    }catch(e){
+        console.error(e)
+    }
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 async function main(){
     const MongoClient = require('mongodb').MongoClient;
@@ -204,13 +216,18 @@ async function main(){
      app.get('/job/:id', (req, res) => { //get all list of db
         var id = parseInt(req.params.id)
         
-        findJByID(client, id, res)
+        findJobByID(client, id, res)
     })
     app.post('/newjob', (req, res) => {
         var payload = req.body;
         console.log(payload)
         createJob(client, payload, res)
         //res.json(payload)
+    })
+    app.delete('/job/:id', (req, res) => { 
+        var id = parseInt(req.params.id)
+        
+        deleteJobByID(client, id, res)
     })
     // app.put('/user/:id', (req, res) => {
     //    var id = parseInt(req.params.id)
