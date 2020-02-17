@@ -57,7 +57,7 @@ async function createJob(client, newJob,res){
     // newJob._id = id.sequence_value
     
     var jobNo = "J" + id.sequence_value;
-    const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, [jobNo]:newJob});
+    const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
     }catch(e){
@@ -102,6 +102,7 @@ async function findUserByEmail(client, email, res){
 }  
 
 async function findAllJob(client, res){
+    
     result = await client.db("CUPartTime").collection("Job").find({}).toArray();
          
     if (result) {
@@ -145,6 +146,22 @@ async function updateUserByID(client, id, updatedName, res) {
     console.log(`${result.matchedCount} document(s) matched the query criteria.`);
     console.log(`${result.modifiedCount} document(s) was/were updated.`);
     //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+    res.json(`${result.matchedCount} document(s) matched the query criteria.`);
+    }catch(e){
+        console.error(e)
+    }
+}
+async function updateJobStatusByID(client, id, status, res) {
+    try{
+    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+    find.job.Status = status
+    result = await client.db("CUPartTime").collection("Job")
+                        .updateOne({ _id: id }, { $set: find  });
+
+    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+    console.log(`${result.modifiedCount} document(s) was/were updated.`);
+    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+    //res.json()
     res.json(`${result.matchedCount} document(s) matched the query criteria.`);
     }catch(e){
         console.error(e)
@@ -229,6 +246,11 @@ async function main(){
         
         deleteJobByID(client, id, res)
     })
+    app.put('/job/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        updateJobStatusByID(client, id, payload.Status, res)
+      })
     // app.put('/user/:id', (req, res) => {
     //    var id = parseInt(req.params.id)
     //     var payload = req.body
