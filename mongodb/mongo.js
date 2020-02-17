@@ -93,7 +93,7 @@ async function main(){
     //connect to db eiei
     try {
         await client.connect();
-
+        await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
 
         //await createUser(client,{name: "uouoeiei"});
