@@ -167,6 +167,23 @@ async function updateJobStatusByID(client, id, status, res) {
         console.error(e)
     }
 }
+
+async function updateJobEmployeeByEmail(client, id, email, res) {
+    try{
+    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
+    find.job.Employee.push(email);
+    result = await client.db("CUPartTime").collection("Job")
+                        .updateOne({ _id: id }, { $set: find  });
+
+    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+    console.log(`${result.modifiedCount} document(s) was/were updated.`);
+    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+    //res.json()
+    res.json(`${result.matchedCount} document(s) matched the query criteria.`);
+    }catch(e){
+        console.error(e)
+    }
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //DELETE
@@ -250,7 +267,15 @@ async function main(){
         var id = parseInt(req.params.id)
         var payload = req.body
         updateJobStatusByID(client, id, payload.Status, res)
-      })
+    })
+
+    app.put('/job/addemployee/:id', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id);
+        // console.log(id)
+        var payload = req.body;
+        updateJobEmployeeByEmail(client, id, payload.Email, res)
+    })
     // app.put('/user/:id', (req, res) => {
     //    var id = parseInt(req.params.id)
     //     var payload = req.body
