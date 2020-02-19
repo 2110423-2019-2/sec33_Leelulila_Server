@@ -88,8 +88,9 @@ async function findUserByID(client, id, res){
 async function findUserByEmail(client, email, res){
     result = await client.db("CUPartTime").collection("Users").findOne({ email: email }
         );
-         
+        console.log(result); 
     if (result) {
+        
         console.log(`Found user(s) with the name '${email}':`);
         console.log(result);
         res.json(result)
@@ -153,7 +154,7 @@ async function updateUserByID(client, id, updatedName, res) {
 }
 async function updateJobStatusByID(client, id, status, res) {
     try{
-    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     find.job.Status = status
     result = await client.db("CUPartTime").collection("Job")
                         .updateOne({ _id: id }, { $set: find  });
@@ -171,7 +172,9 @@ async function updateJobStatusByID(client, id, status, res) {
 async function updateJobEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
-    find.job.Employee.push(email);
+    console.log(email)
+    find.job.CurrentEmployee.push(email);
+    
     result = await client.db("CUPartTime").collection("Job")
                         .updateOne({ _id: id }, { $set: find  });
 
@@ -263,16 +266,17 @@ async function main(){
         
         deleteJobByID(client, id, res)
     })
-    app.put('/job/:id', (req, res) => {
+    app.put('/jobstatus/:id', (req, res) => {
         var id = parseInt(req.params.id)
         var payload = req.body
+        console.log(payload);
         updateJobStatusByID(client, id, payload.Status, res)
     })
 
     app.put('/job/addemployee/:id', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
-        // console.log(id)
+        console.log(id)
         var payload = req.body;
         updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
