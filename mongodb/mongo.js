@@ -60,6 +60,7 @@ async function createJob(client, newJob,res){
     const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
+    
     }catch(e){
         console.error(e)
     }
@@ -173,10 +174,11 @@ async function updateJobEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     console.log(email)
-    find.job.CurrentEmployee.push(email);
+    find.job.CurrentEmployee.push(email)
+    console.log(find.job.CurrentEmployee)
     
     result = await client.db("CUPartTime").collection("Job")
-                        .updateOne({ _id: id }, { $set: find  });
+                        .updateOne({ _id: id }, { $set : find  });
 
     console.log(`${result.matchedCount} document(s) matched the query criteria.`);
     console.log(`${result.modifiedCount} document(s) was/were updated.`);
@@ -278,6 +280,7 @@ async function main(){
         var id = parseInt(req.params.id);
         console.log(id)
         var payload = req.body;
+        
         updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
     // app.put('/user/:id', (req, res) => {
