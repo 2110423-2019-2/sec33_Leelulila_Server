@@ -235,6 +235,7 @@ async function main(){
         findUserByID(client, id, res)
     })
     app.get('/useremail/:email', (req, res) => { //get all list of db
+        res.header('Access-Control-Allow-Origin', "*");
         var email = req.params.email
         findUserByEmail(client, email, res)
     })
@@ -253,6 +254,7 @@ async function main(){
 //JOB
 /////////////////////////////////////////////////////////////////////////////////////////
      app.get('/job/:id', (req, res) => { //get all list of db
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         findJobByID(client, id, res)
