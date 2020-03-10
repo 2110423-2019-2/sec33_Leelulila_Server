@@ -1,5 +1,6 @@
 
 
+const calendar = require('./calendar.js')
 const express = require('express')
 const app = express()
 
@@ -33,8 +34,10 @@ async function createUser(client, newUser,res){
     const id = await client.db("CUPartTime").collection("counters").findOne({ _id : sequenceName });
     await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
     newUser._id = id.sequence_value
+    newUser.currentJob = []
     
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
+    calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
     res.json(`New User created with the following id: ${result.insertedId}`);
     }catch(e){
@@ -170,7 +173,7 @@ async function updateJobStatusByID(client, id, status, res) {
     }
 }
 
-async function updateJobEmployeeByEmail(client, id, email, res) {
+async function updateJobEmployeeByEmail(client, id, email, res) { //
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     console.log(email)
@@ -190,6 +193,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) {
     }
 }
 
+<<<<<<< HEAD
 async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
@@ -211,6 +215,13 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     }
     }catch(e){
         console.error(e)
+=======
+async function updateJboDetail(client, id, email, res) {
+    try{
+
+    }catch(e){
+
+>>>>>>> 6bcf580cc94c2f834a5ee3af0ee4dd1a6246f784
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
