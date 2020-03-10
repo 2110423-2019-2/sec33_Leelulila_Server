@@ -6,11 +6,20 @@ exports.makeTransaction = async function(client, jobId, res){
 
            emails = find.job.CurrentAcceptedEmployee
            amount = parseInt(find.job.Wages)
+           console.log(emails)
+           if(emails.length == 0){
+            
+                res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
+               return
+           }
            console.log(amount)
+           
            shiftManyWallet(client, amount, emails, res)
-           res.send("Shum hred na krub")
+          
+
         }else{
-           res.send("cannot find job with id:", jobId)
+            
+           //res.send("cannot find job with id:", jobId)
         }
     }catch(e){
         console.error(e)
@@ -32,9 +41,11 @@ async function shiftManyWallet(client, amount, emails, res){
     try{
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
         if(result.matchedCount==0){
-            res.send("Cannot find user with email:", email)
+           res.json(`cannot find this email`)
+           return
         }
-
+        console.log("modified wallet done")
+        res.json(`modified users wallet`)
     }catch(e){
         console.error(e)
     }

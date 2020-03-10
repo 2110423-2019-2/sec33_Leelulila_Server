@@ -102,14 +102,17 @@ async function findUserByEmail(client, email, res){
 }  
 
 async function findAllJob(client, res){
-    
+    try{
     result = await client.db("CUPartTime").collection("Job").find({}).toArray();
-         
+    console.log('ee')
     if (result) {
         res.json(result);
+        console.log(result)
     } 
     else {
         console.log(`No user found with the nam`);                   
+    }}catch(e){
+        console.error(e)
     }
 
 
@@ -118,11 +121,11 @@ async function findJobByID(client, id,res){
 
     
     try{
+        
         result = await client.db("CUPartTime").collection("Job").findOne({_id:id})
         
         if (result) {
             res.json(result);
-            
         } 
         else {
             console.log(`No user found with the nam`);    
@@ -386,7 +389,7 @@ async function main(){
     app.post('/wallet/job/:id', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
-        cash.makeTransaction(client, id,)
+        cash.makeTransaction(client, id, res)
     })
 
 
