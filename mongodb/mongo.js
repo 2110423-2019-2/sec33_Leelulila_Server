@@ -124,7 +124,7 @@ async function findJobByID(client, id,res){
         
         if (result) {
             res.json(result);
-            console.log(jID)
+            
         } 
         else {
             console.log(`No user found with the nam`);    
@@ -189,6 +189,30 @@ async function updateJobEmployeeByEmail(client, id, email, res) {
         console.error(e)
     }
 }
+
+async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
+    try{
+    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
+    if(find){
+        console.log(find)
+        find.job.CurrentAcceptedEmployee.push(email)
+        
+        result = await client.db("CUPartTime").collection("Job")
+                            .updateOne({ _id: id }, { $set : find  });
+
+        console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+        console.log(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json()
+        res.json(`${result.matchedCount} document(s) matched the query criteria.`);
+    }else{
+        console.log("cannot find the job by id:", id)
+        res.json(`cannot find the job by id`)
+    }
+    }catch(e){
+        console.error(e)
+    }
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //DELETE
@@ -202,6 +226,31 @@ async function deleteJobByID(client, id, res){
         }
         else{
             console.log(`No Job with the ID '${id}':`)
+        }
+    }catch(e){
+        console.error(e)
+    }
+}
+async function deleteCurrentEmployeeByID(client, jobID, email, res){
+    try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:jobID});
+        //console.log(find.CurrentEmployee)
+        if(find.job.CurrentEmployee != null){
+            
+            const idx = find.job.CurrentEmployee.indexOf(email)
+            console.log(idx)
+            if(idx > -1){
+                find.job.CurrentEmployee.splice(idx, 1)
+            }else{
+                res.json(`This job has no Email ${email}`)
+                return
+            }
+            result = await client.db("CUPartTime").collection("Job").updateOne({_id:jobID},{$set :find});
+            res.json(`Successfull`)
+            console.log('Successfull')
+        }else{
+            res.json(`cannot find the job by id`)
+            console.log('cannot find job by', jobID)
         }
     }catch(e){
         console.error(e)
@@ -282,8 +331,26 @@ async function main(){
         var id = parseInt(req.params.id);
         console.log(id)
         var payload = req.body;
-        
+        console.log(payload.Email)
         updateJobEmployeeByEmail(client, id, payload.Email, res)
+    })
+
+    app.put('/job/addacceptedemployee/:id', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id);
+        console.log(id)
+        var payload = req.body;
+        //console.log(payload.Email)
+        updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
+    })
+
+    app.delete('/job/CurrentEmployee/:id', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id);
+        console.log(id)
+        var payload = req.body;
+        //console.log(payload.Email)
+        deleteCurrentEmployeeByID(client, id, payload.Email, res)
     })
     // app.put('/user/:id', (req, res) => {
     //    var id = parseInt(req.params.id)
