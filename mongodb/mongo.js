@@ -35,7 +35,7 @@ async function createUser(client, newUser,res){
     await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
     newUser._id = id.sequence_value
     newUser.currentJob = []
-    
+    newUser.pendingJob = []
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
@@ -44,13 +44,6 @@ async function createUser(client, newUser,res){
         console.error(e)
     }
 }
-
-async function createMultipleUser(client, newUsers){
-    const result = await client.db("CUPartTime").collection("Users").insertMany(newUsers);
-    console.log(`${result.insertedCount} new User(s) created with the following id(s):`);
-    console.log(result.insertedIds);
-}
-
 
 async function createJob(client, newJob,res){
     try{
@@ -175,32 +168,45 @@ async function updateJobStatusByID(client, id, status, res) {
 
 async function updateJobEmployeeByEmail(client, id, email, res) { //
     try{
-    const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
-    console.log(email)
-    find.job.CurrentEmployee.push(email)
-    console.log(find.job.CurrentEmployee)
-    
-    result = await client.db("CUPartTime").collection("Job")
-                        .updateOne({ _id: id }, { $set : find  });
+        const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
+        if(find){
+        
+            console.log(email)
+            find.job.CurrentEmployee.push(email)
+            insert = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {pendingJob : id}})
+            console.log(insert.modifiedCount)
+            if(insert.matchedCount==0){
+                
+                res.json(`No user with the email ${email}`)
+                return 
+            }
+            result = await client.db("CUPartTime").collection("Job")
+                                .updateOne({ _id: id }, { $set : find  });
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
-    console.log(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json()
-    res.json(`${result.matchedCount} document(s) matched the query criteria.`);
+            console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+            console.log(`${result.modifiedCount} document(s) was/were updated.`);
+            //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+            //res.json()
+            res.json(`${result.matchedCount} document(s) matched the query criteria.`);
+        }else{
+            res.json(`No document(s) matched the query criteria.`);
+        }
     }catch(e){
         console.error(e)
     }
 }
 
-<<<<<<< HEAD
 async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
-        console.log(find)
         find.job.CurrentAcceptedEmployee.push(email)
-        
+        remove = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$pull : {pendingJob : id}})
+        if(remove.matchedCount==0){          
+            res.json(`No user with the email ${email}`)
+            return
+        }
+        await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
         result = await client.db("CUPartTime").collection("Job")
                             .updateOne({ _id: id }, { $set : find  });
 
@@ -211,17 +217,10 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         res.json(`${result.matchedCount} document(s) matched the query criteria.`);
     }else{
         console.log("cannot find the job by id:", id)
-        res.json(`cannot find the job by id`)
+        res.json(`No document(s) matched the query criteria.`);
     }
     }catch(e){
         console.error(e)
-=======
-async function updateJboDetail(client, id, email, res) {
-    try{
-
-    }catch(e){
-
->>>>>>> 6bcf580cc94c2f834a5ee3af0ee4dd1a6246f784
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -230,13 +229,21 @@ async function updateJboDetail(client, id, email, res) {
 /////////////////////////////////////////////////////////////////////////////////////////
 async function deleteJobByID(client, id, res){
     try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+        pendingList =find.job.CurrentEmployee
+        acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
         if(result){
             console.log(`Deleted Job with the ID '${id}':`)
+            pending = await client.db("CUPartTime").collection("Users").update({email : {$in : pendingList}},{$pull : {pendingJob : id}})
+            accepted = await client.db("CUPartTime").collection("Users").update({email : {$in : acceptedList}},{$pull : {currentJob : id}})
+            console.log(pedding.modifiedCount)
+            console.log(accepted.modifiedCount)
             res.send("success")
         }
         else{
             console.log(`No Job with the ID '${id}':`)
+            res.send("fail")
         }
     }catch(e){
         console.error(e)
