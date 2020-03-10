@@ -235,8 +235,8 @@ async function deleteJobByID(client, id, res){
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
         if(result){
             console.log(`Deleted Job with the ID '${id}':`)
-            pending = await client.db("CUPartTime").collection("Users").update({email : {$in : pendingList}},{$pull : {pendingJob : id}})
-            accepted = await client.db("CUPartTime").collection("Users").update({email : {$in : acceptedList}},{$pull : {currentJob : id}})
+            pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
+            accepted = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : acceptedList}},{$pull : {currentJob : id}})
             console.log(pedding.modifiedCount)
             console.log(accepted.modifiedCount)
             res.send("success")
@@ -286,7 +286,7 @@ async function main(){
         await client.connect();
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-
+        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{pendingJob:[], currentJob:[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
