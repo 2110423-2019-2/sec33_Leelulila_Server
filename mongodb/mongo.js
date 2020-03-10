@@ -1,6 +1,7 @@
 
 
 const calendar = require('./calendar.js')
+const cash  = require('./cash.js')
 const express = require('express')
 const app = express()
 
@@ -36,6 +37,7 @@ async function createUser(client, newUser,res){
     newUser._id = id.sequence_value
     newUser.currentJob = []
     newUser.pendingJob = []
+    newUser.wallet = 0
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
@@ -234,7 +236,7 @@ async function deleteJobByID(client, id, res){
             console.log(`No Job with the ID '${id}':`)
             res.send("fail")
         }
-        pendingList =find.job.CurrentEmployee
+       pendingList =find.job.CurrentEmployee
         acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
         if(result){
@@ -290,7 +292,7 @@ async function main(){
         await client.connect();
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{pendingJob:[], currentJob:[]}})
+        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{wallet:0}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
@@ -380,6 +382,15 @@ async function main(){
     //     updateUserByID(client, id, payload, res)
     // })
 /////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////CASH
+    app.post('/wallet/job/:id', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id);
+        cash.makeTransaction(client, id, res)
+    })
+
+
+
 
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
