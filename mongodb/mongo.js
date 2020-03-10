@@ -230,6 +230,10 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
 async function deleteJobByID(client, id, res){
     try{
         find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+        if(find == null){
+            console.log(`No Job with the ID '${id}':`)
+            res.send("fail")
+        }
         pendingList =find.job.CurrentEmployee
         acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
@@ -237,7 +241,7 @@ async function deleteJobByID(client, id, res){
             console.log(`Deleted Job with the ID '${id}':`)
             pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
             accepted = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : acceptedList}},{$pull : {currentJob : id}})
-            console.log(pedding.modifiedCount)
+            console.log(pending.modifiedCount)
             console.log(accepted.modifiedCount)
             res.send("success")
         }
