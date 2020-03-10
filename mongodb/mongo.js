@@ -193,9 +193,9 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
     }
 }
 
-<<<<<<< HEAD
 async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     try{
+        console.log(id,email);
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
         console.log(find)
@@ -215,13 +215,6 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     }
     }catch(e){
         console.error(e)
-=======
-async function updateJboDetail(client, id, email, res) {
-    try{
-
-    }catch(e){
-
->>>>>>> 6bcf580cc94c2f834a5ee3af0ee4dd1a6246f784
     }
 }
 /////////////////////////////////////////////////////////////////////////////////////////
