@@ -92,7 +92,7 @@ async function findUserByEmail(client, email, res){
     if (result) {
         
         console.log(`Found user(s) with the name '${email}':`);
-        console.log(result);
+        //console.log(result);
         res.json(result)
     } 
     else {
@@ -165,7 +165,7 @@ async function updateJobStatusByID(client, id, status, res) {
             pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
             find.job.CurrentEmployee = []
         }
-        else if(status=="Complete"){
+        else if(status=="Finish"){
             acceptedList =find.job.CurrentAcceptedEmployee
             await client.db("CUPartTime").collection("Users").updateMany({email : { $in : acceptedList}},{$pull : {currentJob : id}})
             find.job.CurrentAcceptedEmployee = []
@@ -264,14 +264,14 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         }
         //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
-        const idx = find.job.CurrentEmployee.indexOf(email)
-        console.log(idx)
+        const idx = find.job.CurrentEmployee.idfndexOf(email)
+        console.log(email)
         if(idx > -1){
             find.job.CurrentEmployee.splice(idx, 1)
         }
         //push to job after everything is confirmed
         find.job.CurrentAcceptedEmployee.push(email)
-        
+        console.log(find.job.CurrentAcceptedEmployee)
         result = await client.db("CUPartTime").collection("Job")
                             .updateOne({ _id: id }, { $set : find  });
 
@@ -460,7 +460,7 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
        success =  cash.makeTransaction(client, id, res)
-       updateJobStatusByID(client, id, "Complete", res)
+       updateJobStatusByID(client, id, "Finish", res)
     })
 
 
