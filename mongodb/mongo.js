@@ -4,7 +4,7 @@ const calendar = require('./calendar.js')
 const cash  = require('./cash.js')
 const express = require('express')
 const app = express()
-
+const notify = require('./notify.js')
 var cors = require('cors');
 
 
@@ -158,14 +158,29 @@ async function updateUserByID(client, id, updatedName, res) {
 async function updateJobStatusByID(client, id, status, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
-    find.job.Status = status
-    result = await client.db("CUPartTime").collection("Job")
-                        .updateOne({ _id: id }, { $set: find  });
+    if(find){
+        find.job.Status = status
+        if(status == "Confirm"){
+            pendingList =find.job.CurrentEmployee
+            pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
+            find.job.CurrentEmployee = []
+        }
+        else if(status=="Complete"){
+            acceptedList =find.job.CurrentAcceptedEmployee
+            await client.db("CUPartTime").collection("Users").updateMany({email : { $in : acceptedList}},{$pull : {currentJob : id}})
+            find.job.CurrentAcceptedEmployee = []
+        }
+        result = await client.db("CUPartTime").collection("Job")
+                            .updateOne({ _id: id }, { $set: find  });
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
-    console.log(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json()
+        console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+        console.log(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json()
+    }else{
+        res.json(`cannot find job`)
+        console.log('cannot find job')
+    }
     res.json(`${result.matchedCount} document(s) matched the query criteria.`);
     }catch(e){
         console.error(e)
@@ -249,6 +264,11 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         }
         //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
+        const idx = find.job.CurrentEmployee.indexOf(email)
+        console.log(idx)
+        if(idx > -1){
+            find.job.CurrentEmployee.splice(idx, 1)
+        }
         //push to job after everything is confirmed
         find.job.CurrentAcceptedEmployee.push(email)
         
@@ -268,6 +288,7 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         console.error(e)
     }
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //DELETE
@@ -439,10 +460,15 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
        success =  cash.makeTransaction(client, id, res)
+       updateJobStatusByID(client, id, "Complete", res)
     })
 
 
-
+    app.put('/rea', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var payload = req.body;
+        notify.readNotify(client,payload.Email,res)
+    })
 
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
