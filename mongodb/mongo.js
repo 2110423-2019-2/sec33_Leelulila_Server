@@ -4,7 +4,7 @@ const calendar = require('./calendar.js')
 const cash  = require('./cash.js')
 const express = require('express')
 const app = express()
-
+const notify = require('./notify.js')
 var cors = require('cors');
 
 
@@ -457,7 +457,11 @@ async function main(){
     })
 
 
-
+    app.put('/read', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var payload = req.body;
+        notify.readNotify(client,payload.Email,res)
+    })
 
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
