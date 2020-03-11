@@ -4,7 +4,7 @@ const calendar = require('./calendar.js')
 const cash  = require('./cash.js')
 const express = require('express')
 const app = express()
-
+const notify = require('./notify.js')
 var cors = require('cors');
 
 
@@ -37,6 +37,7 @@ async function createUser(client, newUser,res){
     newUser._id = id.sequence_value
     newUser.currentJob = []
     newUser.pendingJob = []
+    newUser.notification  = []
     newUser.wallet = 0
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
@@ -157,27 +158,69 @@ async function updateUserByID(client, id, updatedName, res) {
 async function updateJobStatusByID(client, id, status, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
-    find.job.Status = status
-    result = await client.db("CUPartTime").collection("Job")
-                        .updateOne({ _id: id }, { $set: find  });
+    if(find){
+        find.job.Status = status
+        if(status == "Confirm"){
+            pendingList =find.job.CurrentEmployee
+            pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
+            find.job.CurrentEmployee = []
+        }
+        else if(status=="Complete"){
+            acceptedList =find.job.CurrentAcceptedEmployee
+            await client.db("CUPartTime").collection("Users").updateMany({email : { $in : acceptedList}},{$pull : {currentJob : id}})
+            find.job.CurrentAcceptedEmployee = []
+        }
+        result = await client.db("CUPartTime").collection("Job")
+                            .updateOne({ _id: id }, { $set: find  });
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
-    console.log(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json()
+        console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+        console.log(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json()
+    }else{
+        res.json(`cannot find job`)
+        console.log('cannot find job')
+    }
     res.json(`${result.matchedCount} document(s) matched the query criteria.`);
     }catch(e){
         console.error(e)
     }
 }
-
+async function editJob(client, payload, id,res){
+    try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+        if(find){
+            if(payload.JobDetail &&payload.Wages&&payload.Location&&payload.BeginTime&&payload.Date&&payload.EndTime){
+            find.job.JobDetail = payload.JobDetail 
+            find.job.Wages = payload.Wages
+            find.job.Location = payload.Location
+            find.job.BeginTime = payload.BeginTime
+            find.job.Date = payload.Date
+            find.job.EndTime = payload.EndTime
+            //console.log(find.job)
+            result = await client.db("CUPartTime").collection("Job").updateOne({_id:id},{$set:find})
+            if(result){
+                res.json(`ok`)
+            }else{
+                res.json(`fail`)
+            }
+        }else{
+            res.json(`fail not enough data`)
+        }
+    }else{
+        res.json(`fail no job with the id ${id}`)
+    }
+    }catch(e){
+        console.log(e)
+    }
+}
 async function updateJobEmployeeByEmail(client, id, email, res) { //
     try{
         const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
         if(find){
         
             console.log(email)
-            find.job.CurrentEmployee.push(email)
+            
             insert = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {pendingJob : id}})
             console.log(insert.modifiedCount)
             if(insert.matchedCount==0){
@@ -185,6 +228,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
                 res.json(`No user with the email ${email}`)
                 return 
             }
+            find.job.CurrentEmployee.push(email)
             result = await client.db("CUPartTime").collection("Job")
                                 .updateOne({ _id: id }, { $set : find  });
 
@@ -205,13 +249,28 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
-        find.job.CurrentAcceptedEmployee.push(email)
+        amt = parseInt(find.job.Amount)
+        if(find.job.CurrentAcceptedEmployee.length + 1 > amt){
+            console.log("reach maximum employee")
+            res.json(`reach max employee`)
+            return
+        }
+        //remove the job from pending list also validate the email
         remove = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$pull : {pendingJob : id}})
         if(remove.matchedCount==0){          
             res.json(`No user with the email ${email}`)
             return
         }
+        //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
+        const idx = find.job.CurrentEmployee.indexOf(email)
+        console.log(idx)
+        if(idx > -1){
+            find.job.CurrentEmployee.splice(idx, 1)
+        }
+        //push to job after everything is confirmed
+        find.job.CurrentAcceptedEmployee.push(email)
+        
         result = await client.db("CUPartTime").collection("Job")
                             .updateOne({ _id: id }, { $set : find  });
 
@@ -228,6 +287,7 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         console.error(e)
     }
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //DELETE
@@ -239,7 +299,7 @@ async function deleteJobByID(client, id, res){
             console.log(`No Job with the ID '${id}':`)
             res.send("fail")
         }
-       pendingList =find.job.CurrentEmployee
+        pendingList =find.job.CurrentEmployee
         acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
         if(result){
@@ -293,9 +353,11 @@ async function main(){
     //connect to db eiei
     try {
         await client.connect();
+
+
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{wallet:0}})
+        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{notification :[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
@@ -346,6 +408,12 @@ async function main(){
         
         deleteJobByID(client, id, res)
     })
+    app.put('/jobUpdate/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        console.log(payload);
+        editJob(client, payload,id, res)
+    })
     app.put('/jobstatus/:id', (req, res) => {
         var id = parseInt(req.params.id)
         var payload = req.body
@@ -389,12 +457,17 @@ async function main(){
     app.post('/wallet/job/:id', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
-        cash.makeTransaction(client, id, res);
-        // deleteJobByID(client, id, res)
+       success =  cash.makeTransaction(client, id, res)
+       //deleteJobByID(client, id, res)
+       updateJobStatusByID(client, id, "Complete", res)
     })
 
 
-
+    app.put('/read', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var payload = req.body;
+        notify.readNotify(client,payload.Email,res)
+    })
 
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
@@ -409,7 +482,7 @@ async function main(){
         //console.log(findUserByID(client, id))
         res.header('Access-Control-Allow-Origin', "*");
         findAllJob(client, res);
-        //res.json(`OK`)
+       // res.json(`OK`)
 
     })
     

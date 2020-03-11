@@ -8,20 +8,31 @@ exports.makeTransaction = async function(client, jobId, res){
            emails = find.job.CurrentAcceptedEmployee;
            amount = parseInt(find.job.Wages)
         //    console.log(emails)
+           employer = find.job.Employer
+           console.log(emails)
            if(emails.length == 0){
             
                 res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
-               return
+               return 0
            }
            console.log("St Balance dec")
            shiftOneWallet(client, amount*emails.length, employerEmail, res)
            console.log("Balance dec")
-           shiftManyWallet(client, amount, emails, res)
+        //    shiftManyWallet(client, amount, emails, res)
           
+        //    console.log(amount)
+           
+           result = shiftManyWallet(client, amount, emails,employer, res)
+          if(result){
+              return 1
+          }else{
+              return 0
+          }
 
         }else{
             
-           //res.send("cannot find job with id:", jobId)
+           res.json(`cannot find job with id:${jobId}`)
+           return 0
         }
     }catch(e){
         console.error(e)
@@ -41,16 +52,42 @@ async function shiftOneWallet (client, amount, email, res){
     }
 }
 
-async function shiftManyWallet(client, amount, emails, res){
+async function shiftManyWallet(client, amount, emails,employer, res){
     try{
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
         if(result.matchedCount==0){
            res.json(`cannot find this email`)
-           return
+           return 0
         }
         console.log("modified wallet done")
-        res.json({transaction: 1});
+        
+        notifyUser(client, amount, emails, res)
+        return 1
     }catch(e){
         console.error(e)
+    }
+}
+async function notifyUser(client, amount, emails, res){
+    try{
+        var string = "You have been paid with the amount of "+ amount.toString()
+        payload = {
+            "timestamp": Date.now(),
+            "wage": amount,
+            "email":employer ,
+            "string":string,
+            "status": 0
+
+        }
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : payload}})
+        if(result){
+            console.log('successfully notify the users')
+
+            res.json(payload)
+        }else{
+            console.log('unsuccessfully notify the users')
+            res.json(`modified users wallet but cannot notify user`)
+        }
+    }catch(e){
+
     }
 }
