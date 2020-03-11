@@ -464,7 +464,7 @@ async function main(){
     })
 
 
-    app.put('/rea', (req, res) => {
+    app.put('/read', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
