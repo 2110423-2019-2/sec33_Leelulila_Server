@@ -10,16 +10,21 @@ exports.makeTransaction = async function(client, jobId, res){
            if(emails.length == 0){
             
                 res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
-               return
+               return 0
            }
            console.log(amount)
            
-           shiftManyWallet(client, amount, emails, res)
-          
+           result = shiftManyWallet(client, amount, emails, res)
+          if(result){
+              return 1
+          }else{
+              return 0
+          }
 
         }else{
             
            res.json(`cannot find job with id:${jobId}`)
+           return 0
         }
     }catch(e){
         console.error(e)
@@ -42,11 +47,28 @@ async function shiftManyWallet(client, amount, emails, res){
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
         if(result.matchedCount==0){
            res.json(`cannot find this email`)
-           return
+           return 0
         }
         console.log("modified wallet done")
-        res.json(`modified users wallet`)
+        
+        notifyUser(client, amount, emails, res)
+        return 1
     }catch(e){
         console.error(e)
+    }
+}
+async function notifyUser(client, amount, emails, res){
+    try{
+        var string = "You have been paid with the amount of "+ amount.toString()
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : string}})
+        if(result){
+            console.log('successfully notify the users')
+            res.json(`modified users wallet and can notify user`)
+        }else{
+            console.log('unsuccessfully notify the users')
+            res.json(`modified users wallet but cannot modified user`)
+        }
+    }catch(e){
+
     }
 }
