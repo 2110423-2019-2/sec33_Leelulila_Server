@@ -1,0 +1,79 @@
+
+exports.makeTransaction = async function(client, jobId, res){
+    try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:jobId})
+        if(find){
+
+           emails = find.job.CurrentAcceptedEmployee
+           amount = parseInt(find.job.Wages)
+           console.log(emails)
+           if(emails.length == 0){
+            
+                res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
+               return 0
+           }
+           console.log(amount)
+           
+           result = shiftManyWallet(client, amount, emails, res)
+          if(result){
+              return 1
+          }else{
+              return 0
+          }
+
+        }else{
+            
+           res.json(`cannot find job with id:${jobId}`)
+           return 0
+        }
+    }catch(e){
+        console.error(e)
+    }
+}
+exports.shiftOneWallet = async function (client, amount, email, res){
+    try{
+        result = await client.db("CUPartTime").collection("Users").updateOne({email:email},{$inc : {wallet : amount}})
+        if(result.matchedCount==0){
+            res.send("Cannot find user with email:", email)
+        }
+
+    }catch(e){
+        console.error(e)
+    }
+}
+
+async function shiftManyWallet(client, amount, emails, res){
+    try{
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
+        if(result.matchedCount==0){
+           res.json(`cannot find this email`)
+           return 0
+        }
+        console.log("modified wallet done")
+        
+        notifyUser(client, amount, emails, res)
+        return 1
+    }catch(e){
+        console.error(e)
+    }
+}
+async function notifyUser(client, amount, emails, res){
+    try{
+        var string = "You have been paid with the amount of "+ amount.toString()
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : string}})
+        if(result){
+            console.log('successfully notify the users')
+            payload = {
+                "timestamp": Date.now(),
+                "wage": amount,
+                "email": emails
+            }
+            res.json(payload)
+        }else{
+            console.log('unsuccessfully notify the users')
+            res.json(`modified users wallet but cannot notify user`)
+        }
+    }catch(e){
+
+    }
+}
