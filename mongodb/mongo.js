@@ -91,7 +91,7 @@ async function findUserByEmail(client, email, res){
         console.log(result); 
     if (result) {
         
-        console.log(`Found user(s) with the name '${email}':`);
+        //console.log(`Found user(s) with the name '${email}':`);
         //console.log(result);
         res.json(result)
     } 
@@ -238,6 +238,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
             //res.json()
             res.json(`${result.matchedCount} document(s) matched the query criteria.`);
         }else{
+            console.log('cannot find')
             res.json(`No document(s) matched the query criteria.`);
         }
     }catch(e){
@@ -264,7 +265,7 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         }
         //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
-        const idx = find.job.CurrentEmployee.idfndexOf(email)
+        const idx = find.job.CurrentEmployee.indexOf(email)
         console.log(email)
         if(idx > -1){
             find.job.CurrentEmployee.splice(idx, 1)
