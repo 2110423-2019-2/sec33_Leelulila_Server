@@ -19,7 +19,7 @@ exports.makeTransaction = async function(client, jobId, res){
 
         }else{
             
-           //res.send("cannot find job with id:", jobId)
+           res.json(`cannot find job with id:${jobId}`)
         }
     }catch(e){
         console.error(e)

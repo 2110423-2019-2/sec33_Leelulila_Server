@@ -177,7 +177,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
         if(find){
         
             console.log(email)
-            find.job.CurrentEmployee.push(email)
+            
             insert = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {pendingJob : id}})
             console.log(insert.modifiedCount)
             if(insert.matchedCount==0){
@@ -185,6 +185,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
                 res.json(`No user with the email ${email}`)
                 return 
             }
+            find.job.CurrentEmployee.push(email)
             result = await client.db("CUPartTime").collection("Job")
                                 .updateOne({ _id: id }, { $set : find  });
 
@@ -205,13 +206,26 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
-        find.job.CurrentAcceptedEmployee.push(email)
+        amt = parseInt(find.job.Amount)
+        if(find.job.CurrentAcceptedEmployee.length + 1 > amt){
+            console.log("reach maximum employee")
+            res.json(`reach max employee`)
+            return
+        }
+        //remove the job from pending list also validate the email
         remove = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$pull : {pendingJob : id}})
         if(remove.matchedCount==0){          
             res.json(`No user with the email ${email}`)
             return
         }
+        //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
+        if(find.job.CurrentAcceptedEmployee.length + 1 == amt){
+            //change state
+        }
+        //push to job after everything is confirmed
+        find.job.CurrentAcceptedEmployee.push(email)
+        
         result = await client.db("CUPartTime").collection("Job")
                             .updateOne({ _id: id }, { $set : find  });
 
@@ -408,7 +422,7 @@ async function main(){
         //console.log(findUserByID(client, id))
         res.header('Access-Control-Allow-Origin', "*");
         findAllJob(client, res);
-        res.json(`OK`)
+       // res.json(`OK`)
 
     })
     
