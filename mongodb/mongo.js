@@ -158,14 +158,29 @@ async function updateUserByID(client, id, updatedName, res) {
 async function updateJobStatusByID(client, id, status, res) {
     try{
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
-    find.job.Status = status
-    result = await client.db("CUPartTime").collection("Job")
-                        .updateOne({ _id: id }, { $set: find  });
+    if(find){
+        find.job.Status = status
+        if(status == "Confirm"){
+            pendingList =find.job.CurrentEmployee
+            pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
+            find.job.CurrentEmployee = []
+        }
+        else if(status=="Complete"){
+            acceptedList =find.job.CurrentAcceptedEmployee
+            await client.db("CUPartTime").collection("Users").updateMany({email : { $in : acceptedList}},{$pull : {currentJob : id}})
+            find.job.CurrentAcceptedEmployee = []
+        }
+        result = await client.db("CUPartTime").collection("Job")
+                            .updateOne({ _id: id }, { $set: find  });
 
-    console.log(`${result.matchedCount} document(s) matched the query criteria.`);
-    console.log(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json(`${result.modifiedCount} document(s) was/were updated.`);
-    //res.json()
+        console.log(`${result.matchedCount} document(s) matched the query criteria.`);
+        console.log(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json(`${result.modifiedCount} document(s) was/were updated.`);
+        //res.json()
+    }else{
+        res.json(`cannot find job`)
+        console.log('cannot find job')
+    }
     res.json(`${result.matchedCount} document(s) matched the query criteria.`);
     }catch(e){
         console.error(e)
@@ -267,6 +282,7 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         console.error(e)
     }
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 //DELETE
@@ -437,6 +453,7 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
        success =  cash.makeTransaction(client, id, res)
+       updateJobStatusByID(client, id, "Complete", res)
     })
 
 

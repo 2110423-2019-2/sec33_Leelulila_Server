@@ -6,6 +6,7 @@ exports.makeTransaction = async function(client, jobId, res){
 
            emails = find.job.CurrentAcceptedEmployee
            amount = parseInt(find.job.Wages)
+           employer = find.job.Employer
            console.log(emails)
            if(emails.length == 0){
             
@@ -14,7 +15,7 @@ exports.makeTransaction = async function(client, jobId, res){
            }
            console.log(amount)
            
-           result = shiftManyWallet(client, amount, emails, res)
+           result = shiftManyWallet(client, amount, emails,employer, res)
           if(result){
               return 1
           }else{
@@ -42,7 +43,7 @@ exports.shiftOneWallet = async function (client, amount, email, res){
     }
 }
 
-async function shiftManyWallet(client, amount, emails, res){
+async function shiftManyWallet(client, amount, emails,employer, res){
     try{
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
         if(result.matchedCount==0){
@@ -60,14 +61,18 @@ async function shiftManyWallet(client, amount, emails, res){
 async function notifyUser(client, amount, emails, res){
     try{
         var string = "You have been paid with the amount of "+ amount.toString()
-        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : string}})
+        payload = {
+            "timestamp": Date.now(),
+            "wage": amount,
+            "email":employer ,
+            "string":string,
+            "status": 0
+
+        }
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : payload}})
         if(result){
             console.log('successfully notify the users')
-            payload = {
-                "timestamp": Date.now(),
-                "wage": amount,
-                "email": emails
-            }
+
             res.json(payload)
         }else{
             console.log('unsuccessfully notify the users')
