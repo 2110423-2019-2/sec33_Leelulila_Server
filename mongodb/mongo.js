@@ -202,6 +202,11 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
         find.job.CurrentAcceptedEmployee.push(email)
+        const idx = find.job.CurrentEmployee.indexOf(email)
+            console.log(idx)
+        if(idx > -1){
+            find.job.CurrentEmployee.splice(idx, 1)
+        }
         remove = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$pull : {pendingJob : id}})
         if(remove.matchedCount==0){          
             res.json(`No user with the email ${email}`)
@@ -361,6 +366,7 @@ async function main(){
         var payload = req.body;
         //console.log(payload.Email)
         updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
+
     })
 
     app.delete('/job/CurrentEmployee/:id', (req, res) => {
