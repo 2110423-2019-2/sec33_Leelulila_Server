@@ -64,7 +64,7 @@ async function notifyUser(client, amount, emails, res){
         if(result){
             console.log('successfully notify the users')
             payload = {
-                "Date": Date.now(),
+                "timestamp": Date.now(),
                 "wage": amount,
                 "email": emails
             }

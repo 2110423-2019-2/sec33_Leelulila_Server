@@ -171,7 +171,34 @@ async function updateJobStatusByID(client, id, status, res) {
         console.error(e)
     }
 }
-
+async function editJob(client, payload, id,res){
+    try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:id})
+        if(find){
+            if(payload.JobDetail &&payload.Wages&&payload.Location&&payload.BeginTime&&payload.Date&&payload.EndTime){
+            find.job.JobDetail = payload.JobDetail 
+            find.job.Wages = payload.Wages
+            find.job.Location = payload.Location
+            find.job.BeginTime = payload.BeginTime
+            find.job.Date = payload.Date
+            find.job.EndTime = payload.EndTime
+            //console.log(find.job)
+            result = await client.db("CUPartTime").collection("Job").updateOne({_id:id},{$set:find})
+            if(result){
+                res.json(`ok`)
+            }else{
+                res.json(`fail`)
+            }
+        }else{
+            res.json(`fail not enough data`)
+        }
+    }else{
+        res.json(`fail no job with the id ${id}`)
+    }
+    }catch(e){
+        console.log(e)
+    }
+}
 async function updateJobEmployeeByEmail(client, id, email, res) { //
     try{
         const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
@@ -359,6 +386,12 @@ async function main(){
         var id = parseInt(req.params.id)
         
         deleteJobByID(client, id, res)
+    })
+    app.put('/job/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        console.log(payload);
+        editJob(client, payload,id, res)
     })
     app.put('/jobstatus/:id', (req, res) => {
         var id = parseInt(req.params.id)
