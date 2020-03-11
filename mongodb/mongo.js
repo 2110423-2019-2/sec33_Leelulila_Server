@@ -263,6 +263,11 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         }
         //the email is valid
         await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {currentJob : id}})
+        const idx = find.job.CurrentEmployee.indexOf(email)
+        console.log(idx)
+        if(idx > -1){
+            find.job.CurrentEmployee.splice(idx, 1)
+        }
         //push to job after everything is confirmed
         find.job.CurrentAcceptedEmployee.push(email)
         
@@ -457,7 +462,7 @@ async function main(){
     })
 
 
-    app.put('/read', (req, res) => {
+    app.put('/rea', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
