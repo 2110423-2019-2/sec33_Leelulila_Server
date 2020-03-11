@@ -387,7 +387,7 @@ async function main(){
         
         deleteJobByID(client, id, res)
     })
-    app.put('/job/:id', (req, res) => {
+    app.put('/jobUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
         var payload = req.body
         console.log(payload);
