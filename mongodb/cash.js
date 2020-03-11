@@ -3,17 +3,19 @@ exports.makeTransaction = async function(client, jobId, res){
     try{
         find = await client.db("CUPartTime").collection("Job").findOne({_id:jobId})
         if(find){
-
-           emails = find.job.CurrentAcceptedEmployee
+           employerEmail = find.job.Employer;
+           console.log(employerEmail)
+           emails = find.job.CurrentAcceptedEmployee;
            amount = parseInt(find.job.Wages)
-           console.log(emails)
+        //    console.log(emails)
            if(emails.length == 0){
             
                 res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
                return
            }
-           console.log(amount)
-           
+           console.log("St Balance dec")
+           shiftOneWallet(client, amount*emails.length, employerEmail, res)
+           console.log("Balance dec")
            shiftManyWallet(client, amount, emails, res)
           
 
@@ -25,9 +27,11 @@ exports.makeTransaction = async function(client, jobId, res){
         console.error(e)
     }
 }
-exports.shiftOneWallet = async function (client, amount, email, res){
+async function shiftOneWallet (client, amount, email, res){
     try{
-        result = await client.db("CUPartTime").collection("Users").updateOne({email:email},{$inc : {wallet : amount}})
+        find = await client.db("CUPartTime").collection("Users").findOne({email:email});
+        balance = (find.wallet-amount < 0)? 0:(find.wallet-amount);
+        result = await client.db("CUPartTime").collection("Users").updateOne({email:email},{$set : {wallet : balance}})
         if(result.matchedCount==0){
             res.send("Cannot find user with email:", email)
         }
@@ -45,7 +49,7 @@ async function shiftManyWallet(client, amount, emails, res){
            return
         }
         console.log("modified wallet done")
-        res.json(`modified users wallet`)
+        res.json({transaction: 1});
     }catch(e){
         console.error(e)
     }

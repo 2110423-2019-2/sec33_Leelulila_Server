@@ -389,7 +389,8 @@ async function main(){
     app.post('/wallet/job/:id', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
-        cash.makeTransaction(client, id, res)
+        cash.makeTransaction(client, id, res);
+        // deleteJobByID(client, id, res)
     })
 
 
@@ -408,7 +409,7 @@ async function main(){
         //console.log(findUserByID(client, id))
         res.header('Access-Control-Allow-Origin', "*");
         findAllJob(client, res);
-        res.json(`OK`)
+        //res.json(`OK`)
 
     })
     
