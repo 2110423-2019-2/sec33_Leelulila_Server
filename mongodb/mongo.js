@@ -235,14 +235,6 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         console.log(id,email);
     const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
     if(find){
-<<<<<<< HEAD
-        find.job.CurrentAcceptedEmployee.push(email)
-        const idx = find.job.CurrentEmployee.indexOf(email)
-            console.log(idx)
-        if(idx > -1){
-            find.job.CurrentEmployee.splice(idx, 1)
-        }
-=======
         amt = parseInt(find.job.Amount)
         if(find.job.CurrentAcceptedEmployee.length + 1 > amt){
             console.log("reach maximum employee")
@@ -250,7 +242,6 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
             return
         }
         //remove the job from pending list also validate the email
->>>>>>> b2bdcd95759ac80a621261fa1a8dc0572355e5b7
         remove = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$pull : {pendingJob : id}})
         if(remove.matchedCount==0){          
             res.json(`No user with the email ${email}`)
