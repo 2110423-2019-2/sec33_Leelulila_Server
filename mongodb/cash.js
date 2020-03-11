@@ -63,10 +63,15 @@ async function notifyUser(client, amount, emails, res){
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : string}})
         if(result){
             console.log('successfully notify the users')
-            res.json(`modified users wallet and can notify user`)
+            payload = {
+                "Date": Date.now(),
+                "wage": amount,
+                "email": emails
+            }
+            res.json(payload)
         }else{
             console.log('unsuccessfully notify the users')
-            res.json(`modified users wallet but cannot modified user`)
+            res.json(`modified users wallet but cannot notify user`)
         }
     }catch(e){
 
