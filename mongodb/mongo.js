@@ -4,6 +4,7 @@ const cash  = require('./cash.js')
 const express = require('express')
 const app = express()
 const notify = require('./notify.js')
+const suggest = require('./suggestion.js')
 var cors = require('cors');
 
 
@@ -218,9 +219,10 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
         const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
         if(find){
         
-            console.log(email)
+            //console.log(email)
             
             insert = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {pendingJob : id}})
+            suggest.addTFvector(client,email, find.job.TFvector)
             console.log(insert.modifiedCount)
             if(insert.matchedCount==0){
                 
@@ -230,7 +232,7 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
             find.job.CurrentEmployee.push(email)
             result = await client.db("CUPartTime").collection("Job")
                                 .updateOne({ _id: id }, { $set : find  });
-
+            notify.jobNotify(client, find.job.Employer, id, 0)
             console.log(`${result.matchedCount} document(s) matched the query criteria.`);
             console.log(`${result.modifiedCount} document(s) was/were updated.`);
             //res.json(`${result.modifiedCount} document(s) was/were updated.`);
@@ -274,7 +276,7 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         console.log(find.job.CurrentAcceptedEmployee)
         result = await client.db("CUPartTime").collection("Job")
                             .updateOne({ _id: id }, { $set : find  });
-
+        notify.jobNotify(client, email, id, 2)
         console.log(`${result.matchedCount} document(s) matched the query criteria.`);
         console.log(`${result.modifiedCount} document(s) was/were updated.`);
         //res.json(`${result.modifiedCount} document(s) was/were updated.`);
@@ -334,6 +336,7 @@ async function deleteCurrentEmployeeByID(client, jobID, email, res){
                 return
             }
             result = await client.db("CUPartTime").collection("Job").updateOne({_id:jobID},{$set :find});
+            notify.jobNotify(client, email, jobID, 1)
             res.json(`Successfull`)
             console.log('Successfull')
         }else{
@@ -354,15 +357,16 @@ async function main(){
     //connect to db eiei
     try {
         await client.connect();
-
-
+        //suggest.createTFvector(client)
+       // suggest.addTFvector(client,"drive@hotmail.com",[1,0,0,1,0,1,0,1,0,0])
+        //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{notification :[]}})
+       // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{TFvector:[0,0,0,0,0,0,0,0,0,0]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
-        
+ 
     }
     catch(e) {
         console.error(e);

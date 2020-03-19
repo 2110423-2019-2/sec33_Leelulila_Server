@@ -23,6 +23,7 @@ exports.makeTransaction = async function(client, jobId, res){
         //    console.log(amount)
            
            result = shiftManyWallet(client, amount, emails,employer, res)
+           
           if(result){
               return 1
           }else{
