@@ -1,5 +1,4 @@
-
-
+var CryptoJS = require("crypto-js")
 const calendar = require('./calendar.js')
 const cash  = require('./cash.js')
 const express = require('express')
@@ -390,8 +389,12 @@ async function main(){
         findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
-        var payload = req.body;
-        console.log(payload)
+        
+
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        //var payload = req.body;
         createUser(client, payload, res)
       })
     app.put('/user/:id', (req, res) => {
@@ -410,8 +413,9 @@ async function main(){
         findJobByID(client, id, res)
     })
     app.post('/newjob', (req, res) => {
-        var payload = req.body;
-        console.log(payload)
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        let payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         createJob(client, payload, res)
         //res.json(payload)
     })
