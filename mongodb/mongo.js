@@ -383,8 +383,6 @@ async function main(){
         findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
-        
-
         var encryptedData = req.body.data;
         let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
         var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));

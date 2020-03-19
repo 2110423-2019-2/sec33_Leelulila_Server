@@ -70,7 +70,7 @@ async function shiftManyWallet(client, amount, emails,employer, res){
 }
 async function notifyUser(client, amount, emails, res){
     try{
-        var string = "You have been paid with the amount of "+ amount.toString()
+        var string = "You have been paid with the amount of "+ amount.toString() + " from " + employer
         payload = {
             "timestamp": Date.now(),
             "wage": amount,
