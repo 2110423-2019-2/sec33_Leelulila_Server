@@ -39,6 +39,7 @@ async function createUser(client, newUser,res){
     newUser.currentJob = []
     newUser.pendingJob = []
     newUser.notification  = []
+    newUser.TFvector = [0,0,0,0,0,0,0,0,0,0]
     newUser.wallet = 0
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
@@ -310,6 +311,8 @@ async function deleteJobByID(client, id, res){
             console.log(`Deleted Job with the ID '${id}':`)
             pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
             accepted = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : acceptedList}},{$pull : {currentJob : id}})
+            notify.notifyMany(client,pendingList,find.job.JobName+" which you applied has been deleted")
+            notify.notifyMany(client,acceptedList,find.job.JobName+" has been deleted")
             console.log(pending.modifiedCount)
             console.log(accepted.modifiedCount)
             res.send("success")
@@ -367,7 +370,7 @@ async function main(){
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
- 
+        
     }
     catch(e) {
         console.error(e);
