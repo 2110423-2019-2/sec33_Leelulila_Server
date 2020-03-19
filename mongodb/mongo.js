@@ -359,7 +359,7 @@ async function main(){
         await client.connect();
         //suggest.createTFvector(client)
        // suggest.addTFvector(client,"drive@hotmail.com",[1,0,0,1,0,1,0,1,0,0])
-        notify.jobNotify(client, "drive@hotmail.com", 125, 0)
+        //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
         //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{notification :[]}})
