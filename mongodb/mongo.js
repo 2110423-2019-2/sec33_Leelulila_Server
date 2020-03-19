@@ -220,9 +220,10 @@ async function updateJobEmployeeByEmail(client, id, email, res) { //
         const find = await client.db("CUPartTime").collection("Job").findOne({_id:id});
         if(find){
         
-            console.log(email)
+            //console.log(email)
             
             insert = await client.db("CUPartTime").collection("Users").updateOne({email:email}, {$push : {pendingJob : id}})
+            suggest.addTFvector(client,email, find.job.TFvector)
             console.log(insert.modifiedCount)
             if(insert.matchedCount==0){
                 
@@ -362,11 +363,11 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-        //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{notification :[]}})
+       // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{TFvector:[0,0,0,0,0,0,0,0,0,0]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
-        
+ 
     }
     catch(e) {
         console.error(e);
