@@ -59,6 +59,7 @@ async function createJob(client, newJob,res){
     
     var jobNo = "J" + id.sequence_value;
     const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
+    await client.db("CUPartTime").collection("Users").updateOne({email:newJob.Employer},{$push:{jobOwn:id}})
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
     
@@ -304,6 +305,7 @@ async function deleteJobByID(client, id, res){
             console.log(`No Job with the ID '${id}':`)
             res.send("fail")
         }
+        employer = find.job.Employer
         pendingList =find.job.CurrentEmployee
         acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
@@ -311,6 +313,7 @@ async function deleteJobByID(client, id, res){
             console.log(`Deleted Job with the ID '${id}':`)
             pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
             accepted = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : acceptedList}},{$pull : {currentJob : id}})
+            await client.db("CUPartTime").collection("Users").updateOne({email:employer},{$pull:{jobOwn:id}})
             notify.notifyMany(client,pendingList,find.job.JobName+" which you applied has been deleted")
             notify.notifyMany(client,acceptedList,find.job.JobName+" has been deleted")
             console.log(pending.modifiedCount)
@@ -366,7 +369,7 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-       // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{TFvector:[0,0,0,0,0,0,0,0,0,0]}})
+      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{jobOwn:[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
