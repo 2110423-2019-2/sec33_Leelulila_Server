@@ -5,6 +5,7 @@ const express = require('express')
 const app = express()
 const notify = require('./notify.js')
 const suggest = require('./suggestion.js')
+const blog = require('./blog.js')
 var cors = require('cors');
 
 
@@ -108,7 +109,7 @@ async function findUserByEmail(client, email, res){
 async function findAllJob(client, res){
     try{
     result = await client.db("CUPartTime").collection("Job").find({}).toArray();
-    console.log('ee')
+    //console.log('ee')
     if (result) {
         res.json(result);
         //console.log(result)
@@ -484,6 +485,13 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
+    })
+
+    app.post('/newblog', (req, res) => {
+        var payload = req.body;
+        blog.createBlog(client, payload, res)
+
+
     })
 
     app.listen(9000, () => {
