@@ -40,6 +40,7 @@ async function createUser(client, newUser,res){
     newUser.notification  = []
     newUser.TFvector = [0,0,0,0,0,0,0,0,0,0]
     newUser.wallet = 0
+    newUser.jobOwn = []
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
@@ -368,7 +369,7 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{jobOwn:[]}})
+      await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{jobOwn:[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
