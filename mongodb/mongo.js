@@ -77,7 +77,7 @@ async function findUserByID(client, id, res){
          
     if (result) {
         console.log(`Found user(s) with the name '${id}':`);
-        console.log(result);
+        //console.log(result);
         res.json(result)
     } 
     else {
@@ -90,7 +90,7 @@ async function findUserByID(client, id, res){
 async function findUserByEmail(client, email, res){
     result = await client.db("CUPartTime").collection("Users").findOne({ email: email }
         );
-        console.log(result); 
+        //console.log(result); 
     if (result) {
         
         //console.log(`Found user(s) with the name '${email}':`);
@@ -110,7 +110,7 @@ async function findAllJob(client, res){
     console.log('ee')
     if (result) {
         res.json(result);
-        console.log(result)
+        //console.log(result)
     } 
     else {
         console.log(`No user found with the nam`);                   
