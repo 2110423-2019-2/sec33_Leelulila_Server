@@ -17,3 +17,17 @@ exports.createBlog = async function(client, payload, res){
         res.json(`fail to create blog`)
     }
 }
+exports.deleteBlog = async function(client, id, res){
+    try{
+        result = await client.db("CUPartTime").collection("Blogs").deleteOne({_id:id})
+        if(result){
+            console.log("job",id,"deleted")
+            res.json(`deleted one job`)
+        }else{
+            console.log("fail to delete")
+            res.json(`fail`)
+        }
+    }catch(e){
+        console.error(e)
+    }
+}

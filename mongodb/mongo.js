@@ -60,7 +60,7 @@ async function createJob(client, newJob,res){
     
     var jobNo = "J" + id.sequence_value;
     const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
-    await client.db("CUPartTime").collection("Users").updateOne({email:newJob.Employer},{$push:{jobOwn:id}})
+    await client.db("CUPartTime").collection("Users").updateOne({email:newJob.Employer},{$push:{jobOwn:id.sequence_value}})
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
     
@@ -374,6 +374,7 @@ async function main(){
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
+       //notify.notifyIncomingJob(client)
         
     }
     catch(e) {

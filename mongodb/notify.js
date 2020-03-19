@@ -55,6 +55,26 @@ exports.jobNotify = async function(client, email,jobId, type){
 
     }
 }
+exports.notifyIncomingJob = async function(client){
+    try{
+        find = await client.db("CUPartTime").collection("Job").find({})
+        //console.log(find)
+        find.forEach( function(jobs) { 
+            if(jobs.job.BeginTime){
+            beginHours = parseInt(jobs.job.BeginTime.substring(0,2))
+            beginMins = parseInt(jobs.job.BeginTime.substring(3,5))
+            console.log(beginMins)
+            }else{
+            
+                console.log('job corrupted')
+            }
+
+        } );
+    }catch(e){
+        console.error(e)
+    }
+    
+}
 exports.notifyMany = async function(client,email,msg){
     try{
         payload = {
