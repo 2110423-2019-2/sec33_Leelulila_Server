@@ -5,6 +5,7 @@ const express = require('express')
 const app = express()
 const notify = require('./notify.js')
 const suggest = require('./suggestion.js')
+const blog = require('./blog.js')
 var cors = require('cors');
 
 
@@ -38,7 +39,9 @@ async function createUser(client, newUser,res){
     newUser.currentJob = []
     newUser.pendingJob = []
     newUser.notification  = []
+    newUser.TFvector = [0,0,0,0,0,0,0,0,0,0]
     newUser.wallet = 0
+    newUser.jobOwn = []
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
@@ -57,6 +60,7 @@ async function createJob(client, newJob,res){
     
     var jobNo = "J" + id.sequence_value;
     const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
+    await client.db("CUPartTime").collection("Users").updateOne({email:newJob.Employer},{$push:{jobOwn:id.sequence_value}})
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
     
@@ -75,7 +79,7 @@ async function findUserByID(client, id, res){
          
     if (result) {
         console.log(`Found user(s) with the name '${id}':`);
-        console.log(result);
+        //console.log(result);
         res.json(result)
     } 
     else {
@@ -88,7 +92,7 @@ async function findUserByID(client, id, res){
 async function findUserByEmail(client, email, res){
     result = await client.db("CUPartTime").collection("Users").findOne({ email: email }
         );
-        console.log(result); 
+        //console.log(result); 
     if (result) {
         
         //console.log(`Found user(s) with the name '${email}':`);
@@ -105,10 +109,10 @@ async function findUserByEmail(client, email, res){
 async function findAllJob(client, res){
     try{
     result = await client.db("CUPartTime").collection("Job").find({}).toArray();
-    console.log('ee')
+    //console.log('ee')
     if (result) {
         res.json(result);
-        console.log(result)
+        //console.log(result)
     } 
     else {
         console.log(`No user found with the nam`);                   
@@ -302,6 +306,7 @@ async function deleteJobByID(client, id, res){
             console.log(`No Job with the ID '${id}':`)
             res.send("fail")
         }
+        employer = find.job.Employer
         pendingList =find.job.CurrentEmployee
         acceptedList = find.job.CurrentAcceptedEmployee
         result = await client.db("CUPartTime").collection("Job").deleteOne({_id : id})
@@ -309,6 +314,9 @@ async function deleteJobByID(client, id, res){
             console.log(`Deleted Job with the ID '${id}':`)
             pending = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : pendingList}},{$pull : {pendingJob : id}})
             accepted = await client.db("CUPartTime").collection("Users").updateMany({email : {$in : acceptedList}},{$pull : {currentJob : id}})
+            await client.db("CUPartTime").collection("Users").updateOne({email:employer},{$pull:{jobOwn:id}})
+            notify.notifyMany(client,pendingList,find.job.JobName+" which you applied has been deleted")
+            notify.notifyMany(client,acceptedList,find.job.JobName+" has been deleted")
             console.log(pending.modifiedCount)
             console.log(accepted.modifiedCount)
             res.send("success")
@@ -362,11 +370,12 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-       // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{TFvector:[0,0,0,0,0,0,0,0,0,0]}})
+      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{jobOwn:[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
- 
+       //notify.notifyIncomingJob(client)
+        
     }
     catch(e) {
         console.error(e);
@@ -475,6 +484,13 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
+    })
+
+    app.post('/newblog', (req, res) => {
+        var payload = req.body;
+        blog.createBlog(client, payload, res)
+
+
     })
 
     app.listen(9000, () => {
