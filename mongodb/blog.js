@@ -6,6 +6,7 @@ exports.createBlog = async function(client, payload, res){
         payload._id = id.sequence_value
         payload.timestamp = Date.now()
         payload.comments = []
+        payload.comment_seq = 0
         result = await client.db("CUPartTime").collection("Blogs").insertOne(payload)
         if(result){
             console.log("blog created with id", id.sequence_value)
@@ -33,7 +34,7 @@ exports.getBlog = async function(client, id, res){
         console.error(e)
     }
 }
-exports.editBlog = async function(client, payload, res){
+exports.editBlog = async function(client, id,payload, res){
     try{
         result = await client.db("CUPartTime").collection("Blogs").updateOne({_id:id},{$set:payload})
         if(result){
@@ -56,6 +57,20 @@ exports.deleteBlog = async function(client, id, res){
         }else{
             console.log("fail to delete")
             res.json(`fail`)
+        }
+    }catch(e){
+        console.error(e)
+    }
+}
+exports.comment = async function(client, payload, res){
+    try{
+        result = await client.db("CUPartTime").collection("Blogs").updateOne({_id:id},{$set:payload})
+        if(result){
+            console.log("job",id,"deleted")
+            res.json(`${result.modifiedCount} updated`)
+        }else{
+            console.log("fail to delete")
+            res.json(`fail to edit blog ${id}`)
         }
     }catch(e){
         console.error(e)

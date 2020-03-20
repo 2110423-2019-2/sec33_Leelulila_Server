@@ -510,7 +510,7 @@ async function main(){
     app.put('/blogUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
         var payload = req.body
-        blog.editBlog(client,payload,res)
+        blog.editBlog(client,id,payload,res)
     })
     app.put('/user/jobnotify', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
