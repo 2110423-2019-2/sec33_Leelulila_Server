@@ -489,14 +489,29 @@ async function main(){
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
     })
-
+/////////Blog
     app.post('/newblog', (req, res) => {
         var payload = req.body;
         blog.createBlog(client, payload, res)
 
 
     })
-
+    app.get('/blog/:id', (req, res) => { //get all list of db
+        res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        
+        blog.getBlog(client, id, res)
+    })
+    app.delete('/blog/:id', (req, res) => { 
+        var id = parseInt(req.params.id)
+        
+        blog.deleteBlog(client, id, res)
+    })
+    app.put('/blogUpdate/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        blog.editBlog(client,payload,res)
+    })
     app.put('/user/jobnotify', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         notify.notifyIncomingJob(client)
