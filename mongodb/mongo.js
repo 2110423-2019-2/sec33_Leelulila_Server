@@ -57,9 +57,7 @@ async function createJob(client, newJob,res){
     const id = await client.db("CUPartTime").collection("counters").findOne({ _id : sequenceName });
     await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
     // newJob._id = id.sequence_value
-    
-    var jobNo = "J" + id.sequence_value;
-    const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob});
+    const result = await client.db("CUPartTime").collection("Job").insertOne({_id:id.sequence_value, job:newJob,notify1:[],notify2:[],notify3:[]});
     await client.db("CUPartTime").collection("Users").updateOne({email:newJob.Employer},{$push:{jobOwn:id.sequence_value}})
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.json(`New Job created with the following id: ${result.insertedId}`);
@@ -115,7 +113,7 @@ async function findAllJob(client, res){
         //console.log(result)
     } 
     else {
-        console.log(`No user found with the nam`);                   
+        console.log(`cannot find all job`);                   
     }}catch(e){
         console.error(e)
     }
@@ -133,7 +131,7 @@ async function findJobByID(client, id,res){
             res.json(result);
         } 
         else {
-            console.log(`No user found with the nam`);    
+            console.log("No user found with the nam",id);    
                         
         }
     }catch(e){
@@ -279,7 +277,9 @@ async function updateJobAcceptedEmployeeByEmail(client, id, email, res) {
         find.job.CurrentAcceptedEmployee.push(email)
         console.log(find.job.CurrentAcceptedEmployee)
         result = await client.db("CUPartTime").collection("Job")
-                            .updateOne({ _id: id }, { $set : find  });
+                            .updateOne({ _id: id }, { $set : find });
+        await client.db("CUPartTime").collection("Job")
+                            .updateOne({ _id: id }, { $push : {notify1:email} });
         notify.jobNotify(client, email, id, 2)
         console.log(`${result.matchedCount} document(s) matched the query criteria.`);
         console.log(`${result.modifiedCount} document(s) was/were updated.`);
@@ -370,11 +370,13 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{jobOwn:[]}})
+      //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify1:[]}})
+     // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify2:[]}})
+      //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify3:[]}})
         //await createUser(client,{name: "uouoeiei"});
        // await updateUserByName(client, "Somnuk", {name : "Drive"});
        // await findUserByName(client, "Somnuk");
-       //notify.notifyIncomingJob(client)
+       
         
     }
     catch(e) {
@@ -495,6 +497,10 @@ async function main(){
 
     })
 
+    app.put('/user/jobnotify', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        notify.notifyIncomingJob(client)
+    })
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
     })    
