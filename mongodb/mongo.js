@@ -503,7 +503,7 @@ async function main(){
         blog.getBlog(client, id, res)
     })
     app.get('/allblog', (req, res) => { //get all list of db
-        //res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         blog.getAllBlog(client,res)
