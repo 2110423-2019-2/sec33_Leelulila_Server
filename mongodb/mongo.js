@@ -553,8 +553,8 @@ async function main(){
     })
 
 
-    app.put('/user/jobnotify', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+    app.put('/notifyincoming', (req, res) => {
+        console.log('eiei')
         notify.notifyIncomingJob(client)
     })
     app.listen(9000, () => {
