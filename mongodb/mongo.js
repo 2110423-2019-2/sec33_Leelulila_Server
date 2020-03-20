@@ -495,10 +495,16 @@ async function main(){
 
     })
     app.get('/blog/:id', (req, res) => { //get all list of db
-        res.header('Access-Control-Allow-Origin', "*");
+        //res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         blog.getBlog(client, id, res)
+    })
+    app.get('/allblog', (req, res) => { //get all list of db
+        //res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        
+        blog.getAllBlog(client,res)
     })
     app.delete('/blog/:id', (req, res) => { 
         var id = parseInt(req.params.id)
@@ -510,8 +516,43 @@ async function main(){
         var payload = req.body
         blog.editBlog(client,id,payload,res)
     })
-    app.put('/user/jobnotify', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+    app.post('/blog/newcomment/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        blog.comment(client,id,payload,res)
+    })
+    app.put('/blog/comment/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        var cid = payload.cid
+        delete payload.cid
+        blog.editComment(client,id,payload,cid,res)
+    })
+    app.get('/blog/allcomment/:id', (req, res) => { //get all list of db
+        //res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        
+        blog.getAllComment(client,id,res)
+    })
+    app.get('/blog/comment/:id', (req, res) => { //get all list of db
+        //res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        var cid = payload.cid
+        delete payload.cid
+        blog.getCommentByCid(client,id,cid,res)
+    })
+    app.delete('/blog/comment/:id', (req, res) => { 
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        var cid = payload.cid
+        delete payload.cid
+        blog.deleteComment(client,id,cid,res)
+    })
+
+
+    app.put('/notifyincoming', (req, res) => {
+        console.log('eiei')
         notify.notifyIncomingJob(client)
     })
     app.listen(9000, () => {
