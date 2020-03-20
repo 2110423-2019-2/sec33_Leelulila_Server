@@ -5,6 +5,7 @@ exports.createBlog = async function(client, payload, res){
         await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
         payload._id = id.sequence_value
         payload.timestamp = Date.now()
+        payload.comments = []
         result = await client.db("CUPartTime").collection("Blogs").insertOne(payload)
         if(result){
             console.log("blog created with id", id.sequence_value)
