@@ -6,6 +6,7 @@ const app = express()
 const notify = require('./notify.js')
 const suggest = require('./suggestion.js')
 const blog = require('./blog.js')
+const review = require('./review.js')
 var cors = require('cors');
 
 
@@ -372,7 +373,7 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-      await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{blogOwn:[]}})
+      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{blogOwn:[]}})
      // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify2:[]}})
       //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify3:[]}})
         //await createUser(client,{name: "uouoeiei"});
@@ -396,6 +397,8 @@ async function main(){
         findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
+        
+
         var encryptedData = req.body.data;
         let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
         var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -404,9 +407,7 @@ async function main(){
       })
     app.put('/user/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var encryptedData = req.body.data;
-        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
-        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        var payload = req.body
         updateUserByID(client, id, payload, res)
       })
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -433,9 +434,7 @@ async function main(){
     })
     app.put('/jobUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var encryptedData = req.body.data;
-        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
-        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        var payload = req.body
         console.log(payload);
         editJob(client, payload,id, res)
     })
@@ -558,7 +557,35 @@ async function main(){
         blog.deleteComment(client,id,cid,res)
     })
 
+    /////////Review
+    app.post('/newreview', (req, res) => {
+        var payload = req.body;
+        review.createReview(client,payload,res)
 
+
+    })
+    app.get('/review/:id', (req, res) => { //get all list of db
+        res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        
+        review.getReview(client,id,res)
+    })
+    app.get('/allreview', (req, res) => { //get all list of db
+        res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id)
+        
+        review.getAllReview(client,res)
+    })
+    app.delete('/review/:id', (req, res) => { 
+        var id = parseInt(req.params.id)
+        
+        review.deleteReview(client,id,res)
+    })
+    app.put('/reviewUpdate/:id', (req, res) => {
+        var id = parseInt(req.params.id)
+        var payload = req.body
+        review.editReview(client,id,payload,res)
+    })
    // app.put('/notifyincoming', (req, res) => {
       //  console.log('eiei')
       //  notify.notifyIncomingJob(client)

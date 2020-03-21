@@ -3,11 +3,13 @@ exports.createBlog = async function(client, payload, res){
         const sequenceName = "blogid"
         const id = await client.db("CUPartTime").collection("counters").findOne({ _id : sequenceName });
         await client.db("CUPartTime").collection("counters").updateOne({ _id : sequenceName }, { $inc: {sequence_value : 1 }});
+
         payload._id = id.sequence_value
         payload.timestamp = Date.now()
         payload.comments = []
         payload.comment_seq = 0
         result = await client.db("CUPartTime").collection("Blogs").insertOne(payload)
+        await  client.db("CUPartTime").collection("Users").updateOne({email:payload.WriterEmail},{$push:{blogOwn:id.sequence_value}})
         if(result){
             console.log("blog created with id", id.sequence_value)
             res.json(`created one blog`)
@@ -20,7 +22,7 @@ exports.createBlog = async function(client, payload, res){
         res.json(`fail to create blog`)
     }
 }
-exports.getBlog = async function(client, id, res){
+exports.getBlog = async function(client,id, res){
     try{
         result = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
         if(result){
@@ -48,11 +50,25 @@ exports.getAllBlog = async function(client, res){
         console.error(e)
     }
 }
+exports.getBlog = async function(client, id,res){
+    try{
+        result = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
+        if(result){
+            console.log("Blog","found, returning all blog")
+            res.json(result)
+        }else{
+            console.log("fail to find blog")
+            res.json(`fail to find any blog`)
+        }
+    }catch(e){
+        console.error(e)
+    }
+}
 exports.editBlog = async function(client, id,payload, res){
     try{
         result = await client.db("CUPartTime").collection("Blogs").updateOne({_id:id},{$set:payload})
         if(result){
-            console.log("job",id,"deleted")
+            console.log("job",id,"updated")
             res.json(`${result.modifiedCount} updated`)
         }else{
             console.log("fail to delete")
