@@ -448,7 +448,9 @@ async function main(){
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
         console.log(id)
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         console.log(payload.Email)
         updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
