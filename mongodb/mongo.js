@@ -446,7 +446,6 @@ async function main(){
         updateJobStatusByID(client, id, payload.Status, res)
     })
 
-<<<<<<< HEAD
     app.put('/job/addemployee/:id', (req, res) => {
         // res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
@@ -457,9 +456,6 @@ async function main(){
         console.log(payload.Email)
         updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
-=======
-
->>>>>>> 68e6936340166838b2531e5e26ffe3ea44508e0b
 
     app.put('/job/addacceptedemployee/:id', (req, res) => {
          res.header('Access-Control-Allow-Origin', "*");
@@ -469,15 +465,6 @@ async function main(){
         //console.log(payload.Email)
         updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
 
-    })
-    app.put('/job/addemployee/:id', (req, res) => {
-         res.header('Access-Control-Allow-Origin', "*");
-        console.log("start")
-        var id = parseInt(req.params.id);
-        console.log(id)
-        var payload = req.body;
-        console.log(payload.Email)
-        updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
 
     app.delete('/job/CurrentEmployee/:id', (req, res) => {
