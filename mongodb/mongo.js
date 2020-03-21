@@ -445,7 +445,16 @@ async function main(){
         updateJobStatusByID(client, id, payload.Status, res)
     })
 
-
+    app.put('/job/addemployee/:id', (req, res) => {
+        // res.header('Access-Control-Allow-Origin', "*");
+        var id = parseInt(req.params.id);
+        console.log(id)
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        console.log(payload.Email)
+        updateJobEmployeeByEmail(client, id, payload.Email, res)
+    })
 
     app.put('/job/addacceptedemployee/:id', (req, res) => {
          res.header('Access-Control-Allow-Origin', "*");
@@ -455,15 +464,6 @@ async function main(){
         //console.log(payload.Email)
         updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
 
-    })
-    app.put('/job/addemployee/:id', (req, res) => {
-         res.header('Access-Control-Allow-Origin', "*");
-        console.log("start")
-        var id = parseInt(req.params.id);
-        console.log(id)
-        var payload = req.body;
-        console.log(payload.Email)
-        updateJobEmployeeByEmail(client, id, payload.Email, res)
     })
 
     app.delete('/job/CurrentEmployee/:id', (req, res) => {
