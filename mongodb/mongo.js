@@ -42,6 +42,8 @@ async function createUser(client, newUser,res){
     newUser.TFvector = [0,0,0,0,0,0,0,0,0,0]
     newUser.wallet = 0
     newUser.jobOwn = []
+    newUser.blogOwn = []
+    newUser.reviewOwn = []
     const result = await client.db("CUPartTime").collection("Users").insertOne(newUser);
     calendar.createCalendar(client, newUser.Email)
     console.log(`New User created with the following id: ${result.insertedId}`);
@@ -370,7 +372,7 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-      //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify1:[]}})
+      await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{blogOwn:[]}})
      // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify2:[]}})
       //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify3:[]}})
         //await createUser(client,{name: "uouoeiei"});
@@ -442,17 +444,10 @@ async function main(){
         updateJobStatusByID(client, id, payload.Status, res)
     })
 
-    app.put('/job/addemployee/:id', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
-        var id = parseInt(req.params.id);
-        console.log(id)
-        var payload = req.body;
-        console.log(payload.Email)
-        updateJobEmployeeByEmail(client, id, payload.Email, res)
-    })
+
 
     app.put('/job/addacceptedemployee/:id', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+         res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
         console.log(id)
         var payload = req.body;
@@ -460,9 +455,18 @@ async function main(){
         updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
 
     })
+    app.put('/job/addemployee/:id', (req, res) => {
+         res.header('Access-Control-Allow-Origin', "*");
+        console.log("start")
+        var id = parseInt(req.params.id);
+        console.log(id)
+        var payload = req.body;
+        console.log(payload.Email)
+        updateJobEmployeeByEmail(client, id, payload.Email, res)
+    })
 
     app.delete('/job/CurrentEmployee/:id', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
         console.log(id)
         var payload = req.body;
@@ -477,7 +481,7 @@ async function main(){
 /////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////CASH
     app.post('/wallet/job/:id', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+         res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
        success =  cash.makeTransaction(client, id, res)
        updateJobStatusByID(client, id, "Finish", res)
@@ -485,7 +489,7 @@ async function main(){
 
 
     app.put('/read', (req, res) => {
-        // res.header('Access-Control-Allow-Origin', "*");
+         res.header('Access-Control-Allow-Origin', "*");
         var payload = req.body;
         notify.readNotify(client,payload.Email,res)
     })
@@ -497,13 +501,13 @@ async function main(){
 
     })
     app.get('/blog/:id', (req, res) => { //get all list of db
-        //res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         blog.getBlog(client, id, res)
     })
     app.get('/allblog', (req, res) => { //get all list of db
-        //res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         blog.getAllBlog(client,res)
@@ -531,13 +535,13 @@ async function main(){
         blog.editComment(client,id,payload,cid,res)
     })
     app.get('/blog/allcomment/:id', (req, res) => { //get all list of db
-        //res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         
         blog.getAllComment(client,id,res)
     })
     app.get('/blog/comment/:id', (req, res) => { //get all list of db
-        //res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id)
         var payload = req.body
         var cid = payload.cid
@@ -553,10 +557,10 @@ async function main(){
     })
 
 
-    app.put('/notifyincoming', (req, res) => {
-        console.log('eiei')
-        notify.notifyIncomingJob(client)
-    })
+   // app.put('/notifyincoming', (req, res) => {
+      //  console.log('eiei')
+      //  notify.notifyIncomingJob(client)
+   // })
     app.listen(9000, () => {
         console.log('Application is running on port 9000')
     })    
@@ -567,7 +571,7 @@ async function main(){
     ///////////getJobDetailByDrive/////
     
     app.get('/getalljob', (req, res) => { //get all list of db
-        //console.log(findUserByID(client, id))
+        console.log("getalljob")
         res.header('Access-Control-Allow-Origin', "*");
         findAllJob(client, res);
        // res.json(`OK`)
