@@ -599,7 +599,9 @@ async function main(){
     })
     app.put('/reviewUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         review.editReview(client,id,payload,res)
     })
    // app.put('/notifyincoming', (req, res) => {
