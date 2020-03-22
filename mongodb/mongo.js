@@ -535,7 +535,9 @@ async function main(){
     })
     app.post('/blog/newcomment/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.comment(client,id,payload,res)
     })
     app.put('/blog/comment/:id', (req, res) => {
