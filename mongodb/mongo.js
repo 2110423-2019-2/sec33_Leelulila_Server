@@ -496,7 +496,9 @@ async function main(){
     })
 /////////Blog
     app.post('/newblog', (req, res) => {
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.createBlog(client, payload, res)
 
 
