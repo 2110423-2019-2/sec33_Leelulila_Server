@@ -522,7 +522,9 @@ async function main(){
     })
     app.put('/blogUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.editBlog(client,id,payload,res)
     })
     app.post('/blog/newcomment/:id', (req, res) => {
