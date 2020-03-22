@@ -573,7 +573,9 @@ async function main(){
 
     /////////Review
     app.post('/newreview', (req, res) => {
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         review.createReview(client,payload,res)
 
 
