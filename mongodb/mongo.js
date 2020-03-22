@@ -494,8 +494,10 @@ async function main(){
 
 
     app.put('/read', (req, res) => {
-         res.header('Access-Control-Allow-Origin', "*");
-        var payload = req.body;
+        res.header('Access-Control-Allow-Origin', "*");
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         notify.readNotify(client,payload.Email,res)
     })
 /////////Blog
