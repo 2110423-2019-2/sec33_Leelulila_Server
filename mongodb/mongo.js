@@ -398,8 +398,6 @@ async function main(){
         findUserByEmail(client, email, res)
     })
     app.post('/newuser', (req, res) => {
-        
-
         var encryptedData = req.body.data;
         let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
         var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -408,7 +406,9 @@ async function main(){
       })
     app.put('/user/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         updateUserByID(client, id, payload, res)
       })
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -441,7 +441,9 @@ async function main(){
     })
     app.put('/jobstatus/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         console.log(payload);
         updateJobStatusByID(client, id, payload.Status, res)
     })
@@ -458,10 +460,12 @@ async function main(){
     })
 
     app.put('/job/addacceptedemployee/:id', (req, res) => {
-         res.header('Access-Control-Allow-Origin', "*");
+        res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
         console.log(id)
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         //console.log(payload.Email)
         updateJobAcceptedEmployeeByEmail(client, id, payload.Email, res)
 
@@ -471,7 +475,9 @@ async function main(){
         res.header('Access-Control-Allow-Origin', "*");
         var id = parseInt(req.params.id);
         console.log(id)
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         //console.log(payload.Email)
         deleteCurrentEmployeeByID(client, id, payload.Email, res)
     })
@@ -491,13 +497,17 @@ async function main(){
 
 
     app.put('/read', (req, res) => {
-         res.header('Access-Control-Allow-Origin', "*");
-        var payload = req.body;
+        res.header('Access-Control-Allow-Origin', "*");
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         notify.readNotify(client,payload.Email,res)
     })
 /////////Blog
     app.post('/newblog', (req, res) => {
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.createBlog(client, payload, res)
 
 
@@ -521,12 +531,16 @@ async function main(){
     })
     app.put('/blogUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.editBlog(client,id,payload,res)
     })
     app.post('/blog/newcomment/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         blog.comment(client,id,payload,res)
     })
     app.put('/blog/comment/:id', (req, res) => {
@@ -560,7 +574,9 @@ async function main(){
 
     /////////Review
     app.post('/newreview', (req, res) => {
-        var payload = req.body;
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         review.createReview(client,payload,res)
 
 
@@ -584,7 +600,9 @@ async function main(){
     })
     app.put('/reviewUpdate/:id', (req, res) => {
         var id = parseInt(req.params.id)
-        var payload = req.body
+        var encryptedData = req.body.data;
+        let bytes = CryptoJS.AES.decrypt(encryptedData,'123456');
+        var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         review.editReview(client,id,payload,res)
     })
    // app.put('/notifyincoming', (req, res) => {
