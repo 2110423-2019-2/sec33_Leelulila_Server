@@ -1,3 +1,4 @@
+const notify = require('./notify.js')
 exports.createBlog = async function(client, payload, res){
     try{
         const sequenceName = "blogid"
@@ -22,7 +23,7 @@ exports.createBlog = async function(client, payload, res){
         res.json(`fail to create blog`)
     }
 }
-exports.getBlog = async function(client,id, res){
+exports.getBlog = async function(client, id, res){
     try{
         result = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
         if(result){
@@ -39,20 +40,6 @@ exports.getBlog = async function(client,id, res){
 exports.getAllBlog = async function(client, res){
     try{
         result = await client.db("CUPartTime").collection("Blogs").find({}).toArray();
-        if(result){
-            console.log("Blog","found, returning all blog")
-            res.json(result)
-        }else{
-            console.log("fail to find blog")
-            res.json(`fail to find any blog`)
-        }
-    }catch(e){
-        console.error(e)
-    }
-}
-exports.getBlog = async function(client, id,res){
-    try{
-        result = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
         if(result){
             console.log("Blog","found, returning all blog")
             res.json(result)
@@ -101,6 +88,14 @@ exports.comment = async function(client,id,payload, res){
         payload.timestamp = Date.now()
         result = await client.db("CUPartTime").collection("Blogs").updateOne({_id:id},{$push:{comments:payload}})
         if(result){
+            payload = {
+                "timestamp": Date.now(),
+                "string":"You have new comment",
+                "status": 0,
+                "BlogId": id
+    
+            }
+            notify.notifyPayload(client,[cid.Employer],payload)
             console.log("comment",cid,"added")
             res.json(`${result.modifiedCount} commented`)
         }else{
