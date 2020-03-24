@@ -379,7 +379,8 @@ async function main(){
         //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
         //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
        // await listDatabases(client);
-      //await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{blogOwn:[]}})
+     // await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{reviewOwn:[]}})
+    
      // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify2:[]}})
       //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify3:[]}})
         //await createUser(client,{name: "uouoeiei"});
