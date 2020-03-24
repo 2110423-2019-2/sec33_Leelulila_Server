@@ -201,7 +201,7 @@ exports.notifyPayload = async function(client,email,payload){
 
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : email}},{$push : {notification : payload}})
         if(result){
-            console.log("notified the users")
+            console.log("notified the users",result.modifiedCount)
         }else{
             console.log("fail to notify the user")
         }

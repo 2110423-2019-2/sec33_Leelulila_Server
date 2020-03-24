@@ -81,8 +81,8 @@ exports.deleteBlog = async function(client, id, res){
 }
 exports.comment = async function(client,id,payload, res){
     try{
-        cid = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
-        cid = cid.comment_seq
+        blog = await client.db("CUPartTime").collection("Blogs").findOne({_id:id})
+        cid = blog.comment_seq
         await client.db("CUPartTime").collection("Blogs").updateOne({ _id : id }, { $inc: {comment_seq : 1 }});
         payload.cid = cid
         payload.timestamp = Date.now()
@@ -95,7 +95,8 @@ exports.comment = async function(client,id,payload, res){
                 "BlogId": id
     
             }
-            notify.notifyPayload(client,[cid.Employer],payload)
+            //console.log(cid)
+            notify.notifyPayload(client,[blog.Employer],payload)
             console.log("comment",cid,"added")
             res.json(`${result.modifiedCount} commented`)
         }else{

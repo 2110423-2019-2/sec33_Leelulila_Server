@@ -365,7 +365,7 @@ async function main(){
     const client = new MongoClient(uri, { useNewUrlParser: true , useUnifiedTopology: true });
     
     
-    //connect to db eiei
+    //connect to db eieiิิิ
     try {
         await client.connect();
         //suggest.createTFvector(client)
