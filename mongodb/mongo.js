@@ -50,13 +50,13 @@ async function createUser(client, newUser,res){
     console.log(`New User created with the following id: ${result.insertedId}`);
     res.json(`New User created with the following id: ${result.insertedId}`);
     }catch(e){
-        res.json(e)
+        // res.json(e)
         console.error(e)
     }
-    exports.exports.createUser
+    
     
 }
-
+exports = module.exports = createUser;
     
 
 async function createJob(client, newJob,res){
