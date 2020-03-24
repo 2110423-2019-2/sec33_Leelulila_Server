@@ -1,30 +1,21 @@
 {
-  "name": "sec33_leelulila_server",
+  "name": "server",
   "version": "1.0.0",
-  "description": "sec33_Leelulila_Server get user by id : get user/id create new user : post newuser/ update user by id : put user/id",
-  "main": "demo.js",
+  "description": "For SE course",
+  "main": "./mongodb/mongo.js",
+  "scripts": {
+    "start": "node mongodb/mongo.js"
+  },
+  "author": "Leelulila Group",
+  "license": "ISC",
   "dependencies": {
     "crypto-js": "^4.0.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "nodemon": "^2.0.2",
-    "mongodb": "^3.5.2",
-    "cors": "^2.8.5"
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.2"
   },
   "devDependencies": {
-    "mocha": "^7.1.1"
-  },
-  "scripts": {
-    "test": "mocha **/*.test.js",
-    "test-watch": "nodemon --exec \"npm test\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/2110423-2019-2/sec33_Leelulila_Server.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/2110423-2019-2/sec33_Leelulila_Server/issues"
-  },
-  "homepage": "https://github.com/2110423-2019-2/sec33_Leelulila_Server#readme"
+    "prettier": "^2.0.1"
+  }
 }
