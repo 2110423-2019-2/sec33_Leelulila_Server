@@ -50,9 +50,14 @@ async function createUser(client, newUser,res){
     console.log(`New User created with the following id: ${result.insertedId}`);
     res.json(`New User created with the following id: ${result.insertedId}`);
     }catch(e){
+        res.json(e)
         console.error(e)
     }
+    exports.exports.createUser
+    
 }
+
+    
 
 async function createJob(client, newJob,res){
     try{
@@ -66,6 +71,7 @@ async function createJob(client, newJob,res){
     res.json(`New Job created with the following id: ${result.insertedId}`);
     
     }catch(e){
+        res.json(e)
         console.error(e)
     }
 }
@@ -626,6 +632,7 @@ async function main(){
     })
     
 }
+
 main().catch(console.error)
 
     
