@@ -64,4 +64,26 @@ describe('Create Job', function(){
             assert.equal(res._id, 173);
         })
     })
+
+    it("Add Job", async () =>{
+        var email = "thus@hotmail.com";
+        var data = { Email: email};
+    
+        let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), '123456').toString();
+        let sending_data = {data: ciphertext};
+        
+        await fetch("http://localhost:9000/newjob", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sending_data)
+
+        }).then((res) => {
+            return res.json();
+        })
+        .then((res) => {
+            console.log('///////////////3')
+            console.log(res);
+            assert.equal(res, `New Job created with the following id: `);
+        })
+    })
 })
