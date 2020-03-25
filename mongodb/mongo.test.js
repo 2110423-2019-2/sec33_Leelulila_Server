@@ -3,8 +3,6 @@ const CryptoJS = require('crypto-js');
 const fetch = require("node-fetch");
 const expect = require('chai').expect;
 
-const expect = require('chai').expect;
-
 describe('Apply Job',function(){
     it('Response Success (200)',async () =>{
     
@@ -24,7 +22,7 @@ describe('Apply Job',function(){
         })
         .then((res) => {
 
-            console.log('///////////////')
+            console.log('///////////////0')
             console.log(res);
             assert.equal(res, 'No user with the email onDemand@hotmail.com');
         })
@@ -34,32 +32,36 @@ describe('Apply Job',function(){
 describe('Create Job', function(){
     it('Response Success (200)', function(){
     
-        var id = 123;
-    
-        // let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), '123456').toString();
-        // let sending_data = {id: ciphertext};
-
         fetch("http://localhost:9000/job/173", {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             // body: JSON.stringify(id)
 
-        }).then(function (response) {
-            if (response.status <= 400) {
-                console.log("OK")
-                expect(response.status).to.equal(200)
-            // throw new Error("Bad response from server");
-            } else {
-                console.log("WRONG")
-                expect(response.status).to.equal(401)
-            }
-            
-        
-            console.log(response.status);
-            // assert.equal(response.status, 202);
-            // expect(response.status).toEqual(401)
+        }).then((res) => {
+            return res.status;
         })
+        .then((res) => {
+            console.log('///////////////1')
+            console.log(res);
+            assert.equal(res, 200);
+        })
+    })
 
-        // expect(response.status).toEqual(401)
+    it("Check ID", function(){
+        // var id = 123;
+        
+        fetch("http://localhost:9000/job/173", {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            // body: JSON.stringify(id)
+
+        }).then((res) => {
+            return res.json();
+        })
+        .then((res) => {
+            console.log('///////////////2')
+            console.log(res._id);
+            assert.equal(res._id, 173);
+        })
     })
 })
