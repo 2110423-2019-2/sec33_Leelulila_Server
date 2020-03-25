@@ -174,6 +174,7 @@ async function createJob(client, newJob, res) {
     res.json(e)
   }
 }
+module.exports = createJob;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -244,6 +245,10 @@ async function findJobByID(client, id, res) {
 
     if (result) {
       res.json(result);
+      // res.json({
+      //   code: 200,
+      //   message: 'success'
+      // })
     } else {
       console.log('No user found with the nam', id);
     }
