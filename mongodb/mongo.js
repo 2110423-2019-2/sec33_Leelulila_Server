@@ -757,7 +757,7 @@ async function main() {
   app.put('/job/addemployee/:id', (req, res) => {
     // res.header('Access-Control-Allow-Origin', "*");
     var id = parseInt(req.params.id);
-    console.log(id);
+    console.log('receive success');
     var encryptedData = req.body.data;
     let bytes = CryptoJS.AES.decrypt(encryptedData, '123456');
     var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
