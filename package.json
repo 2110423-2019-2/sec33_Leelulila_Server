@@ -4,7 +4,7 @@
   "description": "For SE course",
   "main": "./mongodb/mongo.js",
   "scripts": {
-    "start": "node mongodb/mongo.js",
+    "start": "nodemon mongodb/mongo.js",
     "test": "mocha **/*.test.js"
   },
   "author": "Leelulila Group",
