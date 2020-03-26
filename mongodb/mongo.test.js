@@ -3,7 +3,6 @@ const CryptoJS = require('crypto-js');
 const fetch = require("node-fetch");
 const expect = require('chai').expect;
 
-
 describe('Apply Job',function(){
 
     it('Success',async () =>{

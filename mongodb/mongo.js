@@ -167,14 +167,17 @@ async function createJob(client, newJob, res) {
           jobOwn: id.sequence_value
         }
       });
-    console.log(`New Job created with the following id: ${result.insertedId}`);
-    res.json(`New Job created with the following id: ${result.insertedId}`);
+    
+    const out = (`New Job created with the following id: `); //${result.insertedId}`);
+    console.log(`${out} ${result.insertedId}`);
+    res.json(out); // ${result.insertedId}`)
+
   } catch (e) {
     console.error(e);
-    res.json(e)
+    res.json(e);
   }
 }
-module.exports = createJob;
+// module.exports = createJob;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
