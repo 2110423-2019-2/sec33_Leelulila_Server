@@ -1,7 +1,8 @@
 exports.readNotify = async function (client, email, res) {
     try {
         result = await client.db("CUPartTime").collection("Users").updateOne({
-            email: email
+            email: email,
+            "notification.status":0
         }, {
             $set: {
                 "notification.$[].status": 1
