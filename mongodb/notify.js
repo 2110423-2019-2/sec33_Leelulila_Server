@@ -373,7 +373,7 @@ exports.notifyPayload = async function (client, email, payload) {
             }
         })
         if (result) {
-            console.log("notified the users", result.modifiedCount)
+            console.log("notified the users", result.modifiedCount, payload.string)
         } else {
             console.log("fail to notify the user")
         }

@@ -4,19 +4,21 @@
   "description": "For SE course",
   "main": "./mongodb/mongo.js",
   "scripts": {
-    "start": "node mongodb/mongo.js",
+    "start": "nodemon mongodb/mongo.js",
     "test": "mocha **/*.test.js"
   },
   "author": "Leelulila Group",
   "license": "ISC",
   "dependencies": {
     "chai": "^4.2.0",
+    "cookie-parser": "^1.4.5",
     "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^7.1.1",
-    "mongodb": "^3.5.2"
+    "mongodb": "^3.5.2",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "prettier": "^2.0.1"
