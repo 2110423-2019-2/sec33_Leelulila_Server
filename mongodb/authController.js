@@ -49,12 +49,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   // To use check data in DB
   const MongoClient = require('mongodb').MongoClient;
   const uri =
-    'mongodb+srv://admin:cuparttime2020@cluster0-rjut3.mongodb.net/test?retryWrites=true&w=majority';
+  'mongodb+srv://admin:cuparttime2020@cluster0-rjut3.mongodb.net/test?retryWrites=true&w=majority';
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-
+  
   try {
     await client.connect();
   } catch (err) {
@@ -68,14 +68,29 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  }
-  // } else if (req.cookies.jwt) {
-  //   token = req.cookies.jwt;
   // }
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
   if (!token) {
     throw new Error('You are not logged in! Please log in to get access', 401);
   }
+
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    cookieOptions.secure = true;
+  }
+
+  console.log(token);
+  
+  res.cookie('jwt', token, cookieOptions);
 
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
