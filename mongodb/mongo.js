@@ -609,32 +609,6 @@ async function deleteJobByID(client, id, res) {
     console.error(e);
   }
 }
-<<<<<<< Updated upstream
-/////////////////////////////////////////////////////////////////////////////////////////
-async function main(){
-    const MongoClient = require('mongodb').MongoClient;
-    const uri = "mongodb+srv://admin:cuparttime2020@cluster0-rjut3.mongodb.net/test?retryWrites=true&w=majority";
-    const client = new MongoClient(uri, { useNewUrlParser: true , useUnifiedTopology: true });
-    
-    
-    //connect to db eieiิิิ
-    try {
-        await client.connect();
-        //suggest.createTFvector(client)
-       // suggest.addTFvector(client,"drive@hotmail.com",[1,0,0,1,0,1,0,1,0,0])
-        //notify.jobNotify(client, "drive@hotmail.com", 125, 0)
-        //await client.db("CUPartTime").collection("Users").createIndex({email : 1},{unique : true});
-       // await listDatabases(client);
-     // await client.db("CUPartTime").collection("Users").updateMany({}, {$set :{reviewOwn:[]}})
-    
-     // await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify2:[]}})
-      //await client.db("CUPartTime").collection("Job").updateMany({}, {$set :{notify3:[]}})
-        //await createUser(client,{name: "uouoeiei"});
-       // await updateUserByName(client, "Somnuk", {name : "Drive"});
-       // await findUserByName(client, "Somnuk");
-       
-        
-=======
 async function deleteCurrentEmployeeByID(client, jobID, email, res) {
   try {
     find = await client
@@ -667,7 +641,6 @@ async function deleteCurrentEmployeeByID(client, jobID, email, res) {
     } else {
       res.json(`cannot find the job by id`);
       console.log('cannot find job by', jobID);
->>>>>>> Stashed changes
     }
   } catch (e) {
     console.error(e);
