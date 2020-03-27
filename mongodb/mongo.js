@@ -117,7 +117,7 @@ async function createUser(client, newUser, res) {
     // ];
     authController.createSendToken(result.ops[0], 201, res);
     // console.log(`New User created with the following id: ${result.insertedId}`);
-    // res.json(`New User created with the following id: ${result.insertedId}`);
+    res.json(`New User created success`); //with the following id: ${result.insertedId}`);
   } catch (e) {
     console.error(e);
   }
@@ -154,7 +154,7 @@ async function userLogin(client, user, res) {
     console.log(e);
   }
 }
-exports = module.exports = createUser;
+    
 
 async function createJob(client, newJob, res) {
   try {
