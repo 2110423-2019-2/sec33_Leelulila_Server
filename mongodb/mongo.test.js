@@ -27,6 +27,13 @@ describe('ApplyJob Test',function(){
         })
     })
 
+<<<<<<< HEAD
+            // console.log('///////////////0')
+            // console.log(res);
+||||||| merged common ancestors
+            console.log('///////////////0')
+            console.log(res);
+=======
     it('Wrong Job ID',async () =>{
     
         var email = "e2etest@hotmail.com";
@@ -66,6 +73,7 @@ describe('ApplyJob Test',function(){
             return res.json();
         })
         .then((res) => {
+>>>>>>> d3e147e3b04fec473c758cf52bca9d5f7d9557ce
             assert.equal(res, 'No user with the email onDemand@hotmail.com');
         })
     })
@@ -304,8 +312,8 @@ describe('Create Job', function(){
             return res.status;
         })
         .then((res) => {
-            console.log('///////////////1')
-            console.log(res);
+            // console.log('///////////////1')
+            // console.log(res);
             assert.equal(res, 200);
         })
     })
@@ -322,8 +330,8 @@ describe('Create Job', function(){
             return res.json();
         })
         .then((res) => {
-            console.log('///////////////2')
-            console.log(res._id);
+            // console.log('///////////////2')
+            // console.log(res._id);
             assert.equal(res._id, 173);
         })
     })
@@ -344,9 +352,33 @@ describe('Create Job', function(){
             return res.json();
         })
         .then((res) => {
-            console.log('///////////////3')
-            console.log(res);
+            // console.log('///////////////3')
+            // console.log(res);
             assert.equal(res, `New Job created with the following id: `);
+        })
+    })
+})
+
+describe("Registration Unit test", function(){
+    it("Create User Complete", () =>{
+        var name = "newusertest";
+        var data = { Email: name};
+    
+        let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), '123456').toString();
+        let sending_data = {data: ciphertext};
+        
+        fetch("http://localhost:9000/newuser", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json' },
+            body: JSON.stringify(sending_data)
+
+        }).then((res) => {
+            return res.json();
+        })
+        .then((res) => {
+            console.log('///////////////4')
+            console.log(res);
+            assert.equal(res, `New User created success`);
         })
     })
 })
