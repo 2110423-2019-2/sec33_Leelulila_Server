@@ -88,7 +88,7 @@ async function createUser(client, newUser, res) {
     calendar.createCalendar(client, newUser.Email);
     authController.createSendToken(result, 201, res);
     // console.log(`New User created with the following id: ${result.insertedId}`);
-    // res.json(`New User created with the following id: ${result.insertedId}`);
+    res.json(`New User created success`); //with the following id: ${result.insertedId}`);
   } catch (e) {
     console.error(e);
 
