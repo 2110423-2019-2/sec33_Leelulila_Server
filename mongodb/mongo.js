@@ -98,6 +98,7 @@ async function createUser(client, newUser, res) {
       .collection('Users')
       .insertOne(newUser);
     calendar.createCalendar(client, newUser.Email);
+    // console.log(result.ops[0]);
     // result:
     // ops: [
     //   {
@@ -116,7 +117,7 @@ async function createUser(client, newUser, res) {
     // ];
     authController.createSendToken(result.ops[0], 201, res);
     // console.log(`New User created with the following id: ${result.insertedId}`);
-    // res.json(`New User created with the following id: ${result.insertedId}`);
+    res.json(`New User created success`); //with the following id: ${result.insertedId}`);
   } catch (e) {
     console.error(e);
   }
@@ -124,10 +125,10 @@ async function createUser(client, newUser, res) {
 
 async function userLogin(client, user, res) {
   try {
-    const { email, password } = user;
+    const { email, pass } = user;
 
     // 1) Check if email and password exist
-    if (!email || !password) {
+    if (!email || !pass) {
       throw new Error('Please provide email and password');
     }
 
@@ -136,19 +137,24 @@ async function userLogin(client, user, res) {
       .db('CUPartTime')
       .collection('Users')
       .findOne({
-        email,
+        email
       });
 
     //   await bcrypt.compare(candidatePassword, userPassword);
-    if (!currentUser || !(currentUser.password === password)) {
+    if (!currentUser || !(currentUser.password === pass)) {
+      res.status(404).json({ 
+        status: 'fail', 
+        message: 'Incorrect email or password'
+      })
       throw new Error('Incorrect email or password');
     }
+
     authController.createSendToken(currentUser, 200, res);
   } catch (e) {
     console.log(e);
   }
 }
-exports = module.exports = createUser;
+    
 
 async function createJob(client, newJob, res) {
   try {
@@ -710,13 +716,19 @@ async function main() {
     }
     createUser(client, payload, res);
   });
-  app.post('/login', (req, res) => {
+
+  app.post('/userlogin', (req, res) => {
     let payload = req.body;
     if (process.env.NODE_ENV === 'production') {
       payload = decryptData(payload.data);
     }
     userLogin(client, payload, res);
   });
+  
+  app.get('/userlogout', (req, res) => {
+    authController.logout(req, res);
+  })
+
 
   // exports.checkUser = async (id) => {
   //   currentUser = await client.db('CUPartTime').collection('Users').findOne({
