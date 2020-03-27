@@ -148,7 +148,7 @@ async function userLogin(client, user, res) {
     console.log(e);
   }
 }
-exports = module.exports = createUser;
+    
 
 async function createJob(client, newJob, res) {
   try {
