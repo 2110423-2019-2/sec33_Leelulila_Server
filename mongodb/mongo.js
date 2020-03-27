@@ -22,6 +22,13 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+// Test cookies middleware
+// app.use((req, res, next) => {
+//   req.requestTime = new Date().toISOString();
+//   console.log(req.cookies);
+//   next();
+// });
+
 // async function listDatabases(client) {
 //     databasesList = await client
 //         .db()
@@ -729,28 +736,18 @@ async function main() {
     authController.logout(req, res);
   })
 
-
-  // exports.checkUser = async (id) => {
-  //   currentUser = await client.db('CUPartTime').collection('Users').findOne({
-  //     _id: id,
-  //   });
-  //   return currentUser;
-  // };
-
-  // app.use(authController.protect);
-
-  app.get('/user/:id', (req, res) => {
+  app.get('/user/:id', authController.protect, (req, res) => {
     //get all list of db
     const id = parseInt(req.params.id);
     findUserByID(client, id, res);
   });
-  app.get('/useremail/:email', (req, res) => {
+  app.get('/useremail/:email', authController.protect ,(req, res) => {
     //get all list of db
     res.header('Access-Control-Allow-Origin', '*');
     var email = req.params.email;
     findUserByEmail(client, email, res);
   });
-  app.put('/user/:id', (req, res) => {
+  app.put('/user/:id', authController.protect, (req, res) => {
     let payload = req.body;
     if (process.env.NODE_ENV === 'production') {
       payload = decryptData(payload.data);
@@ -976,10 +973,17 @@ async function main() {
 
   app.get('/getalljob', (req, res) => {
     //get all list of db
-    console.log('getalljob');
     res.header('Access-Control-Allow-Origin', '*');
     findAllJob(client, res);
     // res.json(`OK`)
+  });
+
+  process.on('unhandledRejection', err => {
+    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+    console.log(err.name, err.message);
+    server.close(() => {
+      process.exit(1);
+    });
   });
 }
 main().catch(console.error);
