@@ -1,4 +1,5 @@
 
+const notify = require('./notify.js')
 exports.makeTransaction = async function(client, jobId, res){
     try{
         find = await client.db("CUPartTime").collection("Job").findOne({_id:jobId})
@@ -23,6 +24,14 @@ exports.makeTransaction = async function(client, jobId, res){
         //    console.log(amount)
            
            result = shiftManyWallet(client, amount, emails,employer, res)
+           payload = { 
+            "timestamp": Date.now(),
+            "jobId": jobId,
+            "jobName": find.job.JobName,
+            "string":"Review job?",
+            "status": 0   
+         }
+           notify.notifyPayload(client,emails, payload)
            
           if(result){
               return 1
@@ -62,13 +71,13 @@ async function shiftManyWallet(client, amount, emails,employer, res){
         }
         console.log("modified wallet done")
         
-        notifyUser(client, amount, emails, res)
+        notifyCashUser(client, amount, emails, res)
         return 1
     }catch(e){
         console.error(e)
     }
 }
-async function notifyUser(client, amount, emails, res){
+async function notifyCashUser(client, amount, emails, res){
     try{
         var string = "You have been paid with the amount of "+ amount.toString()
         payload = {
@@ -79,6 +88,7 @@ async function notifyUser(client, amount, emails, res){
             "status": 0
 
         }
+        
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : payload}})
         if(result){
             console.log('successfully notify the users')
@@ -92,3 +102,4 @@ async function notifyUser(client, amount, emails, res){
 
     }
 }
+
