@@ -27,7 +27,7 @@ exports.createBlog = async function (client, payload, res) {
         })
         if (result) {
             console.log("blog created with id", id.sequence_value)
-            res.json(`created one blog`)
+            res.json("blog created with id: "+id.sequence_value);
         } else {
             console.log("fail to create blog")
             res.json(`fail to create blog`)

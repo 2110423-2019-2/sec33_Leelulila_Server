@@ -29,7 +29,7 @@ exports.makeTransaction = async function(client, jobId, res){
             "jobId": jobId,
             "jobName": find.job.JobName,
             "string":"Review job?",
-            "status": 0   
+            "status": 2   
          }
            notify.notifyPayload(client,emails, payload)
            
