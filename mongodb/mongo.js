@@ -209,7 +209,7 @@ async function createJob(client, newJob, res) {
     res.json(out); // ${result.insertedId}`)
   } catch (e) {
     console.error(e);
-    res.json(e);
+    //res.json(e);
   }
 }
 // module.exports = createJob;
@@ -772,7 +772,7 @@ async function main() {
       payload = decryptData(payload.data);
     }
     createJob(client, payload, res);
-    res.json(payload);
+    res.json(payload); //ใครส่งซ้ำมันบัคๆนะ
   });
   app.delete('/job/:id', (req, res) => {
     var id = parseInt(req.params.id);
