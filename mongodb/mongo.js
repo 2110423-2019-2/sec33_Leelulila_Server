@@ -781,7 +781,10 @@ async function main() {
   });
   app.put('/jobUpdate/:id', (req, res) => {
     var id = parseInt(req.params.id);
-    var payload = req.body;
+    var encryptedData = req.body.data;
+    var bytes = CryptoJS.AES.decrypt(encryptedData, '123456');
+    var payload = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
     console.log(payload);
     editJob(client, payload, id, res);
   });
