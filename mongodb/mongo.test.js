@@ -1,8 +1,8 @@
-const assert = require('chai').assert;
+ const assert = require('chai').assert;
 const CryptoJS = require('crypto-js');
 const fetch = require("node-fetch");
 const expect = require('chai').expect;
-
+/*
 
 describe('ApplyJob Test',function(){
 
@@ -27,13 +27,6 @@ describe('ApplyJob Test',function(){
         })
     })
 
-<<<<<<< HEAD
-            // console.log('///////////////0')
-            // console.log(res);
-||||||| merged common ancestors
-            console.log('///////////////0')
-            console.log(res);
-=======
     it('Wrong Job ID',async () =>{
     
         var email = "e2etest@hotmail.com";
@@ -73,7 +66,6 @@ describe('ApplyJob Test',function(){
             return res.json();
         })
         .then((res) => {
->>>>>>> d3e147e3b04fec473c758cf52bca9d5f7d9557ce
             assert.equal(res, 'No user with the email onDemand@hotmail.com');
         })
     })
@@ -381,4 +373,205 @@ describe("Registration Unit test", function(){
             assert.equal(res, `New User created success`);
         })
     })
+}) */
+
+//////TIME
+
+describe('Payment Test',function(){
+
+    it('Pay all with employer',async () =>{
+     //create job
+     var emailEmployer = "thus2@hotmail.com";
+     var emailEmployee = "thus2@gmail.com";
+     var jobdata = {
+        "JobName": "testPayment",
+        "JobDetail": "None",
+        "Wages": "50",
+        "Amount": "999",
+        "Location": "วิศวะ ฬ",
+        "BeginTime": "08:00",
+        "EndTime": "09:00",
+        "Date": "2020-08-26",
+        "CurrentEmployee": [],
+        "CurrentAcceptedEmployee": [emailEmployee],
+        "Employer": emailEmployer,
+        "Status": "Ready"
+    };
+
+    let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(jobdata), '123456').toString();
+    let sending_data = {data: ciphertext};
+    await fetch("http://localhost:9000/newjob", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sending_data)
+    })
+        
+       //get employer wallet
+    employer = await fetch("http://localhost:9000/useremail/"+emailEmployer, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        }).then((res) => {
+            //var walletEmployer = res.json().wallet
+            return res.json();
+        })
+    thisJobId = employer.jobOwn[employer.jobOwn.length - 1]
+    employerWallet = employer.wallet
+    console.log(thisJobId)
+       //get employee wallet
+    employee =  await fetch("http://localhost:9000/useremail/"+emailEmployee, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        }).then((res) => {
+           
+            return res.json();
+        })
+    employeeWallet = employee.wallet 
+        //do the payment
+
+        await fetch("http://localhost:9000/wallet/job/"+thisJobId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        //get new employer wallet
+     employer2 =   await fetch("http://localhost:9000/useremail/"+emailEmployer, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        }).then((res) => {
+           
+            return res.json();
+        })
+    employerWallet2 = employer2.wallet
+    
+       //get new employee wallet
+     employee2 =   await fetch("http://localhost:9000/useremail/"+emailEmployee, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            
+        }).then((res) => {
+            return res.json();
+        })
+    employeeWallet2 = employee2.wallet
+    assert.equal(employeeWallet2 - employeeWallet, jobdata.Wages, "employee check") //after - before equals wage
+   // assert.equal(employerWallet - employerWallet2, jobdata.Wages*jobdata.CurrentAcceptedEmployee.length,"employee check")
+
+
+    }),
+    it('Pay all with employer but employer lack the money',async () =>{
+        //create job
+        var emailEmployer = "test01@example.com"; // employer with no money
+        var emailEmployee = "thus2@gmail.com";
+        var jobdata = {
+           "JobName": "testPayment",
+           "JobDetail": "None",
+           "Wages": "50",
+           "Amount": "999",
+           "Location": "วิศวะ ฬ",
+           "BeginTime": "08:00",
+           "EndTime": "09:00",
+           "Date": "2020-08-26",
+           "CurrentEmployee": [],
+           "CurrentAcceptedEmployee": [emailEmployee],
+           "Employer": emailEmployer,
+           "Status": "Ready"
+       };
+   
+       let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(jobdata), '123456').toString();
+       let sending_data = {data: ciphertext};
+       await fetch("http://localhost:9000/newjob", {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify(sending_data)
+       })
+           
+          //get employer wallet
+       employer = await fetch("http://localhost:9000/useremail/"+emailEmployer, {
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+           }).then((res) => {
+               //var walletEmployer = res.json().wallet
+               return res.json();
+           })
+       thisJobId = employer.jobOwn[employer.jobOwn.length - 1]
+       employerWallet = employer.wallet
+       console.log(thisJobId)
+          //get employee wallet
+       employee =  await fetch("http://localhost:9000/useremail/"+emailEmployee, {
+               method: 'GET',
+               headers: { 'Content-Type': 'application/json' }
+           }).then((res) => {
+              
+               return res.json();
+           })
+       employeeWallet = employee.wallet 
+           //do the payment
+   
+     payment =   await fetch("http://localhost:9000/wallet/job/"+thisJobId, {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' }
+        }).then((res) => {
+              
+            return res.json();
+        })
+    assert(payment, 'Employee has not enough money')
+       
+    })
+
+
+   
 })
+describe("Job Request Unit test", async function(){
+    it("Find all job", async() =>{
+        var emailEmployer = "thus2@hotmail.com";
+        var emailEmployee = "thus2@gmail.com";
+        var jobdata = {
+            "JobName": "testJobRequest",
+            "JobDetail": "None",
+            "Wages": "50",
+            "Amount": "999",
+            "Location": "วิศวะ ฬ",
+            "BeginTime": "08:00",
+            "EndTime": "09:00",
+            "Date": "2020-08-26",
+            "CurrentEmployee": [],
+            "CurrentAcceptedEmployee": [emailEmployee],
+            "Employer": emailEmployer,
+            "Status": "Ready"
+        };
+    
+        let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(jobdata), '123456').toString();
+        let sending_data = {data: ciphertext};
+        await fetch("http://localhost:9000/newjob", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sending_data)
+        })
+
+       alljob = await fetch("http://localhost:9000/getalljob", {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json' }
+
+        }).then((res) => {
+            return res.json();
+        })
+
+        employer = await fetch("http://localhost:9000/useremail/"+emailEmployer, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json' }
+        }).then((res) => {
+            return res.json();
+        })
+        thisJobId = employer.jobOwn[employer.jobOwn.length - 1]
+
+        findjob = await fetch("http://localhost:9000/job/"+thisJobId, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json' }
+
+        }).then((res) => {
+            return res.json();
+        })
+        console.log(jobdata, findjob.job)
+        assert(alljob.length>0, "check all job")
+        assert.equal(jobdata.JobName, findjob.job.JobName, "check find job")
+        
+    })
+}) 
