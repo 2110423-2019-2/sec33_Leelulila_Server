@@ -27,13 +27,6 @@ describe('ApplyJob Test',function(){
         })
     })
 
-<<<<<<< HEAD
-            // console.log('///////////////0')
-            // console.log(res);
-||||||| merged common ancestors
-            console.log('///////////////0')
-            console.log(res);
-=======
     it('Wrong Job ID',async () =>{
     
         var email = "e2etest@hotmail.com";
@@ -73,7 +66,6 @@ describe('ApplyJob Test',function(){
             return res.json();
         })
         .then((res) => {
->>>>>>> d3e147e3b04fec473c758cf52bca9d5f7d9557ce
             assert.equal(res, 'No user with the email onDemand@hotmail.com');
         })
     })
@@ -190,6 +182,7 @@ describe('Blog Test', function(){
         
         await fetch('http://localhost:9000/newblog', {
             method: 'POST',
+
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(sending_data)
 
@@ -197,7 +190,7 @@ describe('Blog Test', function(){
             return res.json();
         })
         .then((res) => {
-            job_id = res.substring(22,24);
+            job_id = res.substring(22,25);
             assert.equal(res,'blog created with id: '+job_id);
 
         })
@@ -232,49 +225,8 @@ describe('Blog Test', function(){
         
     })
 
-    var notification_amount = 0;
 
     it('Notify Comment', async () =>{
-
-        
-    
-        await fetch('http://localhost:9000/useremail/e2etest@hotmail.com', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            // body: JSON.stringify(id)
-
-        }).then((res) => {
-            
-            return res.json();
-        })
-        .then((res) => {
-            console.log('############');
-            console.log(res['notification']);
-            notification_amount = res['notification'].length;
-        })
-
-
-
-        let comment = 'test';
-        let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(comment), '123456').toString();
-        let sending_data = {data: ciphertext};
-
-        await fetch('http://localhost:9000/blog/newcomment/28', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(sending_data)
-        }).then((res) => {
-            console.log('POST')
-            return res.json();
-        })
-        .then((res) => {
-            assert.equal(res,'1 commented');
-            
-        })
-        
-    })
-    //Add Delay Please
-    it('Check Notify Comment', async () =>{
 
         await fetch('http://localhost:9000/useremail/e2etest@hotmail.com', {
             method: 'GET',
@@ -282,21 +234,38 @@ describe('Blog Test', function(){
             // body: JSON.stringify(id)
 
         }).then((response) => {
-            console.log('GET')
             return response.json();
         })
         .then((response) => {
-            console.log('############');
-            console.log(response);
-            assert.equal(notification_amount+1,response['notification'].length);
+            expect(response['notification']).to.be.an('array');
         })
-
-
-
     })
     
 })
+describe('Login',function(){
+    
+    it('Login Success', async () =>{
+        var email = 'e2etest@hotmail.com';
+        var pass = '123456';
+        let data = {email,pass};
+        let ciphertext = CryptoJS.AES.encrypt(JSON.stringify(data), '123456').toString();
+        let sending_data = {data: ciphertext};
+    
+        await fetch("/userlogin", {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(sending_data)
+        }).then((res) => {
+            return res;
+        })
+        .then((res) => {
+            console.log('///////////////1')
+            console.log(res);
+            assert.equal(res, 200);
+        })
+    })
 
+})
 
 
 
