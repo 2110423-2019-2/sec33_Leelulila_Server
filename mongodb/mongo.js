@@ -10,7 +10,7 @@ const suggest = require('./suggestion.js');
 const blog = require('./blog.js');
 const review = require('./review.js');
 const authController = require('./authController');
-var cors = require('cors');
+// var cors = require('cors');
 
 dotenv.config({
   path: './config.env',
@@ -18,7 +18,7 @@ dotenv.config({
 
 
 const app = express();
-app.use(cors);
+// app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -999,7 +999,7 @@ async function main() {
     //get all list of db
     // console.log(req.headers);
     // console.log('fromgetalljob', req.headers.authorization);
-
+    
     res.header('Access-Control-Allow-Origin', '*');
     findAllJob(client, res);
     // res.json(`OK`)
