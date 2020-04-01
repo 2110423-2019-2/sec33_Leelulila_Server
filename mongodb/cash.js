@@ -13,12 +13,18 @@ exports.makeTransaction = async function(client, jobId, res){
            console.log(emails)
            if(emails.length == 0){
             
-                res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
+                //res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
                return 0
            }
-           console.log("St Balance dec")
-           shiftOneWallet(client, amount*emails.length, employerEmail, res)
-           console.log("Balance dec")
+        findEmployer = await client.db("CUPartTime").collection("Users").findOne({email:employerEmail})
+        if(findEmployer.wallet <  amount*emails.length){
+            res.json(`Employee has not enough money`)
+        }
+
+
+        console.log("St Balance dec")
+        shiftOneWallet(client, amount*emails.length, employerEmail, res)
+        console.log("Balance dec")
         //    shiftManyWallet(client, amount, emails, res)
           
         //    console.log(amount)
@@ -66,7 +72,7 @@ async function shiftManyWallet(client, amount, emails,employer, res){
     try{
         result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
         if(result.matchedCount==0){
-           res.json(`cannot find this email`)
+           //res.json(`cannot find this email`)
            return 0
         }
         console.log("modified wallet done")
