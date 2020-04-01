@@ -1,37 +1,49 @@
 
 const notify = require('./notify.js')
-exports.makeTransaction = async function (client, jobId, res) {
-    try {
-        find = await client.db("CUPartTime").collection("Job").findOne({ _id: jobId })
-        if (find) {
-            employerEmail = find.job.Employer;
-            console.log(employerEmail)
-            emails = find.job.CurrentAcceptedEmployee;
-            amount = parseInt(find.job.Wages)
-            //    console.log(emails)
-            employer = find.job.Employer
-            console.log(emails)
-            if (emails.length == 0) {
+exports.makeTransaction = async function(client, jobId, res){
+    try{
+        find = await client.db("CUPartTime").collection("Job").findOne({_id:jobId})
+        if(find){
+           employerEmail = find.job.Employer;
+           console.log(employerEmail)
+           emails = find.job.CurrentAcceptedEmployee;
+           amount = parseInt(find.job.Wages)
+        //    console.log(emails)
+           employer = find.job.Employer
+           console.log(emails)
+           if(emails.length == 0){
+            
+                //res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
+               return 0
+           }
+        findEmployer = await client.db("CUPartTime").collection("Users").findOne({email:employerEmail})
+        if(findEmployer.wallet <  amount*emails.length){
+            res.json(`Employee has not enough money`)
+        }
 
-                res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
-                return 0
-            }
-            console.log("St Balance dec")
-            shiftOneWallet(client, amount * emails.length, employerEmail, res)
-            console.log("Balance dec")
-            //    shiftManyWallet(client, amount, emails, res)
 
-            //    console.log(amount)
-
-            result = shiftManyWallet(client, amount, emails, employer, res)
-            payload = {
-                "timestamp": Date.now(),
-                "jobId": jobId,
-                "jobName": find.job.JobName,
-                "string": "Review job " + find.job.JobName + "?",
-                "status": 2
-            }
-            notify.notifyPayload(client, emails, payload)
+        console.log("St Balance dec")
+        shiftOneWallet(client, amount*emails.length, employerEmail, res)
+        console.log("Balance dec")
+        //    shiftManyWallet(client, amount, emails, res)
+          
+        //    console.log(amount)
+           
+           result = shiftManyWallet(client, amount, emails,employer, res)
+           payload = { 
+            "timestamp": Date.now(),
+            "jobId": jobId,
+            "jobName": find.job.JobName,
+            "string":"Review job?",
+            "status": 2   
+         }
+           notify.notifyPayload(client,emails, payload)
+           
+          if(result){
+              return 1
+          }else{
+              return 0
+          }
 
             if (result) {
                 return 1
@@ -62,12 +74,12 @@ async function shiftOneWallet(client, amount, email, res) {
     }
 }
 
-async function shiftManyWallet(client, amount, emails, employer, res) {
-    try {
-        result = await client.db("CUPartTime").collection("Users").updateMany({ email: { $in: emails } }, { $inc: { wallet: amount } })
-        if (result.matchedCount == 0) {
-            res.json(`cannot find this email`)
-            return 0
+async function shiftManyWallet(client, amount, emails,employer, res){
+    try{
+        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$inc : {wallet : amount}})
+        if(result.matchedCount==0){
+           //res.json(`cannot find this email`)
+           return 0
         }
         console.log("modified wallet done")
 
@@ -77,9 +89,9 @@ async function shiftManyWallet(client, amount, emails, employer, res) {
         console.error(e)
     }
 }
-async function notifyCashUser(client, amount, emails, res) {
-    try {
-        var string = "You have been paid with the amount of " + amount.toString()
+async function notifyCashUser(client, amount, emails, res){
+    try{
+        var string = "You have been paid with the amount of "+ amount.toString() + " from " + employer
         payload = {
             "timestamp": Date.now(),
             "wage": amount,

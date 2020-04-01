@@ -10,17 +10,36 @@ const suggest = require('./suggestion.js');
 const blog = require('./blog.js');
 const review = require('./review.js');
 const authController = require('./authController');
-// var cors = require('cors');
+var cors = require('cors');
 
 dotenv.config({
   path: './config.env',
 });
 
-// app.use(cors);
-const app = express();
 
+const app = express();
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(function (req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 // Test cookies middleware
 // app.use((req, res, next) => {
@@ -209,7 +228,7 @@ async function createJob(client, newJob, res) {
     res.json(out); // ${result.insertedId}`)
   } catch (e) {
     console.error(e);
-    res.json(e);
+    //res.json(e);
   }
 }
 // module.exports = createJob;
@@ -251,7 +270,7 @@ async function findUserByEmail(client, email, res) {
 async function findAllJob(client, res) {
   try {
     result = await client.db('CUPartTime').collection('Job').find({}).toArray();
-    //console.log('ee')
+
     if (result) {
       res.json(result);
       //console.log(result)
@@ -738,11 +757,13 @@ async function main() {
 
   app.get('/user/:id', authController.protect, (req, res) => {
     //get all list of db
+    console.log('fromgetuserid', req.cookies);
     const id = parseInt(req.params.id);
     findUserByID(client, id, res);
   });
   app.get('/useremail/:email', authController.protect ,(req, res) => {
     //get all list of db
+    console.log('fromgetuseremail', req.cookies);
     res.header('Access-Control-Allow-Origin', '*');
     var email = req.params.email;
     findUserByEmail(client, email, res);
@@ -772,7 +793,7 @@ async function main() {
       payload = decryptData(payload.data);
     }
     createJob(client, payload, res);
-    res.json(payload);
+    res.json(payload); //ใครส่งซ้ำมันบัคๆนะ
   });
   app.delete('/job/:id', (req, res) => {
     var id = parseInt(req.params.id);
@@ -968,14 +989,17 @@ async function main() {
   //  console.log('eiei')
   //  notify.notifyIncomingJob(client)
   // })
-  app.listen(9000, () => {
+  app.listen(9000 ,() => {
     console.log('Application is running on port 9000');
   });
 
   ///////////getJobDetailByDrive/////
 
-  app.get('/getalljob', (req, res) => {
+  app.get('/getalljob', authController.protect, (req, res) => {
     //get all list of db
+    // console.log(req.headers);
+    // console.log('fromgetalljob', req.headers.authorization);
+
     res.header('Access-Control-Allow-Origin', '*');
     findAllJob(client, res);
     // res.json(`OK`)
