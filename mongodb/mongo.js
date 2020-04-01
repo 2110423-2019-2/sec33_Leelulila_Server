@@ -989,7 +989,7 @@ async function main() {
   //  console.log('eiei')
   //  notify.notifyIncomingJob(client)
   // })
-  app.listen(9000 ,'cupt_backend',() => {
+  app.listen(9000 ,() => {
     console.log('Application is running on port 9000');
   });
 
