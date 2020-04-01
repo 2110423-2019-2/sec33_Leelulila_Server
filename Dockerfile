@@ -1,14 +1,18 @@
 # Use Node v8 as the base image.
 FROM node:alpine
 
-WORKDIR /usr/app/server
+# Create app directory
+WORKDIR /usr/src/app/server
+# Install app dependencies
+COPY package*.json ./
 
-COPY . /usr/app/server
+RUN npm install
+# Copy app source code
+COPY . .
 
-RUN cd /usr/app/server && npm install --production
-
-EXPOSE 8008
-CMD ["npm", "start"]
+#Expose port and start application
+EXPOSE 9000
+CMD [ "npm", "start" ]
 
 # # --> Add everything in the current directory to our image, in the 'app' folder.
 # ADD . /app

@@ -10,15 +10,15 @@ const suggest = require('./suggestion.js');
 const blog = require('./blog.js');
 const review = require('./review.js');
 const authController = require('./authController');
-// var cors = require('cors');
+var cors = require('cors');
 
 dotenv.config({
   path: './config.env',
 });
 
-// app.use(cors);
-const app = express();
 
+const app = express();
+app.use(cors);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -968,7 +968,7 @@ async function main() {
   //  console.log('eiei')
   //  notify.notifyIncomingJob(client)
   // })
-  app.listen(9000 ,() => {
+  app.listen(9000 ,'cupt_backend',() => {
     console.log('Application is running on port 9000');
   });
 
