@@ -10,12 +10,7 @@ const suggest = require('./suggestion.js');
 const blog = require('./blog.js');
 const review = require('./review.js');
 const authController = require('./authController');
-<<<<<<< HEAD
 var cors = require('cors');
-||||||| merged common ancestors
-// var cors = require('cors');
-=======
->>>>>>> 0d201b50104eea93fce4a99aa16ba807ec9f4cb8
 
 dotenv.config({
   path: './config.env',
