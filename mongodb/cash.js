@@ -34,7 +34,7 @@ exports.makeTransaction = async function(client, jobId, res){
             "timestamp": Date.now(),
             "jobId": jobId,
             "jobName": find.job.JobName,
-            "string":"Review job?",
+            "string":"Review " + find.job.JobName +  "?",
             "status": 2   
          }
            notify.notifyPayload(client,emails, payload)
@@ -45,25 +45,31 @@ exports.makeTransaction = async function(client, jobId, res){
               return 0
           }
 
-        }else{
-            
-           res.json(`cannot find job with id:${jobId}`)
-           return 0
+            if (result) {
+                return 1
+            } else {
+                return 0
+            }
+
+        } else {
+
+            res.json(`cannot find job with id:${jobId}`)
+            return 0
         }
-    }catch(e){
+    } catch (e) {
         console.error(e)
     }
 }
-async function shiftOneWallet (client, amount, email, res){
-    try{
-        find = await client.db("CUPartTime").collection("Users").findOne({email:email});
-        balance = (find.wallet-amount < 0)? 0:(find.wallet-amount);
-        result = await client.db("CUPartTime").collection("Users").updateOne({email:email},{$set : {wallet : balance}})
-        if(result.matchedCount==0){
+async function shiftOneWallet(client, amount, email, res) {
+    try {
+        find = await client.db("CUPartTime").collection("Users").findOne({ email: email });
+        balance = (find.wallet - amount < 0) ? 0 : (find.wallet - amount);
+        result = await client.db("CUPartTime").collection("Users").updateOne({ email: email }, { $set: { wallet: balance } })
+        if (result.matchedCount == 0) {
             res.send("Cannot find user with email:", email)
         }
 
-    }catch(e){
+    } catch (e) {
         console.error(e)
     }
 }
@@ -76,10 +82,10 @@ async function shiftManyWallet(client, amount, emails,employer, res){
            return 0
         }
         console.log("modified wallet done")
-        
+
         notifyCashUser(client, amount, emails, res)
         return 1
-    }catch(e){
+    } catch (e) {
         console.error(e)
     }
 }
@@ -89,22 +95,22 @@ async function notifyCashUser(client, amount, emails, res){
         payload = {
             "timestamp": Date.now(),
             "wage": amount,
-            "email":employer ,
-            "string":string,
+            "email": employer,
+            "string": string,
             "status": 0
 
         }
-        
-        result = await client.db("CUPartTime").collection("Users").updateMany({email : { $in : emails}},{$push : {notification : payload}})
-        if(result){
+
+        result = await client.db("CUPartTime").collection("Users").updateMany({ email: { $in: emails } }, { $push: { notification: payload } })
+        if (result) {
             console.log('successfully notify the users')
 
             res.json(payload)
-        }else{
+        } else {
             console.log('unsuccessfully notify the users')
             res.json(`modified users wallet but cannot notify user`)
         }
-    }catch(e){
+    } catch (e) {
 
     }
 }
