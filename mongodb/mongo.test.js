@@ -2,7 +2,7 @@
 const CryptoJS = require('crypto-js');
 const fetch = require("node-fetch");
 const expect = require('chai').expect;
-/*
+
 
 describe('ApplyJob Test',function(){
 
@@ -373,7 +373,7 @@ describe("Registration Unit test", function(){
             assert.equal(res, `New User created success`);
         })
     })
-}) */
+}) 
 
 //////TIME
 

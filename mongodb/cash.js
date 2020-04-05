@@ -19,6 +19,7 @@ exports.makeTransaction = async function(client, jobId, res){
         findEmployer = await client.db("CUPartTime").collection("Users").findOne({email:employerEmail})
         if(findEmployer.wallet <  amount*emails.length){
             res.json(`Employee has not enough money`)
+            return 0
         }
 
 
