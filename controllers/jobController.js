@@ -1,14 +1,18 @@
 const {
     mongo
 } = require('../server');
+const suggestion = require('./suggestionController');
+const notification = require('./notificationController');
 const Counter = require('../models/counterModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-// notify suggestion
 
 exports.getAllJob = catchAsync(async (req, res, next) => {
-    const result = await mongo.db('CUPartTime').collection('Job').find().toArray();
-    //console.log('ee')
+    const result = await mongo
+        .db('CUPartTime')
+        .collection('Job')
+        .find()
+        .toArray();
     if (result) {
         res.status(200).json(result);
     } else {
@@ -43,7 +47,7 @@ exports.createJob = catchAsync(async (req, res, next) => {
 exports.getJob = catchAsync(async (req, res, next) => {
     const _id = parseInt(req.params.id);
     const result = await mongo.db('CUPartTime').collection('Job').findOne({
-        _id
+        _id,
     });
     if (result) {
         res.status(200).json(result);
@@ -56,7 +60,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
     const _id = parseInt(req.params.id);
     const jobData = req.body;
     let currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
-        _id
+        _id,
     });
     if (currentJob) {
         if (
@@ -75,7 +79,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
             currentJob.job.EndTime = jobData.EndTime;
             //console.log(currentJob.job)
             const result = await mongo.db('CUPartTime').collection('Job').updateOne({
-                _id
+                _id,
             }, {
                 $set: currentJob,
             });
@@ -95,18 +99,18 @@ exports.updateJob = catchAsync(async (req, res, next) => {
 exports.deleteJob = catchAsync(async (req, res, next) => {
     const _id = parseInt(req.params.id);
     const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
-        _id
+        _id,
     });
     if (!currentJob) {
         // console.log(`No Job with the ID '${id}':`);
         // res.send('fail');
-        return next(new AppError('Not found this job!', 404))
+        return next(new AppError('Not found this job!', 404));
     }
     const employer = currentJob.job.Employer;
     const pendingList = currentJob.job.CurrentEmployee;
     const acceptedList = currentJob.job.CurrentAcceptedEmployee;
     const result = await mongo.db('CUPartTime').collection('Job').deleteOne({
-        _id
+        _id,
     });
     if (result) {
         console.log(`Deleted Job with the ID: ${id}`);
@@ -173,7 +177,7 @@ exports.updateJobStatus = catchAsync(async (req, res, next) => {
     const _id = parseInt(req.params.id);
     const currentStatus = req.body;
     const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
-        _id
+        _id,
     });
     if (currentJob) {
         currentJob.job.Status = currentStatus;
@@ -208,10 +212,15 @@ exports.updateJobStatus = catchAsync(async (req, res, next) => {
                 });
             currentJob.job.CurrentAcceptedEmployee = [];
         } else {
-            return next(new AppError(`${currentStatus}, This status don't match with criteria.`, 400));
+            return next(
+                new AppError(
+                    `${currentStatus}, This status don't match with criteria.`,
+                    400
+                )
+            );
         }
         const result = await mongo.db('CUPartTime').collection('Job').updateOne({
-            _id
+            _id,
         }, {
             $set: currentJob,
         });
@@ -238,40 +247,42 @@ exports.updateEmployeeByEmail = catchAsync(async (req, res, next) => {
     const _id = req.params.id;
     const email = req.body;
     let currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
-        _id
+        _id,
     });
     if (currentJob) {
         const updatedUser = await mongo
             .db('CUPartTime')
             .collection('Users')
             .updateOne({
-                email
+                email,
             }, {
                 $push: {
-                    pendingJob: _id
-                }
+                    pendingJob: _id,
+                },
             });
-        // suggest.addTFvector(mongo, email, currentJob.job.TFvector);
+        suggestion.addTFvector(email, currentJob.job.TFvector);
         console.log(updatedUser.modifiedCount);
         if (updatedUser.matchedCount == 0) {
             return next(new AppError(`Not found user with the email: ${email}`, 400));
         }
         currentJob.job.CurrentEmployee.push(email);
         const result = await mongo.db('CUPartTime').collection('Job').updateOne({
-            _id
+            _id,
         }, {
-            $set: currentJob
+            $set: currentJob,
         });
         // notify.jobNotify(mongo, currentJob.job.Employer, id, 0);
         console.log(
             `${result.matchedCount} document(s) matched the query criteria.`
         );
         console.log(`${result.modifiedCount} document(s) was/were updated.`);
-        res.status(200).json(
-            `${result.matchedCount} document(s) matched the query criteria.`
-        );
+        res
+            .status(200)
+            .json(`${result.matchedCount} document(s) matched the query criteria.`);
     } else {
-        return next(new AppError('No document(s) matched the query criteria.', 400));
+        return next(
+            new AppError('No document(s) matched the query criteria.', 400)
+        );
     }
 });
 
@@ -306,9 +317,12 @@ exports.deleteEmployee = catchAsync(async (req, res, next) => {
 exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
     const _id = req.params.id;
     const email = req.body;
-    let currentJob = await mongo.db('CUPartTime').collection('Job').currentJobOne({
-        _id
-    });
+    let currentJob = await mongo
+        .db('CUPartTime')
+        .collection('Job')
+        .currentJobOne({
+            _id,
+        });
     if (currentJob) {
         const amt = parseInt(currentJob.job.Amount);
         if (currentJob.job.CurrentAcceptedEmployee.length + 1 > amt) {
@@ -320,7 +334,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
             .db('CUPartTime')
             .collection('Users')
             .updateOne({
-                email
+                email,
             }, {
                 $pull: {
                     pendingJob: _id,
@@ -334,7 +348,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
             .db('CUPartTime')
             .collection('Users')
             .updateOne({
-                email
+                email,
             }, {
                 $push: {
                     currentJob: _id,
@@ -349,7 +363,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
         currentJob.job.CurrentAcceptedEmployee.push(email);
         console.log(currentJob.job.CurrentAcceptedEmployee);
         const result = await mongo.db('CUPartTime').collection('Job').updateOne({
-            _id
+            _id,
         }, {
             $set: currentJob,
         });
@@ -357,7 +371,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
             .db('CUPartTime')
             .collection('Job')
             .updateOne({
-                _id
+                _id,
             }, {
                 $push: {
                     notify1: email,
@@ -368,11 +382,13 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
             `${result.matchedCount} document(s) matched the query criteria.`
         );
         console.log(`${result.modifiedCount} document(s) was/were updated.`);
-        res.status(200).json(
-            `${result.matchedCount} document(s) matched the query criteria.`
-        );
+        res
+            .status(200)
+            .json(`${result.matchedCount} document(s) matched the query criteria.`);
     } else {
         console.log('Can not find the job by id:', _id);
-        return next(new AppError('No document(s) matched the query criteria.', 400));
+        return next(
+            new AppError('No document(s) matched the query criteria.', 400)
+        );
     }
 });
