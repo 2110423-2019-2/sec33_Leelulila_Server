@@ -7,45 +7,47 @@ const decryptController = require('../controllers/decryptController');
 const router = express.Router();
 
 router
-    .route('/')
-    .get(jobController.getAllJobs)
-    // Frontend will called /newjob
-    .post(
-        decryptController.getDecryptedData,
-        authController.protect,
-        jobController.createJob
-    );
+  .route('/')
+  .get(jobController.getAllJobs)
+  // Frontend will called /newjob
+  .post(
+    decryptController.getDecryptedData,
+    authController.protect,
+    jobController.createJob
+  );
 
 // Protect all middleware below this
 router.use(authController.protect);
 
 router
-    .route('/:id')
-    .get(jobController.getJob)
-    .patch(
-        decryptController.getDecryptedData,
-        jobController.updateJob
-    )
-    .delete(
-        jobController.deleteJob
-    )
+  .route('/:id')
+  .get(jobController.getJob)
+  .patch(decryptController.getDecryptedData, jobController.updateJob)
+  .delete(jobController.deleteJob);
 
 router
-    .route('/jobstatus/:id')
-    .get(jobController.getJobStatus)
-    .patch(
-        decryptController.getDecryptedData,
-        jobController.updateJobStatus
-    );
-
+  .route('/jobstatus/:id')
+  // .get(jobController.getJobStatus)
+  .patch(decryptController.getDecryptedData, jobController.updateJobStatus);
 
 router
-    .route('/:id/employee')
-    .patch(decryptController.getDecryptedData, jobController.updateEmployeeByEmail);
+  .route('/:id/employee')
+  .patch(
+    decryptController.getDecryptedData,
+    jobController.updateEmployeeByEmail
+  );
 
-router.put('/:id/addAcceptedEmployee', decryptController.getDecryptedData, jobController.updateAcceptedEmployeeByEmail);
+router.put(
+  '/:id/addAcceptedEmployee',
+  decryptController.getDecryptedData,
+  jobController.updateAcceptedEmployeeByEmail
+);
 
-router.delete('/employee/:id', decryptController.getDecryptedData, jobController.deleteEmployee);
+router.delete(
+  '/employee/:id',
+  decryptController.getDecryptedData,
+  jobController.deleteEmployee
+);
 
 // app.post('/wallet/job/:id', (req, res) => {
 //     res.header('Access-Control-Allow-Origin', '*');
@@ -90,16 +92,12 @@ router.delete('/employee/:id', decryptController.getDecryptedData, jobController
 //     jobs.deleteCurrentEmployeeByID(client, id, payload.Email, res);
 //   });
 
-
-
 // app.post('/wallet/job/:id', (req, res) => {
 //     res.header('Access-Control-Allow-Origin', '*');
 //     var id = parseInt(req.params.id);
 //     success = cash.makeTransaction(client, id, res);
 //     jobs.updateJobStatusByID(client, id, 'Finish', res);
 //   });
-
-
 
 // app.get('/job/:id', (req, res) => {
 //     //get all list of db

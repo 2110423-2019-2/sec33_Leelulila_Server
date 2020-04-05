@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
     useUnifiedTopology: true
 });
 
-exports.mongo = client.connect()
+const mongo = client.connect()
     .then(() => console.log('DB connection successful!'))
     .catch((err) => console.log(err));
 
@@ -44,3 +44,5 @@ process.on('unhandledRejection', err => {
         process.exit(1);
     });
 });
+
+module.exports = mongo;

@@ -31,7 +31,7 @@ router.use(authController.protect);
 router
     .route('/:id/comments')
     .get(blogController.getAllComments)
-    .post(decryptController.getDecryptedData, blogController.createComment)
+    .post(decryptController.getDecryptedData, blogController.postComment)
 // .delete(blogController.deleteAllComments);
 
 router
