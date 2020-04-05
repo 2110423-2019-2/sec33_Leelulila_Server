@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getAllBlogs = catchAsync(async (req, res, next) => {
-  const result = await client
+  const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .find({})
@@ -27,11 +27,11 @@ exports.createBlog = catchAsync(async (req, res, next) => {
   newBlog.comments = [];
   newBlog.comment_seq = 0;
 
-  const result = await client
+  const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .insertOne(newBlog);
-  await client
+  await mongo
     .db('CUPartTime')
     .collection('Users')
     .updateOne(
@@ -56,7 +56,7 @@ exports.createBlog = catchAsync(async (req, res, next) => {
 
 exports.getBlog = catchAsync(async (req, res, next) => {
   const _id = parseInt(req.params.id);
-  const result = await client.db('CUPartTime').collection('Blogs').findOne({
+  const result = await mongo.db('CUPartTime').collection('Blogs').findOne({
     _id,
   });
   if (result) {
@@ -72,7 +72,7 @@ exports.getBlog = catchAsync(async (req, res, next) => {
 exports.editBlog = catchAsync(async (req, res, next) => {
   const _id = parseInt(req.params.id);
   const newContent = req.body;
-  const result = await client.db('CUPartTime').collection('Blogs').updateOne(
+  const result = await mongo.db('CUPartTime').collection('Blogs').updateOne(
     {
       _id,
     },
@@ -91,7 +91,7 @@ exports.editBlog = catchAsync(async (req, res, next) => {
 
 exports.deleteBlog = catchAsync(async (req, res, next) => {
   const _id = parseInt(req.params.id);
-  const result = await client.db('CUPartTime').collection('Blogs').deleteOne({
+  const result = await mongo.db('CUPartTime').collection('Blogs').deleteOne({
     _id,
   });
   if (result) {
@@ -106,7 +106,7 @@ exports.deleteBlog = catchAsync(async (req, res, next) => {
 // Comments Controller
 exports.getAllComments = catchAsync(async (req, res, next) => {
   const blogId = parseInt(req.params.id);
-  const result = await client.db('CUPartTime').collection('Blogs').findOne({
+  const result = await mongo.db('CUPartTime').collection('Blogs').findOne({
     _id: blogId,
   });
   if (result) {
@@ -121,14 +121,11 @@ exports.getAllComments = catchAsync(async (req, res, next) => {
 exports.postComment = catchAsync(async (req, res, next) => {
   const blogId = parseInt(req.params.id);
   const payload = req.body;
-  const currentBlog = await client
-    .db('CUPartTime')
-    .collection('Blogs')
-    .findOne({
-      _id: blogId,
-    });
+  const currentBlog = await mongo.db('CUPartTime').collection('Blogs').findOne({
+    _id: blogId,
+  });
   const cid = currentBlog.comment_seq;
-  await client
+  await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .updateOne(
@@ -144,7 +141,7 @@ exports.postComment = catchAsync(async (req, res, next) => {
 
   payload.cid = cid;
   payload.timestamp = Date.now();
-  const result = await client
+  const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .updateOne(
@@ -181,7 +178,7 @@ exports.getComment = catchAsync(async (req, res, next) => {
   const payload = req.body;
   const cid = payload.cid;
   delete payload.cid;
-  let result = await client.db('CUPartTime').collection('Blogs').findOne({
+  let result = await mongo.db('CUPartTime').collection('Blogs').findOne({
     _id: blogId,
   });
   let result_comment = '';
@@ -203,7 +200,7 @@ exports.editComment = catchAsync(async (req, res, next) => {
   const payload = req.body;
   const cid = payload.cid;
   delete payload.cid;
-  const result = await client
+  const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .updateOne(
@@ -233,7 +230,7 @@ exports.deleteComment = catchAsync(async (req, res, next) => {
   const payload = req.body;
   const cid = payload.cid;
   delete payload.cid;
-  const result = await client
+  const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
     .updateOne(
