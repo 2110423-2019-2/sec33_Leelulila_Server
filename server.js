@@ -25,10 +25,9 @@ const client = new MongoClient(uri, {
     useUnifiedTopology: true
 });
 
-mongo = client.connect()
+exports.mongo = client.connect()
     .then(() => console.log('DB connection successful!'))
     .catch((err) => console.log(err));
-
 
 // Open server on port...
 const port = process.env.PORT || 9000;
@@ -45,5 +44,3 @@ process.on('unhandledRejection', err => {
         process.exit(1);
     });
 });
-
-module.exports = mongo;

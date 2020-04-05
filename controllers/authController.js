@@ -1,12 +1,14 @@
-const {
-  promisify
-} = require('util');
+// const {
+//   promisify
+// } = require('util');
 const jwt = require('jsonwebtoken');
 
 const catchAsync = require('../utils/catchAsync');
 
 const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({
+    id
+  }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
@@ -27,12 +29,14 @@ exports.createSendToken = (user, statusCode, res) => {
   res.cookie('jwt', token, cookieOptions);
 
   // Remove the password from the output
-  //   user.password = undefined;
+  user.password = undefined;
 
   console.log(`User with the following id: ${user._id}`);
-  res.status(statusCode).json({ 
+  res.status(statusCode).json({
     status: 'success',
-    message: `User with the following id: ${user._id}`
+    data: {
+      user
+    }
   });
 };
 
@@ -40,7 +44,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
   // console.log(req.headers);
-  
+
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
@@ -67,5 +71,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     // httpOnly: true
   });
-  res.status(200).json({ status: 'success' });
+  res.status(200).json({
+    status: 'success'
+  });
 };
