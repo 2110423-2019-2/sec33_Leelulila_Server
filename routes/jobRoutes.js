@@ -40,13 +40,14 @@ router
 
 
 router
-    .route('/employee/:email')
-    .get(decryptController.getDecryptedData, jobController.getEmployee)
-    .patch(decryptController.getDecryptedData, jobController.updateEmployee)
+    .route('/:id/employee')
+    .patch(decryptController.getDecryptedData, jobController.updateEmployeeByEmail);
+
+router.put('/:id/addAcceptedEmployee', decryptController.getDecryptedData, jobController.updateAcceptedEmployeeByEmail);
 
 router.delete('/employee/:id', decryptController.getDecryptedData, jobController.deleteEmployee);
 
-router.post('/wallet/:id', paymentController.makeTransaction, jobController.updateJobStatus);
+router.path('/wallet/:id', paymentController.makeTransaction, jobController.updateJobStatus);
 
 // app.post('/wallet/job/:id', (req, res) => {
 //     res.header('Access-Control-Allow-Origin', '*');
