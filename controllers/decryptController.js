@@ -7,11 +7,9 @@ const decryptData = (encryptedData) => {
 };
 
 exports.getDecryptedData = (req, res, next) => {
-    rawData = req.body
+    rawData = req.body.data
     if (process.env.NODE_ENV === 'production') {
-        req = decryptData(rawData.data);
-    } else {
-        req = rawData;
+        req.body = decryptData(rawData);
     }
     next();
 }

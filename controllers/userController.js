@@ -1,169 +1,113 @@
-const authController = require('./authController');
+const {
+    mongo
+} = require('../server');
+const Counter = require('../models/counterModel');
+const {
+    createSendToken
+} = require('./authController');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
+exports.signup = catchAsync(async (req, res, next) => {
+    // console.log(req);
+    const newUser = req;
+    const sequenceValue = await Counter.getSequenceValue('productid');
+    newUser._id = sequenceValue;
+    newUser.currentJob = [];
+    newUser.pendingJob = [];
+    newUser.notification = [];
+    newUser.TFvector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    newUser.wallet = 0;
+    newUser.jobOwn = [];
+    newUser.blogOwn = [];
+    newUser.reviewOwn = [];
 
-app.post('/newuser', (req, res) => {
-    let payload = req.body;
-    if (process.env.NODE_ENV === 'production') {
-        payload = decryptData(payload.data);
+    const result = await mongo.db('CUPartTime').collection('Users').insertOne(newUser);
+
+    // res.json is in createSendToken
+    createSendToken(result.ops[0], 201, res);
+});
+
+exports.login = catchAsync(async (req, res, next) => {
+    const {
+        email,
+        password
+    } = req;
+
+    // 1) Check if email and password exist
+    if (!email || !password) {
+        return next(new AppError('Please provide email and password!', 400));
     }
-    users.createUser(client, payload, res);
-});
 
-app.post('/userlogin', (req, res) => {
-    let payload = req.body;
-    if (process.env.NODE_ENV === 'production') {
-        payload = decryptData(payload.data);
-    }
-    users.userLogin(client, payload, res);
-});
-
-app.get('/userlogout', (req, res) => {
-    authController.logout(req, res);
-})
-
-app.get('/user/:id', authController.protect, (req, res) => {
-    //get all list of db
-    console.log('fromgetuserid', req.cookies);
-    const id = parseInt(req.params.id);
-    users.findUserByID(client, id, res);
-});
-app.get('/useremail/:email', authController.protect, (req, res) => {
-    //get all list of db
-    console.log('fromgetuseremail', req.cookies);
-    res.header('Access-Control-Allow-Origin', '*');
-    var email = req.params.email;
-    users.findUserByEmail(client, email, res);
-});
-app.put('/user/:id', authController.protect, (req, res) => {
-    let payload = req.body;
-    if (process.env.NODE_ENV === 'production') {
-        payload = decryptData(payload.data);
-    }
-    const id = parseInt(req.params.id);
-    users.updateUserByID(client, id, payload, res);
-});
-
-exports.createUser = async function (client, newUser, res) {
-    try {
-        const sequenceName = 'productid';
-        const id = await client.db('CUPartTime').collection('counters').findOne({
-            _id: sequenceName,
+    // 2) Check if user exists && password is correct
+    const currentUser = await mongo
+        .db('CUPartTime')
+        .collection('Users')
+        .findOne({
+            email
         });
-        await client
-            .db('CUPartTime')
-            .collection('counters')
-            .updateOne({
-                _id: sequenceName,
-            }, {
-                $inc: {
-                    sequence_value: 1,
-                },
-            });
 
-        newUser._id = id.sequence_value;
-        newUser.currentJob = [];
-        newUser.pendingJob = [];
-        newUser.notification = [];
-        newUser.TFvector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        newUser.wallet = 0;
-        newUser.jobOwn = [];
-        newUser.blogOwn = [];
-        newUser.reviewOwn = [];
-
-        // console.log(newUser);
-
-        let result = await client
-            .db('CUPartTime')
-            .collection('Users')
-            .insertOne(newUser);
-
-
-        authController.createSendToken(result.ops[0], 201, res);
-        // console.log(`New User created with the following id: ${result.insertedId}`);
-        res.json(`New User created success`); //with the following id: ${result.insertedId}`);
-    } catch (e) {
-        console.error(e);
+    //   await bcrypt.compare(candidatePassword, userPassword);
+    if (!currentUser || !(currentUser.password === pass)) {
+        res.status(404).json({
+            status: 'fail',
+            message: 'Incorrect email or password'
+        })
+        return next(new AppError('Incorrect email or password', 404));
     }
-}
-exports.userLogin = async function (client, user, res) {
-    try {
-        const {
-            email,
-            pass
-        } = user;
+    createSendToken(currentUser, 200, res);
+});
 
-        // 1) Check if email and password exist
-        if (!email || !pass) {
-            throw new Error('Please provide email and password');
-        }
-
-        // 2) Check if user exists && password is correct
-        const currentUser = await client
-            .db('CUPartTime')
-            .collection('Users')
-            .findOne({
-                email
-            });
-
-        //   await bcrypt.compare(candidatePassword, userPassword);
-        if (!currentUser || !(currentUser.password === pass)) {
-            res.status(404).json({
-                status: 'fail',
-                message: 'Incorrect email or password'
-            })
-            throw new Error('Incorrect email or password');
-        }
-
-        authController.createSendToken(currentUser, 200, res);
-    } catch (e) {
-        console.log(e);
-    }
-}
-exports.findUserByID = async function (client, id, res) {
-    result = await client.db('CUPartTime').collection('Users').findOne({
+exports.findUserById = catchAsync(async (req, res, next) => {
+    const id = parseInt(req.params.id);
+    result = await mongo.db('CUPartTime').collection('Users').findOne({
         _id: id,
     });
 
     if (result) {
         console.log(`Found user(s) with the name '${id}':`);
-        //console.log(result);
-        res.json(result);
+        res.status(200).json(result);
     } else {
         console.log(`No user found with the name '${id}'`);
+        return next(new AppError('Not found user for this id!', 404));
     }
-    return result;
-}
+});
 
-exports.findUserByEmail = async function (client, email, res) {
-    result = await client.db('CUPartTime').collection('Users').findOne({
-        email: email,
+exports.getUserByEmail = catchAsync(async (req, res, next) => {
+    const email = req.params.email;
+    result = await mongo.db('CUPartTime').collection('Users').findOne({
+        email,
     });
     //console.log(result);
     if (result) {
-        //console.log(`Found user(s) with the name '${email}':`);
-        //console.log(result);
-        res.json(result);
+        res.status(200).json(result);
     } else {
         console.log(`No user found with the name '${email}'`);
-    }
-    return result;
-}
+        return next(new AppError('Not found user for this email!', 404));
+    };
+});
 
-exports.updateUserByID = async function (client, id, updatedName, res) {
-    try {
-        result = await client.db('CUPartTime').collection('Users').updateOne({
-            _id: id,
-        }, {
-            $set: updatedName,
-        });
+exports.updateUser = catchAsync(async (req, res, next) => {
+    const id = req.params.id;
+    console.log(req.body);
+    result = await mongo.db('CUPartTime').collection('Users').updateOne({
+        _id: id,
+    }, {
+        $set: req.body,
+    });
 
-        console.log(
-            `${result.matchedCount} document(s) matched the query criteria.`
-        );
-        console.log(`${result.modifiedCount} document(s) was/were updated.`);
-        //res.json(`${result.modifiedCount} document(s) was/were updated.`);
-        res.json(`${result.matchedCount} document(s) matched the query criteria.`);
-    } catch (e) {
-        console.error(e);
+    if (!result) {
+        return next(new AppError('Not found this id', 404));
     }
-}
+
+    console.log(
+        `${result.matchedCount} document(s) matched the query criteria.`
+    );
+    console.log(`${result.modifiedCount} document(s) was/were updated.`);
+    res.status(200).json({
+        status: 'success',
+        data: {
+            user: result
+        }
+    });
+});

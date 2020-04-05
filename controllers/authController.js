@@ -29,12 +29,14 @@ exports.createSendToken = (user, statusCode, res) => {
   res.cookie('jwt', token, cookieOptions);
 
   // Remove the password from the output
-  //   user.password = undefined;
+  user.password = undefined;
 
   console.log(`User with the following id: ${user._id}`);
   res.status(statusCode).json({
     status: 'success',
-    message: `User with the following id: ${user._id}`
+    data: {
+      user
+    }
   });
 };
 
