@@ -9,6 +9,7 @@ const userRouter = require('./routes/userRoutes')
 const jobRouter = require('./routes/jobRoutes');
 const blogRouter = require('./routes/blogRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const otherRouter = require('./routes/othersRoutes');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/users', userRouter);
 app.use('/api/jobs', jobRouter);
 app.use('/api/blogs', blogRouter);
 app.use('/api/reviews', reviewRouter);
+app.use('/api', otherRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
