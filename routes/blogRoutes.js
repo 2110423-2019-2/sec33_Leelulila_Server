@@ -21,7 +21,7 @@ router
     .patch(
         decryptController.getDecryptedData,
         authController.protect,
-        blogController.updateBlog
+        blogController.editBlog
     )
     .delete(authController.protect, blogController.deleteBlog);
 
@@ -31,14 +31,14 @@ router.use(authController.protect);
 router
     .route('/:id/comments')
     .get(blogController.getAllComments)
-    .post(decryptController.getDecryptedData, blogController.postComment)
-    .delete(blogController.deleteAllComments);
+    .post(decryptController.getDecryptedData, blogController.createComment)
+// .delete(blogController.deleteAllComments);
 
 router
-    .route('/comment/:commentId')
+    .route('/:id/comment')
     .get(blogController.getComment)
-    // Front end not yet encryptData this line!!
-    .patch(decryptController.getDecryptedData, blogController.editCommentById)
-    .delete(blogController.deleteCommentById);
+    // front-end not call this line
+    .patch(decryptController.getDecryptedData, blogController.editComment)
+    .delete(blogController.deleteComment);
 
 module.exports = router;

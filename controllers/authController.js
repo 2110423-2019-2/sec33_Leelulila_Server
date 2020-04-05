@@ -5,12 +5,16 @@ const jwt = require('jsonwebtoken');
 
 const catchAsync = require('../utils/catchAsync');
 
-const signToken = id => {
-  return jwt.sign({
-    id
-  }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
+const signToken = (id) => {
+  return jwt.sign(
+    {
+      id,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
 };
 
 exports.createSendToken = (user, statusCode, res) => {
@@ -18,7 +22,7 @@ exports.createSendToken = (user, statusCode, res) => {
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 60 * 1000
-    )
+    ),
     // httpOnly: true,
   };
 
@@ -35,8 +39,8 @@ exports.createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: 'success',
     data: {
-      user
-    }
+      user,
+    },
   });
 };
 
@@ -57,8 +61,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!token) {
     res.status(401).json({
       status: 'fail',
-      message: 'You are not logged in! Please log in to get access'
-    })
+      message: 'You are not logged in! Please log in to get access',
+    });
     throw new Error('You are not logged in! Please log in to get access', 401);
   }
 
@@ -72,6 +76,6 @@ exports.logout = (req, res) => {
     // httpOnly: true
   });
   res.status(200).json({
-    status: 'success'
+    status: 'success',
   });
 };
