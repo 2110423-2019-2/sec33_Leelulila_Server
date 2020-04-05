@@ -41,8 +41,8 @@ exports.jobNotify = async function (client, email, jobId, type) {
                 "status": 0
             }
 
-        } else if (type == 2) {
-            var string = "Congratulations you has been accepted to " + jobName
+        }else if(type == 2){
+            var string = "Congratulations you has been accepted to "+jobName +" job"
             payload = {
                 "timestamp": Date.now(),
                 "string": string,
