@@ -51,7 +51,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(currentUser, 200, res);
 });
 
-exports.findUserById = catchAsync(async (req, res, next) => {
+exports.getUser = catchAsync(async (req, res, next) => {
   const id = parseInt(req.params.id);
   result = await mongo.db('CUPartTime').collection('Users').findOne({
     _id: id,
