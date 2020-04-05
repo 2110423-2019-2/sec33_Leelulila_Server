@@ -9,7 +9,7 @@ const userRouter = require('./routes/userRoutes')
 const jobRouter = require('./routes/jobRoutes');
 const blogRouter = require('./routes/blogRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
-const otherRouter = require('./routes/othersRoutes');
+const otherRouter = require('./routes/otherRoutes');
 
 const app = express();
 
