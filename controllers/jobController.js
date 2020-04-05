@@ -148,16 +148,14 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
                     jobOwn: id,
                 },
             });
-        // notify.notifyMany(
-        //     mongo,
-        //     pendingList,
-        //     find.job.JobName + ' which you applied has been deleted'
-        // );
-        // notify.notifyMany(
-        //     mongo,
-        //     acceptedList,
-        //     find.job.JobName + ' has been deleted'
-        // );
+        notification.notifyMany(
+            pendingList,
+            find.job.JobName + ' which you applied has been deleted'
+        );
+        notification.notifyMany(
+            acceptedList,
+            find.job.JobName + ' has been deleted'
+        );
         console.log(pending.modifiedCount);
         console.log(accepted.modifiedCount);
         // res.send('success');
@@ -271,7 +269,7 @@ exports.updateEmployeeByEmail = catchAsync(async (req, res, next) => {
         }, {
             $set: currentJob,
         });
-        // notify.jobNotify(mongo, currentJob.job.Employer, id, 0);
+        notification.jobNotify(_id, currentJob.job.Employer, 0);
         console.log(
             `${result.matchedCount} document(s) matched the query criteria.`
         );
@@ -306,7 +304,7 @@ exports.deleteEmployee = catchAsync(async (req, res, next) => {
         }, {
             $set: currentJob,
         });
-        // notify.jobNotify(mongo, email, jobId, 1);
+        notification.jobNotify(jobId, email, 1);
         res.status(200).json(result);
     } else {
         return next(new AppError(`Not found this job!`), 404);
@@ -377,7 +375,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
                     notify1: email,
                 },
             });
-        // notify.jobNotify(mongo, email, id, 2);
+        notification.jobNotify(_id, email, 2);
         console.log(
             `${result.matchedCount} document(s) matched the query criteria.`
         );

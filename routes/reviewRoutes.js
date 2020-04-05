@@ -12,8 +12,8 @@ router
         decryptController.getDecryptedData,
         authController.protect,
         reviewController.createReview
-    )
-    .delete(authController.protect, reviewController.deleteAllReviews);
+    );
+// .delete(authController.protect, reviewController.deleteAllReviews);
 
 router
     .route('/:id')
