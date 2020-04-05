@@ -148,11 +148,11 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
                     jobOwn: id,
                 },
             });
-        notification.notifyMany(
+        await notification.notifyMany(
             pendingList,
             find.job.JobName + ' which you applied has been deleted'
         );
-        notification.notifyMany(
+        await notification.notifyMany(
             acceptedList,
             find.job.JobName + ' has been deleted'
         );
@@ -171,9 +171,10 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
 //     res.json();
 // });
 
-exports.updateJobStatus = catchAsync(async (req, res, next) => {
-    const _id = parseInt(req.params.id);
-    const currentStatus = req.body;
+// This function NOT use as middleware. JUST normal function
+exports.updateJobStatus = catchAsync(async (_id, currentStatus, res) => {
+    // const _id = parseInt(req.params.id);
+    // const currentStatus = req.body;
     const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
         _id,
     });
@@ -269,7 +270,7 @@ exports.updateEmployeeByEmail = catchAsync(async (req, res, next) => {
         }, {
             $set: currentJob,
         });
-        notification.jobNotify(_id, currentJob.job.Employer, 0);
+        await notification.jobNotify(_id, currentJob.job.Employer, 0);
         console.log(
             `${result.matchedCount} document(s) matched the query criteria.`
         );
@@ -304,7 +305,7 @@ exports.deleteEmployee = catchAsync(async (req, res, next) => {
         }, {
             $set: currentJob,
         });
-        notification.jobNotify(jobId, email, 1);
+        await notification.jobNotify(jobId, email, 1);
         res.status(200).json(result);
     } else {
         return next(new AppError(`Not found this job!`), 404);
@@ -375,7 +376,7 @@ exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
                     notify1: email,
                 },
             });
-        notification.jobNotify(_id, email, 2);
+        await notification.jobNotify(_id, email, 2);
         console.log(
             `${result.matchedCount} document(s) matched the query criteria.`
         );

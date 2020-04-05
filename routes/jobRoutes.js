@@ -47,8 +47,6 @@ router.put('/:id/addAcceptedEmployee', decryptController.getDecryptedData, jobCo
 
 router.delete('/employee/:id', decryptController.getDecryptedData, jobController.deleteEmployee);
 
-router.path('/wallet/:id', paymentController.makeTransaction, jobController.updateJobStatus);
-
 // app.post('/wallet/job/:id', (req, res) => {
 //     res.header('Access-Control-Allow-Origin', '*');
 //     var id = parseInt(req.params.id);

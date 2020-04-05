@@ -4,8 +4,9 @@ const {
 const catchAsync = require('../utils/catchAsync');
 // const AppError = require('../utils/appError');
 
-exports.readNotify = catchAsync(async (req, res, next) => {
-    const email = req.body;
+// Only readNotification will use as middleware.
+exports.readNotification = catchAsync(async (req, res, next) => {
+    const email = req.body.email;
     const result = await mongo.db("CUPartTime").collection("Users").updateOne({
         email
     }, {
