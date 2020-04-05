@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const optionsMiddleware = require('./utils/setHeaders');
 const userRouter = require('./routes/userRoutes')
 const jobRouter = require('./routes/jobRoutes');
 const blogRouter = require('./routes/blogRoutes');
@@ -31,6 +32,7 @@ app.use(
 
 // Cookie parser
 app.use(cookieParser());
+app.use(optionsMiddleware.setHeaders);
 
 // // Routes
 app.use('/api/users', userRouter);
