@@ -1,5 +1,8 @@
 
 const notify = require('./notify.js')
+
+const {PaymentNotification, ReviewNotification} = require('./notifyOOP.js')
+
 exports.makeTransaction = async function(client, jobId, res){
     try{
         find = await client.db("CUPartTime").collection("Job").findOne({_id:jobId})
@@ -8,12 +11,10 @@ exports.makeTransaction = async function(client, jobId, res){
            console.log(employerEmail)
            emails = find.job.CurrentAcceptedEmployee;
            amount = parseInt(find.job.Wages)
-        //    console.log(emails)
            employer = find.job.Employer
            console.log(emails)
            if(emails.length == 0){
             
-                //res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
                return 0
            }
         findEmployer = await client.db("CUPartTime").collection("Users").findOne({email:employerEmail})
@@ -26,31 +27,18 @@ exports.makeTransaction = async function(client, jobId, res){
         console.log("St Balance dec")
         shiftOneWallet(client, amount*emails.length, employerEmail, res)
         console.log("Balance dec")
-        //    shiftManyWallet(client, amount, emails, res)
-          
-        //    console.log(amount)
+    
            
-           result = shiftManyWallet(client, amount, emails,employer, res)
-           payload = { 
-            "timestamp": Date.now(),
-            "jobId": jobId,
-            "jobName": find.job.JobName,
-            "string":"Review " + find.job.JobName +  "?",
-            "status": 2   
-         }
-           notify.notifyPayload(client,emails, payload)
+        result = shiftManyWallet(client, amount, emails,employer, res)
+    
+        let noti = new ReviewNotification(jobId, find.job.JobName);
+        noti.notify(client, emails);
            
           if(result){
               return 1
           }else{
               return 0
           }
-
-            if (result) {
-                return 1
-            } else {
-                return 0
-            }
 
         } else {
 
@@ -84,35 +72,12 @@ async function shiftManyWallet(client, amount, emails,employer, res){
         }
         console.log("modified wallet done")
 
-        notifyCashUser(client, amount, emails, employer,  res)
+        //notifyCashUser(client, amount, emails, employer,  res)
+        let noti = new PaymentNotification(amount, employer)
+        noti.notify(client, emails);
         return 1
     } catch (e) {
         console.error(e)
-    }
-}
-async function notifyCashUser(client, amount, emails, employer, res){
-    try{
-        var string = "You have been paid with the amount of "+ amount.toString() + " from " + employer
-        payload = {
-            "timestamp": Date.now(),
-            "wage": amount,
-            "email": employer,
-            "string": string,
-            "status": 0
-
-        }
-
-        result = await client.db("CUPartTime").collection("Users").updateMany({ email: { $in: emails } }, { $push: { notification: payload } })
-        if (result) {
-            console.log('successfully notify the users')
-
-            res.json(payload)
-        } else {
-            console.log('unsuccessfully notify the users')
-            res.json(`modified users wallet but cannot notify user`)
-        }
-    } catch (e) {
-
     }
 }
 
