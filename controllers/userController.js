@@ -1,13 +1,15 @@
-const { mongo } = require('../server');
 const Counter = require('../models/counterModel');
-const { createSendToken } = require('./authController');
+const {
+  createSendToken
+} = require('./authController');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.signup = catchAsync(async (req, res, next) => {
-  // console.log(req);
+  const mongo = req.app.locals.db;
   const newUser = req.body;
-  const sequenceValue = await Counter.getSequenceValue('productid');
+  const sequenceValue = await Counter.getSequenceValue(mongo, 'productid');
+
   newUser._id = sequenceValue;
   newUser.currentJob = [];
   newUser.pendingJob = [];
@@ -28,7 +30,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req;
+  const mongo = req.app.locals.db;
+  const {
+    email,
+    password
+  } = req;
 
   // 1) Check if email and password exist
   if (!email || !password) {
@@ -52,6 +58,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const id = parseInt(req.params.id);
   result = await mongo.db('CUPartTime').collection('Users').findOne({
     _id: id,
@@ -67,6 +74,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
 });
 
 exports.getUserByEmail = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const email = req.params.email;
   result = await mongo.db('CUPartTime').collection('Users').findOne({
     email,
@@ -81,16 +89,14 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUser = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const id = req.params.id;
-  console.log(req.body);
-  result = await mongo.db('CUPartTime').collection('Users').updateOne(
-    {
-      _id: id,
-    },
-    {
-      $set: req.body,
-    }
-  );
+  // console.log(req.body);
+  result = await mongo.db('CUPartTime').collection('Users').updateOne({
+    _id: id,
+  }, {
+    $set: req.body,
+  });
 
   if (!result) {
     return next(new AppError('Not found this id', 404));

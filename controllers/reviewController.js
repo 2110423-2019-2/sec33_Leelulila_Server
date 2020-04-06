@@ -1,9 +1,9 @@
-const { mongo } = require('../server');
 const Counter = require('../models/counterModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const result = await mongo
     .db('CUPartTime')
     .collection('Reviews')
@@ -19,8 +19,9 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   let review = req.body;
-  const sequenceValue = Counter.getSequenceValue('reviewid');
+  const sequenceValue = Counter.getSequenceValue(mongo, 'reviewid');
 
   review._id = sequenceValue;
   review.timestamp = Date.now();
@@ -28,16 +29,13 @@ exports.createReview = catchAsync(async (req, res, next) => {
   await mongo
     .db('CUPartTime')
     .collection('Users')
-    .updateOne(
-      {
-        email: review.WriterEmail,
+    .updateOne({
+      email: review.WriterEmail,
+    }, {
+      $push: {
+        reviewOwn: sequenceValue,
       },
-      {
-        $push: {
-          reviewOwn: sequenceValue,
-        },
-      }
-    );
+    });
   if (result) {
     console.log('review created with id', sequenceValue);
     res.status(200).json(result);
@@ -48,6 +46,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
 });
 
 exports.getReview = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const _id = req.params.id;
   const result = await mongo.db('CUPartTime').collection('Reviews').findOne({
     _id,
@@ -62,16 +61,14 @@ exports.getReview = catchAsync(async (req, res, next) => {
 });
 
 exports.updateReview = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const _id = req.params.id;
   const newReview = req.body;
-  const result = await mongo.db('CUPartTime').collection('Reviews').updateOne(
-    {
-      _id,
-    },
-    {
-      $set: newReview,
-    }
-  );
+  const result = await mongo.db('CUPartTime').collection('Reviews').updateOne({
+    _id,
+  }, {
+    $set: newReview,
+  });
   if (result) {
     console.log('Reviews', _id, 'edited');
     res.status(200).json(result);
@@ -82,6 +79,7 @@ exports.updateReview = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteReview = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
   const _id = req.params.id;
   const result = await mongo.db('CUPartTime').collection('Reviews').deleteOne({
     _id,
