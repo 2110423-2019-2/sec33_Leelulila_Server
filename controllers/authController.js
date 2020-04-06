@@ -71,6 +71,6 @@ exports.logout = (req, res) => {
     // httpOnly: true
   });
   res.status(200).json({
-    status: 'success',
+    status: 'success'
   });
 };

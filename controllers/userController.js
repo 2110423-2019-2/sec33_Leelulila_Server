@@ -34,7 +34,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const {
     email,
     password
-  } = req;
+  } = req.body;
 
   // 1) Check if email and password exist
   if (!email || !password) {
@@ -47,7 +47,7 @@ exports.login = catchAsync(async (req, res, next) => {
   });
 
   //   await bcrypt.compare(candidatePassword, userPassword);
-  if (!currentUser || !(currentUser.password === pass)) {
+  if (!currentUser || !(currentUser.password === password)) {
     res.status(404).json({
       status: 'fail',
       message: 'Incorrect email or password',
@@ -77,7 +77,7 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const email = req.params.email;
   result = await mongo.db('CUPartTime').collection('Users').findOne({
-    email,
+    email
   });
   //console.log(result);
   if (result) {
