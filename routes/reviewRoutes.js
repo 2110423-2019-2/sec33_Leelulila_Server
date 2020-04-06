@@ -18,7 +18,7 @@ router
 router
     .route('/:id')
     .get(reviewController.getReview)
-    .patch(
+    .put(
         decryptController.getDecryptedData,
         authController.protect,
         reviewController.updateReview

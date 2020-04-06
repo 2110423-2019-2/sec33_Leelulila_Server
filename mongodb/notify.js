@@ -2,14 +2,17 @@ exports.readNotify = async function (client, email, res) {
     try {
         result = await client.db("CUPartTime").collection("Users").updateOne({
             email: email,
-            
+
         }, {
             $set: {
-                "notification.$[element].status": 1 }, 
-        },
-        { multi: true,
-            arrayFilters: [ { "element.status": 0 } ]
-          })
+                "notification.$[element].status": 1
+            },
+        }, {
+            multi: true,
+            arrayFilters: [{
+                "element.status": 0
+            }]
+        })
         if (result.modifiedCount > 0) {
             res.json(`successfull`)
         } else {
@@ -41,8 +44,8 @@ exports.jobNotify = async function (client, email, jobId, type) {
                 "status": 0
             }
 
-        }else if(type == 2){
-            var string = "Congratulations you has been accepted to "+jobName +" job"
+        } else if (type == 2) {
+            var string = "Congratulations you has been accepted to " + jobName + " job"
             payload = {
                 "timestamp": Date.now(),
                 "string": string,
@@ -361,8 +364,8 @@ exports.notifyMany = async function (client, email, msg) {
     } catch (e) {
         console.error(e)
     }
-
 }
+
 exports.notifyPayload = async function (client, email, payload) {
     try {
 

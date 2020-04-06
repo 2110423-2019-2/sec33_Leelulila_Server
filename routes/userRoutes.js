@@ -16,7 +16,7 @@ router.use(authController.protect);
 // router.get('/me', userController.getMe, userController.getUser);
 
 // From Frontend is called put to update
-// router.patch(
+// router.put(
 //     '/updateMe',
 //     decryptController.getDecryptedData,
 //     userController.updateMe
@@ -32,7 +32,7 @@ router.get('/useremail/:email', userController.getUserByEmail);
 router
     .route('/:id')
     .get(userController.getUser)
-    .patch(userController.updateUser)
+    .put(userController.updateUser)
 // .delete(userController.deleteUser);
 
 module.exports = router;

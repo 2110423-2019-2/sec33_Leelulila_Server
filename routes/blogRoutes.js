@@ -18,7 +18,7 @@ router
 router
     .route('/:id')
     .get(blogController.getBlog)
-    .patch(
+    .put(
         decryptController.getDecryptedData,
         authController.protect,
         blogController.editBlog
@@ -38,7 +38,7 @@ router
     .route('/:id/comment')
     .get(blogController.getComment)
     // front-end not call this line
-    .patch(decryptController.getDecryptedData, blogController.editComment)
+    .put(decryptController.getDecryptedData, blogController.editComment)
     .delete(blogController.deleteComment);
 
 module.exports = router;

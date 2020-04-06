@@ -21,17 +21,17 @@ router.use(authController.protect);
 router
   .route('/:id')
   .get(jobController.getJob)
-  .patch(decryptController.getDecryptedData, jobController.updateJob)
+  .put(decryptController.getDecryptedData, jobController.updateJob)
   .delete(jobController.deleteJob);
 
 router
   .route('/jobstatus/:id')
   // .get(jobController.getJobStatus)
-  .patch(decryptController.getDecryptedData, jobController.updateJobStatus);
+  .put(decryptController.getDecryptedData, jobController.updateJobStatus);
 
 router
   .route('/:id/employee')
-  .patch(
+  .put(
     decryptController.getDecryptedData,
     jobController.updateEmployeeByEmail
   );

@@ -1,39 +1,44 @@
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-
-exports.createTFvector = catchAsync(async (mongo) => {
-  TFvec = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  await mongo
-    .db('CUPartTime')
-    .collection('Users')
-    .updateMany({}, {
-      $set: {
-        TFvector: TFvec,
-      },
-    });
-  // console.log('done')
-});
-
-exports.addTFvector = catchAsync(async (mongo, email, addVector) => {
-  const currentUser = await mongo.db('CUPartTime').collection('Users').findOne({
-    email,
-  });
-  if (currentUser) {
-    let TFvec = currentUser.TFvector;
-    for (i = 0; i < TFvec.length; i++) {
-      TFvec[i] += addVector[i];
-    }
+exports.createTFvector = (async (mongo) => {
+  try {
+    TFvec = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateOne({
-        email,
-      }, {
+      .updateMany({}, {
         $set: {
           TFvector: TFvec,
         },
       });
-  } else {
-    return new AppError('Not found user in DB.', 404);
+    // console.log('done')
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+
+exports.addTFvector = (async (mongo, email, addVector) => {
+  try {
+    const currentUser = await mongo.db('CUPartTime').collection('Users').findOne({
+      email,
+    });
+    if (currentUser) {
+      let TFvec = currentUser.TFvector;
+      for (i = 0; i < TFvec.length; i++) {
+        TFvec[i] += addVector[i];
+      }
+      await mongo
+        .db('CUPartTime')
+        .collection('Users')
+        .updateOne({
+          email,
+        }, {
+          $set: {
+            TFvector: TFvec,
+          },
+        });
+    } else {
+      return new AppError('Not found user in DB.', 404);
+    }
+  } catch (err) {
+    throw new Error(err.message);
   }
 });
