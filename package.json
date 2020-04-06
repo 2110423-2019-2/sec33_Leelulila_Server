@@ -5,7 +5,8 @@
   "main": "./mongodb/mongo.js",
   "scripts": {
     "start": "node mongodb/mongo.js",
-    "start:dev": "nodemon mongodb/mongo.js",
+    "start:dev": "nodemon server.js",
+    "debug": "sudo ndb server.js",
     "test": "mocha **/*.test.js"
   },
   "author": "Leelulila Group",

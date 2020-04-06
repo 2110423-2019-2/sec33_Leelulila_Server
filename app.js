@@ -4,6 +4,12 @@ const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const optionsMiddleware = require('./utils/setHeaders');
+const userRouter = require('./routes/userRoutes')
+const jobRouter = require('./routes/jobRoutes');
+const blogRouter = require('./routes/blogRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const otherRouter = require('./routes/otherRoutes');
 
 const app = express();
 
@@ -25,12 +31,16 @@ app.use(
   })
 );
 
-// // Routes
-// app.use('/api/users', userRouter);
-// app.use('/api/reviews', reviewRouter);
-
 // Cookie parser
 app.use(cookieParser());
+app.use(optionsMiddleware.setHeaders);
+
+// // Routes
+app.use('/api/users', userRouter);
+app.use('/api/jobs', jobRouter);
+app.use('/api/blogs', blogRouter);
+app.use('/api/reviews', reviewRouter);
+app.use('/api', otherRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

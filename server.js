@@ -14,26 +14,30 @@ dotenv.config({
 });
 const app = require('./app');
 
-// Connect to the database
+// Connect to the database and open server on port...
 const uri = process.env.DATABASE.replace(
     '<PASSWORD>',
     process.env.DATABASE_PASSWORD
 );
 
-const client = new MongoClient(uri, {
+const mongoOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true
-});
+}
 
-mongo = client.connect()
-    .then(() => console.log('DB connection successful!'))
-    .catch((err) => console.log(err));
-
-
-// Open server on port...
+let server
 const port = process.env.PORT || 9000;
-const server = app.listen(port, () => {
-    console.log(`App running on port ${port}...`);
+
+MongoClient.connect(uri, mongoOptions, (err, db) => {
+    if (err) {
+        console.log(`Failed to connect to the database. ${err.stack}`);
+    } else {
+        app.locals.db = db;
+        console.log('DB connection successful!');
+        server = app.listen(port, () => {
+            console.log(`App running on port ${port}...`);
+        });
+    };
 });
 
 // UNHANDLED ERROR handler
@@ -45,5 +49,3 @@ process.on('unhandledRejection', err => {
         process.exit(1);
     });
 });
-
-module.exports = mongo;
