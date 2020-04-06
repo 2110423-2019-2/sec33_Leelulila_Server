@@ -229,7 +229,7 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
     console.log(pending.modifiedCount);
     console.log(accepted.modifiedCount);
     // res.send('success');
-    res.status(200).json();
+    return res.status(200).json();
   } else {
     // console.log(`No Job with the ID '${id}':`);
     // res.send('fail');

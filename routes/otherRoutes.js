@@ -6,7 +6,7 @@ const decryptController = require('../controllers/decryptController');
 
 const router = express.Router();
 
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router.post('/wallet/job/:id', paymentController.makeTransaction);
 

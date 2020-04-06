@@ -28,17 +28,27 @@ const mongoOptions = {
 let server
 const port = process.env.PORT || 9000;
 
-MongoClient.connect(uri, mongoOptions, (err, db) => {
-    if (err) {
-        console.log(`Failed to connect to the database. ${err.stack}`);
-    } else {
-        app.locals.db = db;
-        console.log('DB connection successful!');
-        server = app.listen(port, () => {
-            console.log(`App running on port ${port}...`);
+const connectDB = async () => {
+    try {
+        await MongoClient.connect(uri, mongoOptions, (err, db) => {
+            if (err) {
+                console.log(`Failed to connect to the database. ${err.stack}`);
+            } else {
+                app.locals.db = db;
+                console.log('DB connection successful!');
+            };
         });
-    };
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
+connectDB(uri).then(() => {
+    server = app.listen(port, () => {
+        console.log(`App running on port ${port}...`);
+    });
 });
+
 
 // UNHANDLED ERROR handler
 process.on('unhandledRejection', err => {

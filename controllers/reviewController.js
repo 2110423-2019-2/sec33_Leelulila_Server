@@ -11,7 +11,7 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
     .toArray();
   if (result) {
     console.log('Reviews found, returning all reviews');
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } else {
     console.log('fail to find reviews');
     return next(new AppError('Not found any reviews.'), 404);

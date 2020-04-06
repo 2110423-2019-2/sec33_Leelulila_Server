@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 const signToken = (id) => {
   return jwt.sign({
@@ -42,7 +42,6 @@ exports.createSendToken = (user, statusCode, res) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
-  // console.log(req.headers);
 
   if (
     req.headers.authorization &&
@@ -54,11 +53,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
-    res.status(401).json({
+    console.log(req.headers);
+    return res.status(401).json({
       status: 'fail',
       message: 'You are not logged in! Please log in to get access',
     });
-    throw new Error('You are not logged in! Please log in to get access', 401);
+    // throw new Error('You are not logged in! Please log in to get access', 401);
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE

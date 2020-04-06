@@ -8,6 +8,7 @@ const AppError = require('../utils/appError');
 exports.signup = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const newUser = req.body;
+
   const sequenceValue = await Counter.getSequenceValue(mongo, 'productid');
 
   newUser._id = sequenceValue;
@@ -33,27 +34,28 @@ exports.login = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const {
     email,
-    password
+    pass
   } = req.body;
 
   // 1) Check if email and password exist
-  if (!email || !password) {
+  if (!email || !pass) {
     return next(new AppError('Please provide email and password!', 400));
   }
-
+  
   // 2) Check if user exists && password is correct
   const currentUser = await mongo.db('CUPartTime').collection('Users').findOne({
-    email,
+    email
   });
 
   //   await bcrypt.compare(candidatePassword, userPassword);
-  if (!currentUser || !(currentUser.password === password)) {
+  if (!currentUser || !(currentUser.password === pass)) {
     res.status(404).json({
       status: 'fail',
       message: 'Incorrect email or password',
     });
     return next(new AppError('Incorrect email or password', 404));
   }
+  
   createSendToken(currentUser, 200, res);
 });
 
@@ -81,7 +83,7 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
   });
   //console.log(result);
   if (result) {
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } else {
     console.log(`No user found with the name '${email}'`);
     return next(new AppError('Not found user for this email!', 404));

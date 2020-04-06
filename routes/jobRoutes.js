@@ -16,35 +16,38 @@ router
   );
 
 // Protect all middleware below this
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
   .route('/:id')
   .get(jobController.getJob)
-  .put(decryptController.getDecryptedData, jobController.updateJob)
-  .delete(jobController.deleteJob);
+  .put(decryptController.getDecryptedData, authController.protect, jobController.updateJob)
+  .delete(authController.protect, jobController.deleteJob);
 
 router
   .route('/jobstatus/:id')
   // .get(jobController.getJobStatus)
-  .put(decryptController.getDecryptedData, jobController.updateJobStatus);
+  .put(decryptController.getDecryptedData, authController.protect, jobController.updateJobStatus);
 
 router
   .route('/:id/employee')
   .put(
     decryptController.getDecryptedData,
+    authController.protect,
     jobController.updateEmployeeByEmail
   );
 
 router.put(
   '/:id/addAcceptedEmployee',
   decryptController.getDecryptedData,
+  authController.protect,
   jobController.updateAcceptedEmployeeByEmail
 );
 
 router.delete(
   '/employee/:id',
   decryptController.getDecryptedData,
+  authController.protect,
   jobController.deleteEmployee
 );
 

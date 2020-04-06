@@ -10,23 +10,22 @@ router
     .get(blogController.getAllBlogs)
     .post(
         decryptController.getDecryptedData,
-        authController.protect,
+        // authController.protect,
         blogController.createBlog
     );
-
 
 router
     .route('/:id')
     .get(blogController.getBlog)
     .put(
         decryptController.getDecryptedData,
-        authController.protect,
+        // authController.protect,
         blogController.editBlog
     )
     .delete(authController.protect, blogController.deleteBlog);
 
 // Comments
-router.use(authController.protect);
+// router.use(authController.protect);
 
 router
     .route('/:id/comments')
