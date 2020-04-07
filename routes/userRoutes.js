@@ -32,7 +32,7 @@ router.get('/useremail/:email', userController.getUserByEmail);
 router
     .route('/:id')
     .get(userController.getUser)
-    .put(userController.updateUser)
+    .put(decryptController.getDecryptedData, userController.updateUser)
 // .delete(userController.deleteUser);
 
 module.exports = router;
