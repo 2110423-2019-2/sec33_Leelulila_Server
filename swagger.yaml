@@ -262,114 +262,180 @@ paths:
         - "write:pets"
         - "read:pets"
 
-#============================================================= [Teemo] ========================================================================
-/api/blogs/:
-    post:
+#------------------------------------------------------------------ [Teemo] ------------------------------------------------------------------
+  /api/blogs/:
+    get:
       tags:
-      - "pet"
-      summary: "uploads an image"
+      - "blogs"
+      summary: "get all blogs"
       description: ""
-      operationId: "uploadFile"
+      operationId: "get all blogs"
       consumes:
-      - "multipart/form-data"
+      - "application/json"
+      - "application/xml"
       produces:
+      - "application/xml"
       - "application/json"
       parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to update"
-        required: true
-        type: "integer"
-        format: "int64"
-      - name: "additionalMetadata"
-        in: "formData"
-        description: "Additional data to pass to server"
-        required: false
-        type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
+      - in: "body"
+        name: "body"
+        description: ""
+        required: ""
+        schema:
+          $ref: ""
       responses:
         200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/ApiResponse"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
+          description: "successful get all blogs "
+        400:
+          description: "Invalid get all blogs"
+    post:
+      tags:
+      - "blogs"
+      summary: "create blog"
+      description: ""
+      operationId: "create blog"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: ""
+        name: ""
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/newBlog"
+      responses:
+        200:
+          description: "successful to create blog"
+        400:
+          description: "Invalid to create blog"
+  
   /api/blogs/:id:
     get:
       tags:
-      - "store"
-      summary: "Returns pet inventories by status"
-      description: "Returns a map of status codes to quantities"
-      operationId: "getInventory"
-      produces:
-      - "application/json"
-      parameters: []
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "object"
-            additionalProperties:
-              type: "integer"
-              format: "int32"
-      security:
-      - api_key: []
-
-/api/blogs/:id/comment:
-    post:
-      tags:
-      - "store"
-      summary: "Place an order for a pet"
+      - "blogs"
+      summary: "get blogs by id"
       description: ""
-      operationId: "placeOrder"
+      operationId: "get blog"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "order placed for purchasing the pet"
+      - in: "param"
+        name: "param"
+        description: "id of blog"
         required: true
         schema:
-          $ref: "#/definitions/Order"
+          $ref: ""
       responses:
         200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
+          description: "successful get blog by id "
         400:
-          description: "Invalid Order"
+          description: "Invalid get blog by id"
+    put:
+      tags:
+      - "blogs"
+      summary: "edit blog information"
+      description: ""
+      operationId: "edit blog"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "param"
+        name: "param"
+        description: "id of blog"
+        required: true
+        schema:
+          $ref: ""
+      responses:
+        200:
+          description: "successful edit blog by id "
+        400:
+          description: "Invalid edit blog by id"
+    delete:
+      tags:
+      - "blogs"
+      summary: "delete blog"
+      description: ""
+      operationId: "delete blog by id"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "param"
+        name: "param"
+        description: "id of blog"
+        required: true
+        schema:
+          $ref: ""
+      responses:
+        200:
+          description: "successful to delete blog by id "
+        400:
+          description: "Invalid to delete blog by id"
 
   /api/blogs/:id/comments:
+    get:
+      tags:
+      - "blogs"
+      summary: "get all comments in blog by id"
+      description: ""
+      operationId: "getAllComments"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "param"
+        name: "param"
+        description: "id of blog"
+        required: true
+        schema:
+          $ref: ""
+      responses:
+        200:
+          description: "successful to get all comments from blog by id "
+        400:
+          description: "Invalid to get all comments from blog by id"
     post:
       tags:
-      - "store"
-      summary: "Place an order for a pet"
+      - "blogs"
+      summary: "post comment in blog"
       description: ""
-      operationId: "placeOrder"
+      operationId: "postComment"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "order placed for purchasing the pet"
+        description: "post comment"
         required: true
         schema:
-          $ref: "#/definitions/Order"
+          $ref: "#/definitions/comment"
       responses:
         200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
+          description: "successful to post comment"
         400:
-          description: "Invalid Order"
+          description: "Invalid to post comment"
 
 #-------------------------------------------------------------[Nai]---------------------------------------------------------------------------
   /api/jobs/:
@@ -488,7 +554,7 @@ paths:
         default:
           description: "successful operation"
 
-  /:id/addAcceptedEmployee
+  api/:id/addAcceptedEmployee
     post:
       tags:
       - "user"
