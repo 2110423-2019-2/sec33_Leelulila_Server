@@ -443,6 +443,9 @@ paths:
       summary: "Get all jobs"
       description: "Get all jobs from mogoDB"
       operationId: "getAllJobs"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -457,9 +460,21 @@ paths:
       summary: "Create job"
       description: "Create job and add it to mongoDB"
       operationId: "createJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "newJob"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -470,6 +485,9 @@ paths:
       summary: "Get job by id"
       description: "Return job by id from mongoDB"
       operationId: "getJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -484,9 +502,21 @@ paths:
       summary: "Update job"
       description: "Update job information on mongoDB"
       operationId: "updateJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "jobData"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -500,9 +530,21 @@ paths:
       summary: "Delete job"
       description: "Delete job from mongoDB"
       operationId: "deleteJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "currentStatus"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -515,6 +557,9 @@ paths:
       summary: "Update job status"
       description: "Update job information on mongoDB"
       operationId: "updateJobStatus"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
