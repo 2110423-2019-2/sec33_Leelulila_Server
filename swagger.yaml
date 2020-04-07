@@ -1017,6 +1017,37 @@ definitions:  #-----------------------------------------------------------------
 #------------[Drive]----------------
 
 #------------[porsch]----------------
+  newreview:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      timestamp:
+        type: double
+
+  review:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      Status:
+        type: string
+      timestamp:
+        type: double
 
   Pet:
     type: "object"
