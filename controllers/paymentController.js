@@ -21,8 +21,8 @@ exports.makeTransaction = catchAsync(async (req, res, next) => {
     const employer = currentJob.job.Employer;
     // console.log(emails);
     if (emails.length == 0) {
-      res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
-      return next(new AppError('Not found an emails.', 404));
+      // res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
+      return 0;
     }
     const findEmployer = await mongo
       .db('CUPartTime')
