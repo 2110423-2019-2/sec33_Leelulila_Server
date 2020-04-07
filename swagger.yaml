@@ -660,7 +660,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      parameters: [] 
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "read notification"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -677,12 +681,7 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "username"
-      #   in: "path"
-      #   description: "The name that needs to be fetched. Use user1 for testing. "
-      #   required: true
-      #   type: "string"
+      parameters: []
       responses:
         200:
           description: "successful operation"
@@ -697,18 +696,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "id"
-      #   in: "path"
-      #   description: "review that need to be created"
-      #   required: true
-      #   type: "string"
-      # - in: "body"
-      #   name: "body"
-      #   description: "Updated user object"
-      #   required: true
-      #   schema:
-      #     $ref: "#/definitions/User"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "create user review"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -750,6 +742,10 @@ paths:
         description: "ID for update review"
         required: true
         type: "string"
+      - in: "body"
+        name: "body"
+        description: "update user review"
+        required: true
       responses:
         200:
           description: "successful operation"
