@@ -22,7 +22,7 @@ exports.getAllBlogs = catchAsync(async (req, res, next) => {
 exports.createBlog = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const newBlog = req.body;
-  const sequenceValue = Counter.getSequenceValue(mongo, 'blogid');
+  const sequenceValue = await Counter.getSequenceValue(mongo, 'blogid');
   newBlog._id = sequenceValue;
   newBlog.timestamp = Date.now();
   newBlog.comments = [];
@@ -42,6 +42,8 @@ exports.createBlog = catchAsync(async (req, res, next) => {
         blogOwn: sequenceValue,
       },
     });
+  console.log(result);
+
   if (result) {
     console.log('blog created with id', sequenceValue);
     res.status(201).json(result);
@@ -58,6 +60,8 @@ exports.getBlog = catchAsync(async (req, res, next) => {
   const result = await mongo.db('CUPartTime').collection('Blogs').findOne({
     _id,
   });
+  console.log(result);
+
   if (result) {
     console.log('Blog', _id, 'found, returning blog');
     res.status(200).json(result);
@@ -138,6 +142,7 @@ exports.postComment = catchAsync(async (req, res, next) => {
 
   payload.cid = cid;
   payload.timestamp = Date.now();
+
   const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
@@ -148,6 +153,8 @@ exports.postComment = catchAsync(async (req, res, next) => {
         comments: payload,
       },
     });
+  // console.log(result);
+
   if (result) {
     payload = {
       timestamp: Date.now(),
@@ -159,7 +166,7 @@ exports.postComment = catchAsync(async (req, res, next) => {
     await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
     console.log('comment', cid, 'added');
     // res.json(`${result.modifiedCount} commented`)
-    res.status(201).json(result);
+    res.status(201).json('comment is created');
   } else {
     console.log('fail to comment');
     // res.json(`fail to comment ${blogId}`)
