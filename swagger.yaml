@@ -654,16 +654,18 @@ paths:
     get:
       tags:
       - "notification"
-      summary: "Logs out current logged in user session"
+      summary: "read notification"
       description: ""
-      operationId: "logoutUser"
+      operationId: "readNotification"
       produces:
       - "application/xml"
       - "application/json"
-      parameters: []
+      parameters: [] 
       responses:
-        default:
+        200:
           description: "successful operation"
+        400:
+          description: ""
 
   /api/reviews/:
     get:
@@ -800,7 +802,7 @@ definitions:  #-----------------------------------------------------------------
 
 #------------[Drive]----------------
 
-#------------[porch]----------------
+#------------[porsch]----------------
 
   Pet:
     type: "object"
