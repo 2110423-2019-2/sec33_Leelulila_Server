@@ -284,8 +284,8 @@ paths:
       responses:
         200:
           description: "successful get all blogs "
-        400:
-          description: "Invalid get all blogs"
+        404:
+          description: "Not found any blogs"
     post:
       tags:
       - "blogs"
@@ -306,10 +306,10 @@ paths:
         schema:
           $ref: "#/definitions/newBlog"
       responses:
-        200:
-          description: "successful to create blog"
-        400:
-          description: "Invalid to create blog"
+        201:
+          description: "blog created with id"
+        404:
+          description: "Fail to create a blog"
   
   /api/blogs/:id:
     get:
@@ -333,9 +333,9 @@ paths:
           $ref: ""
       responses:
         200:
-          description: "successful get blog by id "
-        400:
-          description: "Invalid get blog by id"
+          description: "success to get blog"
+        404:
+          description: "Can not get this blog with this id."
     put:
       tags:
       - "blogs"
@@ -358,8 +358,8 @@ paths:
       responses:
         200:
           description: "successful edit blog by id "
-        400:
-          description: "Invalid edit blog by id"
+        404:
+          description: "Not found this blog with id"
     delete:
       tags:
       - "blogs"
@@ -380,10 +380,10 @@ paths:
         schema:
           $ref: ""
       responses:
-        200:
+        204:
           description: "successful to delete blog by id "
-        400:
-          description: "Invalid to delete blog by id"
+        404:
+          description: "Not found this blog with id"
 
   /api/blogs/:id/comments:
     get:
@@ -408,8 +408,8 @@ paths:
       responses:
         200:
           description: "successful to get all comments from blog by id "
-        400:
-          description: "Invalid to get all comments from blog by id"
+        404:
+          description: "Can not found with this blog id."
     post:
       tags:
       - "blogs"
@@ -430,10 +430,10 @@ paths:
         schema:
           $ref: "#/definitions/comment"
       responses:
-        200:
-          description: "successful to post comment"
-        400:
-          description: "Invalid to post comment"
+        201:
+          description: "comment is created"
+        404:
+          description: "Fail to comment on this blog."
 
 #-------------------------------------------------------------[Nai]---------------------------------------------------------------------------
   /api/jobs/:
