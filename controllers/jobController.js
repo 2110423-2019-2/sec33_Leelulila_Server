@@ -247,8 +247,8 @@ exports.deleteJob = catchAsync(async (req, res, next) => {
 
 exports.updateEmployeeByEmail = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
-  const _id = req.params.id;
-  const email = req.body;
+  const _id = parseInt(req.params.id);
+  const email = req.body.Email;
   let currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
     _id,
   });
@@ -263,12 +263,13 @@ exports.updateEmployeeByEmail = catchAsync(async (req, res, next) => {
           pendingJob: _id,
         },
       });
-    suggestion.addTFvector(email, currentJob.job.TFvector);
+    suggestion.addTFvector(mongo, email, currentJob.job.TFvector);
     console.log(updatedUser.modifiedCount);
     if (updatedUser.matchedCount == 0) {
       return next(new AppError(`Not found user with the email: ${email}`, 400));
     }
     currentJob.job.CurrentEmployee.push(email);
+    console.log(currentJob)
     const result = await mongo.db('CUPartTime').collection('Job').updateOne({
       _id,
     }, {
