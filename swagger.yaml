@@ -835,12 +835,6 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-
-#------------[James]----------------
-||||||| merged common ancestors
-#------------[James]----------------
-=======
 #------------[James]---------------- 16 fucking attributes WTF!
   User:
     type: object
@@ -912,7 +906,6 @@ definitions:  #-----------------------------------------------------------------
 
     xml:
       name: User
->>>>>>> e4783c8fb86bb61bb91778e7ac7f63b5e1365aa4
 
 #------------[Teemo]----------------
   newBlog:
@@ -957,6 +950,7 @@ definitions:  #-----------------------------------------------------------------
  job:
     type: "object"
     required:
+    - "_id"
     - "JobName"
     - "JobDetail"
     - "Wages"
@@ -970,7 +964,12 @@ definitions:  #-----------------------------------------------------------------
     - "Employer"
     - "Status"
     - "TFVector"
+    - "notify1"
+    - "notify2"
+    - "notify3"
     properties:
+      _id:
+        type: "int32"
       JobName:
         type: "string"
       JobDetail:
@@ -996,6 +995,12 @@ definitions:  #-----------------------------------------------------------------
       Status:
         type: "string"
       TFVector:
+        type: "array"
+      notify1:
+        type: "array"
+      notify2:
+        type: "array"
+      notify3:
         type: "array"
     xml:
       name: "job"
