@@ -22,8 +22,7 @@ exports.makeTransaction = catchAsync(async (req, res, next) => {
     // console.log(emails);
     if (emails.length == 0) {
       res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
-      // return next(new AppError('Not found an emails.', 404));
-      return 0;
+      return next(new AppError('Not found an emails.', 404));
     }
     const findEmployer = await mongo
       .db('CUPartTime')
@@ -34,9 +33,11 @@ exports.makeTransaction = catchAsync(async (req, res, next) => {
 
     console.log(findEmployer);
 
+
     if (findEmployer.wallet < amount * emails.length) {
-      // res.json(`Employee has not enough money`)
-      return next(new AppError('Employee has not enough money', 405));
+      res.json(`Employee has not enough money`)
+      // return next(new AppError('Employee has not enough money', 405));
+      return 0;
     }
     console.log('St Balance dec');
     await payment.shiftOneWallet(mongo, amount * emails.length, employerEmail, res);
