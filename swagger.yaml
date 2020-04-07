@@ -28,7 +28,7 @@ schemes:
 
 #-------------------------------------------------------------[JAMES]---------------------------------------------------------------------------
 paths:
-  /api/signup:
+  /api/user/signup:
     post:
       tags:
       - "user"
@@ -54,7 +54,7 @@ paths:
         400:
           description: "Invalid Input"
 
-  /api/login:
+  /api/user/login:
     post:
       tags:
       - "user"
@@ -84,7 +84,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/logout:
+  /api/user/logout:
     get:
       tags:
       - "user"
@@ -106,7 +106,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/:id:
+  /api/user/:id:
     get:
       tags:
       - "user"
@@ -165,7 +165,7 @@ paths:
         - "read:pets"
       deprecated: true
   
-  /api/useremail/:email:
+  /api/user/useremail/:email:
     get:
       tags:
       - "user"
@@ -792,7 +792,77 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
-#------------[James]----------------
+#------------[James]---------------- 16 fucking attributes WTF!
+  User:
+    type: object
+    required: 
+    - _id
+    - email
+    - password
+    - confirmPasssword
+    - firstname
+    - lastname
+    - gender
+    - birthday
+    - currentJob
+    - pendingJob
+    - notification
+    - TFvector
+    - wallet
+    - jobOwn
+    - blogOwn
+    - reviewOwn
+
+    properties:
+      _id:
+        type: integer
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+      confirmPassword:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender:
+        type: string
+      birthday:
+        type: string
+        format: date
+      currentJob:
+        type: array
+      pendingJob:
+        type: array
+      notification:
+        type: array
+      TFvector:
+        type: array
+      wallet:
+        type: integer
+      jobOwn:
+        type: array
+      blogOwn:
+        type: array
+      reviewOwn:
+        type: array
+
+      # role:
+      #   type: string
+      #   description: User role for authorization
+      #   enum:
+      #   - admin
+      #   - customer
+      #   - photographer
+
+      # createTime:
+      #   type: string
+      #   format: time
+
+    xml:
+      name: User
 
 #------------[Teemo]----------------
 
