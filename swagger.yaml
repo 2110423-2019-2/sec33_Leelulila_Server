@@ -275,8 +275,8 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
+      - in: ""
+        name: ""
         description: ""
         required: ""
         schema:
@@ -299,12 +299,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: ""
-        name: ""
+      - in: "body"
+        name: "body"
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/newBlog"
+          $ref: "#/definitions/blog"
       responses:
         201:
           description: "blog created with id"
@@ -835,6 +835,12 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
+
+#------------[James]----------------
+||||||| merged common ancestors
+#------------[James]----------------
+=======
 #------------[James]---------------- 16 fucking attributes WTF!
   User:
     type: object
@@ -906,8 +912,46 @@ definitions:  #-----------------------------------------------------------------
 
     xml:
       name: User
+>>>>>>> e4783c8fb86bb61bb91778e7ac7f63b5e1365aa4
 
 #------------[Teemo]----------------
+  newBlog:
+    type: "object"
+    properties:
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+
+  blog:
+    type: "object"
+    properties:
+      _id:
+        type: "integer"
+        format: "int64"
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      timestamp:
+        type: "double"
+      comments: 
+        type: "array"
+      comment_seq: 
+        type: "integer"  
+        format: "Int32"    
 
 #------------[Nai]----------------
 
