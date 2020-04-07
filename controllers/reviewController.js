@@ -62,7 +62,7 @@ exports.getReview = catchAsync(async (req, res, next) => {
 
 exports.updateReview = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
-  const _id = req.params.id;
+  const _id = parseInt(req.params.id);
   const newReview = req.body;
   const result = await mongo.db('CUPartTime').collection('Reviews').updateOne({
     _id,
@@ -80,7 +80,7 @@ exports.updateReview = catchAsync(async (req, res, next) => {
 
 exports.deleteReview = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
-  const _id = req.params.id;
+  const _id = parseInt(req.params.id);
   const result = await mongo.db('CUPartTime').collection('Reviews').deleteOne({
     _id,
   });
