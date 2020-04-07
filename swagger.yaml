@@ -28,7 +28,7 @@ schemes:
 
 #-------------------------------------------------------------[JAMES]---------------------------------------------------------------------------
 paths:
-  /api/signup:
+  /api/user/signup:
     post:
       tags:
       - "user"
@@ -54,7 +54,7 @@ paths:
         400:
           description: "Invalid Input"
 
-  /api/login:
+  /api/user/login:
     post:
       tags:
       - "user"
@@ -84,7 +84,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/logout:
+  /api/user/logout:
     get:
       tags:
       - "user"
@@ -106,7 +106,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/:id:
+  /api/user/:id:
     get:
       tags:
       - "user"
@@ -165,7 +165,7 @@ paths:
         - "read:pets"
       deprecated: true
   
-  /api/useremail/:email:
+  /api/user/useremail/:email:
     get:
       tags:
       - "user"
@@ -275,8 +275,8 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
+      - in: ""
+        name: ""
         description: ""
         required: ""
         schema:
@@ -299,12 +299,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: ""
-        name: ""
+      - in: "body"
+        name: "body"
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/newBlog"
+          $ref: "#/definitions/blog"
       responses:
         201:
           description: "blog created with id"
@@ -705,7 +705,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      parameters: [] 
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "read notification"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -722,12 +726,7 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "username"
-      #   in: "path"
-      #   description: "The name that needs to be fetched. Use user1 for testing. "
-      #   required: true
-      #   type: "string"
+      parameters: []
       responses:
         200:
           description: "successful operation"
@@ -742,18 +741,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "id"
-      #   in: "path"
-      #   description: "review that need to be created"
-      #   required: true
-      #   type: "string"
-      # - in: "body"
-      #   name: "body"
-      #   description: "Updated user object"
-      #   required: true
-      #   schema:
-      #     $ref: "#/definitions/User"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "create user review"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -795,6 +787,10 @@ paths:
         description: "ID for update review"
         required: true
         type: "string"
+      - in: "body"
+        name: "body"
+        description: "update user review"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -839,9 +835,123 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
+
 #------------[James]----------------
+||||||| merged common ancestors
+#------------[James]----------------
+=======
+#------------[James]---------------- 16 fucking attributes WTF!
+  User:
+    type: object
+    required: 
+    - _id
+    - email
+    - password
+    - confirmPasssword
+    - firstname
+    - lastname
+    - gender
+    - birthday
+    - currentJob
+    - pendingJob
+    - notification
+    - TFvector
+    - wallet
+    - jobOwn
+    - blogOwn
+    - reviewOwn
+
+    properties:
+      _id:
+        type: integer
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+      confirmPassword:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender:
+        type: string
+      birthday:
+        type: string
+        format: date
+      currentJob:
+        type: array
+      pendingJob:
+        type: array
+      notification:
+        type: array
+      TFvector:
+        type: array
+      wallet:
+        type: integer
+      jobOwn:
+        type: array
+      blogOwn:
+        type: array
+      reviewOwn:
+        type: array
+
+      # role:
+      #   type: string
+      #   description: User role for authorization
+      #   enum:
+      #   - admin
+      #   - customer
+      #   - photographer
+
+      # createTime:
+      #   type: string
+      #   format: time
+
+    xml:
+      name: User
+>>>>>>> e4783c8fb86bb61bb91778e7ac7f63b5e1365aa4
 
 #------------[Teemo]----------------
+  newBlog:
+    type: "object"
+    properties:
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+
+  blog:
+    type: "object"
+    properties:
+      _id:
+        type: "integer"
+        format: "int64"
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      timestamp:
+        type: "double"
+      comments: 
+        type: "array"
+      comment_seq: 
+        type: "integer"  
+        format: "Int32"    
 
 #------------[Nai]----------------
  job:
