@@ -914,6 +914,27 @@ definitions:  #-----------------------------------------------------------------
 #------------[Drive]----------------
 
 #------------[porsch]----------------
+  review:
+    type: object
+    required: 
+    - _id
+    - JobName
+    - ReviewDetail
+    - Rating
+    - Writer
+    - timestamp
+
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+      timestamp:
+        type: double
 
   Pet:
     type: "object"
