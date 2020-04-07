@@ -30,11 +30,16 @@ router
   .put(decryptController.getDecryptedData, authController.protect, jobController.updateJobStatus);
 
 router
-  .route('/:id/employee')
+  .route('/employee/:id')
   .put(
     decryptController.getDecryptedData,
     authController.protect,
     jobController.updateEmployeeByEmail
+  )
+  .delete(
+    decryptController.getDecryptedData,
+    authController.protect,
+    jobController.deleteEmployee
   );
 
 router.put(
@@ -42,13 +47,6 @@ router.put(
   decryptController.getDecryptedData,
   authController.protect,
   jobController.updateAcceptedEmployeeByEmail
-);
-
-router.delete(
-  '/employee/:id',
-  decryptController.getDecryptedData,
-  authController.protect,
-  jobController.deleteEmployee
 );
 
 module.exports = router;
