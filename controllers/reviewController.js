@@ -21,7 +21,7 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 exports.createReview = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   let review = req.body;
-  const sequenceValue = Counter.getSequenceValue(mongo, 'reviewid');
+  const sequenceValue = await Counter.getSequenceValue(mongo, 'reviewid');
 
   review._id = sequenceValue;
   review.timestamp = Date.now();
