@@ -5,7 +5,7 @@
   "main": "./mongodb/mongo.js",
   "scripts": {
     "start": "node server.js",
-    "start:dev": "nodemon server.js",
+    "dev": "nodemon server.js",
     "debug": "sudo ndb server.js",
     "test": "mocha **/*.test.js"
   },

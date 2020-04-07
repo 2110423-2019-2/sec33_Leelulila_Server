@@ -51,11 +51,11 @@ connectDB(uri).then(() => {
 
 
 // UNHANDLED ERROR handler
-process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    client.close();
-    server.close(() => {
-        process.exit(1);
-    });
-});
+// process.on('unhandledRejection', err => {
+//     console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+//     console.log(err.name, err.message);
+//     client.close();
+//     server.close(() => {
+//         process.exit(1);
+//     });
+// });
