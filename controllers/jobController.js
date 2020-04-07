@@ -5,12 +5,15 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 // This function NOT use as middleware. JUST normal function
-exports.updateJobStatus = catchAsync(async (mongo, _id, currentStatus, res) => {
-  // const _id = parseInt(req.params.id);
-  // const currentStatus = req.body;
+exports.updateJobStatus = catchAsync(async (req, res, next) => {
+  const mongo = req.app.locals.db;
+  const _id = parseInt(req.params.id);
+  const currentStatus = req.body.Status;
+
   const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
     _id,
   });
+
   if (currentJob) {
     currentJob.job.Status = currentStatus;
     if (currentStatus == 'Confirm') {
@@ -321,14 +324,16 @@ exports.deleteEmployee = catchAsync(async (req, res, next) => {
 
 exports.updateAcceptedEmployeeByEmail = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
-  const _id = req.params.id;
-  const email = req.body;
+  const _id = parseInt(req.params.id);
+  const email = req.body.Email;
+
   let currentJob = await mongo
     .db('CUPartTime')
     .collection('Job')
-    .currentJobOne({
-      _id,
+    .findOne({
+      _id
     });
+
   if (currentJob) {
     const amt = parseInt(currentJob.job.Amount);
     if (currentJob.job.CurrentAcceptedEmployee.length + 1 > amt) {
