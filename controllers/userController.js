@@ -81,7 +81,7 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
   result = await mongo.db('CUPartTime').collection('Users').findOne({
     email
   });
-  //console.log(result);
+
   if (result) {
     return res.status(200).json(result);
   } else {
@@ -92,8 +92,7 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
 
 exports.updateUser = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
-  const id = req.params.id;
-  console.log(req.body);
+  const id = parseInt(req.params.id);
   result = await mongo.db('CUPartTime').collection('Users').updateOne({
     _id: id,
   }, {
