@@ -835,12 +835,6 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-
-#------------[James]----------------
-||||||| merged common ancestors
-#------------[James]----------------
-=======
 #------------[James]---------------- 16 fucking attributes WTF!
   User:
     type: object
@@ -912,7 +906,6 @@ definitions:  #-----------------------------------------------------------------
 
     xml:
       name: User
->>>>>>> e4783c8fb86bb61bb91778e7ac7f63b5e1365aa4
 
 #------------[Teemo]----------------
   newBlog:
@@ -958,16 +951,8 @@ definitions:  #-----------------------------------------------------------------
 #------------[Drive]----------------
 
 #------------[porsch]----------------
-  review:
+  newreview:
     type: object
-    required: 
-    - _id
-    - JobName
-    - ReviewDetail
-    - Rating
-    - Writer
-    - timestamp
-
     properties:
       _id:
         type: integer
@@ -976,6 +961,24 @@ definitions:  #-----------------------------------------------------------------
       ReviewDetail:
         type: string
       Writer:
+        type: string
+        format: email
+      timestamp:
+        type: double
+
+  review:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      Status:
         type: string
       timestamp:
         type: double
