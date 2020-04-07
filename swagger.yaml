@@ -466,58 +466,97 @@ paths:
           description: "successful operation"
 #------------------------------------------------------------[Drive]------------------------------------------------
   /api/jobs/employee/:id:
-    post:
+    put:
       tags:
-      - "user"
-      summary: "Creates list of users with given input array"
+      - "job"
+      summary: "Push Employee Email To Array Of CurrentEmployee DB"
       description: ""
-      operationId: "createUsersWithListInput"
+      operationId: "updateEmployeeByEmail"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "List of user object"
+        description: "String Of Email"
         required: true
         schema:
           type: "array"
           items:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Job"
       responses:
-        default:
+        200:
+          description: "${result.matchedCount} document(s) matched the query criteria"
+        400:
+          description: "Not found user with the email: ${email}"
+    delete:
+      tags:
+      - "job"
+      summary: "Delete Applicant In CurrentEmlpoyee DB"
+      description: ""
+      operationId: "createUsersWithListInput"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "String Of Email"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
+      responses:
+        200:
           description: "successful operation"
+        404:
+          description: "This job has no current employee."
 
-  /:id/addAcceptedEmployee
-    post:
+  /api/jobs/:id/addAcceptedEmployee:
+    put:
       tags:
-      - "user"
-      summary: "Creates list of users with given input array"
+      - "job"
+      summary: "add employee who apply job to acceptedemployee DB"
       description: ""
-      operationId: "createUsersWithListInput"
+      operationId: "updateAcceptedEmployeeByEmail"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "List of user object"
+        description: "String Of Email"
         required: true
         schema:
           type: "array"
           items:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/Job"
       responses:
-        default:
+        200:
           description: "successful operation"
+        400:
+          description: "No document(s) matched the query criteria."
 
   /api/wallet/job/:id:
-    get:
+    post:
       tags:
-      - "user"
-      summary: "Logs user into the system"
+      - "other"
+      summary: "Employer pay for emlpoyees"
       description: ""
-      operationId: "loginUser"
+      operationId: "makeTransaction"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -535,19 +574,8 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
-        400:
-          description: "Invalid username/password supplied"
+        404:
+          description: "Not found job with this id."
 #-------------------------------------------------------------[porche]---------------------------------------------------------------------------
 
   /api/read:
