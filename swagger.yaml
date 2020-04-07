@@ -548,12 +548,12 @@ paths:
               description: "date in UTC when token expires"
         400:
           description: "Invalid username/password supplied"
-#-------------------------------------------------------------[porche]---------------------------------------------------------------------------
+#-------------------------------------------------------------[porsche]---------------------------------------------------------------------------
 
   /api/read:
     get:
       tags:
-      - "user"
+      - "notification"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
@@ -568,111 +568,111 @@ paths:
   /api/reviews/:
     get:
       tags:
-      - "user"
-      summary: "Get user by user name"
+      - "reviews"
+      summary: "Get all reviews"
       description: ""
-      operationId: "getUserByName"
+      operationId: "getAllReviews"
       produces:
       - "application/xml"
       - "application/json"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be fetched. Use user1 for testing. "
-        required: true
-        type: "string"
+      # parameters:
+      # - name: "username"
+      #   in: "path"
+      #   description: "The name that needs to be fetched. Use user1 for testing. "
+      #   required: true
+      #   type: "string"
       responses:
         200:
           description: "successful operation"
-          schema:
-            $ref: "#/definitions/User"
-        400:
-          description: "Invalid username supplied"
         404:
-          description: "User not found"
-    put:
+          description: "Not found any reviews."
+    post:
       tags:
-      - "user"
-      summary: "Updated user"
+      - "reviews"
+      summary: "create review"
       description: "This can only be done by the logged in user."
-      operationId: "updateUser"
+      operationId: "createReview"
       produces:
       - "application/xml"
       - "application/json"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "name that need to be updated"
-        required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "Updated user object"
-        required: true
-        schema:
-          $ref: "#/definitions/User"
+      # parameters:
+      # - name: "id"
+      #   in: "path"
+      #   description: "review that need to be created"
+      #   required: true
+      #   type: "string"
+      # - in: "body"
+      #   name: "body"
+      #   description: "Updated user object"
+      #   required: true
+      #   schema:
+      #     $ref: "#/definitions/User"
       responses:
-        400:
-          description: "Invalid user supplied"
+        200:
+          description: "successful operation"
         404:
-          description: "User not found"
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
-      produces:
-      - "application/xml"
-      - "application/json"
-      parameters:
-      - name: "username"
-        in: "path"
-        description: "The name that needs to be deleted"
-        required: true
-        type: "string"
-      responses:
-        400:
-          description: "Invalid username supplied"
-        404:
-          description: "User not found"
+          description: "Can not create a review."
   /api/reviews/:id:
     get:
       tags:
-      - "user"
-      summary: "Logs user into the system"
-      description: ""
-      operationId: "loginUser"
+      - "reviews"
+      summary: "get review"
+      description: "get review with this id"
+      operationId: "getReview"
       produces:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
+      - name: "id"
+        in: "path"
+        description: "Id for create review"
         required: true
         type: "string"
       responses:
         200:
           description: "successful operation"
-          schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
         400:
-          description: "Invalid username/password supplied"
+          description: "Can not get review with this id."
+    put:
+      tags:
+      - "reviews"
+      summary: "update review"
+      description: "ีupdate review with this id"
+      operationId: "updateReview"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID for update review"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Cannot edit this review."
+    delete:
+      tags:
+      - "user"
+      summary: "delete user review"
+      description: "delete review with this ID"
+      operationId: "deleteReview"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID for delete review"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Can not delete this review"
 
 
 
