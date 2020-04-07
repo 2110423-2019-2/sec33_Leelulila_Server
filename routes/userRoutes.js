@@ -11,7 +11,7 @@ router.post('/login', decryptController.getDecryptedData, userController.login);
 router.get('/logout', authController.logout);
 
 // Protect all routes after this middleware
-router.use(authController.protect);
+// router.use(authController.protect);
 
 // router.get('/me', userController.getMe, userController.getUser);
 
@@ -32,7 +32,7 @@ router.get('/useremail/:email', userController.getUserByEmail);
 router
     .route('/:id')
     .get(userController.getUser)
-    .put(userController.updateUser)
+    .put(decryptController.getDecryptedData, userController.updateUser)
 // .delete(userController.deleteUser);
 
 module.exports = router;

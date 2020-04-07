@@ -2,7 +2,7 @@ const catchAsync = require('../utils/catchAsync');
 
 exports.readNotification = catchAsync(async (req, res, next) => {
     const mongo = req.app.locals.db;
-    const email = req.body.email;
+    const email = req.body.Email;
     const result = await mongo
         .db('CUPartTime')
         .collection('Users')

@@ -1,5 +1,5 @@
 const notification = require('../models/notificationModel');
-const jobController = require('./jobController');
+const jobController = require('../models/jobModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
