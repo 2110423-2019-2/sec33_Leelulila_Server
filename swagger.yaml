@@ -28,7 +28,7 @@ schemes:
 
 #-------------------------------------------------------------[JAMES]---------------------------------------------------------------------------
 paths:
-  /api/signup:
+  /api/user/signup:
     post:
       tags:
       - "user"
@@ -54,7 +54,7 @@ paths:
         400:
           description: "Invalid Input"
 
-  /api/login:
+  /api/user/login:
     post:
       tags:
       - "user"
@@ -84,7 +84,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/logout:
+  /api/user/logout:
     get:
       tags:
       - "user"
@@ -106,7 +106,7 @@ paths:
         - "write:pets"
         - "read:pets"
 
-  /api/:id:
+  /api/user/:id:
     get:
       tags:
       - "user"
@@ -165,7 +165,7 @@ paths:
         - "read:pets"
       deprecated: true
   
-  /api/useremail/:email:
+  /api/user/useremail/:email:
     get:
       tags:
       - "user"
@@ -443,6 +443,9 @@ paths:
       summary: "Get all jobs"
       description: "Get all jobs from mogoDB"
       operationId: "getAllJobs"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -457,9 +460,21 @@ paths:
       summary: "Create job"
       description: "Create job and add it to mongoDB"
       operationId: "createJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "newJob"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -470,6 +485,9 @@ paths:
       summary: "Get job by id"
       description: "Return job by id from mongoDB"
       operationId: "getJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -484,9 +502,21 @@ paths:
       summary: "Update job"
       description: "Update job information on mongoDB"
       operationId: "updateJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "jobData"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -500,9 +530,21 @@ paths:
       summary: "Delete job"
       description: "Delete job from mongoDB"
       operationId: "deleteJob"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "currentStatus"
+        required: true
+        schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -515,6 +557,9 @@ paths:
       summary: "Update job status"
       description: "Update job information on mongoDB"
       operationId: "updateJobStatus"
+      consumes:
+      - "application/json"
+      - "application/xml"
       produces:
       - "application/xml"
       - "application/json"
@@ -654,16 +699,22 @@ paths:
     get:
       tags:
       - "notification"
-      summary: "Logs out current logged in user session"
+      summary: "read notification"
       description: ""
-      operationId: "logoutUser"
+      operationId: "readNotification"
       produces:
       - "application/xml"
       - "application/json"
-      parameters: []
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "read notification"
+        required: true
       responses:
-        default:
+        200:
           description: "successful operation"
+        400:
+          description: ""
 
   /api/reviews/:
     get:
@@ -675,12 +726,7 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "username"
-      #   in: "path"
-      #   description: "The name that needs to be fetched. Use user1 for testing. "
-      #   required: true
-      #   type: "string"
+      parameters: []
       responses:
         200:
           description: "successful operation"
@@ -695,18 +741,11 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      # parameters:
-      # - name: "id"
-      #   in: "path"
-      #   description: "review that need to be created"
-      #   required: true
-      #   type: "string"
-      # - in: "body"
-      #   name: "body"
-      #   description: "Updated user object"
-      #   required: true
-      #   schema:
-      #     $ref: "#/definitions/User"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "create user review"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -748,6 +787,10 @@ paths:
         description: "ID for update review"
         required: true
         type: "string"
+      - in: "body"
+        name: "body"
+        description: "update user review"
+        required: true
       responses:
         200:
           description: "successful operation"
@@ -792,8 +835,84 @@ securityDefinitions:
 
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
 
 #------------[James]----------------
+||||||| merged common ancestors
+#------------[James]----------------
+=======
+#------------[James]---------------- 16 fucking attributes WTF!
+  User:
+    type: object
+    required: 
+    - _id
+    - email
+    - password
+    - confirmPasssword
+    - firstname
+    - lastname
+    - gender
+    - birthday
+    - currentJob
+    - pendingJob
+    - notification
+    - TFvector
+    - wallet
+    - jobOwn
+    - blogOwn
+    - reviewOwn
+
+    properties:
+      _id:
+        type: integer
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+      confirmPassword:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender:
+        type: string
+      birthday:
+        type: string
+        format: date
+      currentJob:
+        type: array
+      pendingJob:
+        type: array
+      notification:
+        type: array
+      TFvector:
+        type: array
+      wallet:
+        type: integer
+      jobOwn:
+        type: array
+      blogOwn:
+        type: array
+      reviewOwn:
+        type: array
+
+      # role:
+      #   type: string
+      #   description: User role for authorization
+      #   enum:
+      #   - admin
+      #   - customer
+      #   - photographer
+
+      # createTime:
+      #   type: string
+      #   format: time
+
+    xml:
+      name: User
+>>>>>>> e4783c8fb86bb61bb91778e7ac7f63b5e1365aa4
 
 #------------[Teemo]----------------
   newBlog:
@@ -838,7 +957,7 @@ definitions:  #-----------------------------------------------------------------
 
 #------------[Drive]----------------
 
-#------------[porch]----------------
+#------------[porsch]----------------
 
   Pet:
     type: "object"
