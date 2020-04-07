@@ -416,6 +416,9 @@ exports.notifyPayload = (async (mongo, email, payload) => {
           notification: payload,
         },
       });
+    console.log('notify: ',
+      result);
+
     if (result) {
       console.log('notified the users', result.modifiedCount, payload.string);
     } else {

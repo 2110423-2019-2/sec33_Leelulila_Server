@@ -116,6 +116,7 @@ exports.createJob = catchAsync(async (req, res, next) => {
 exports.getJob = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const _id = parseInt(req.params.id);
+
   const result = await mongo.db('CUPartTime').collection('Job').findOne({
     _id,
   });
@@ -130,6 +131,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const _id = parseInt(req.params.id);
   const jobData = req.body;
+
   let currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
     _id,
   });
@@ -154,6 +156,7 @@ exports.updateJob = catchAsync(async (req, res, next) => {
       }, {
         $set: currentJob,
       });
+
       if (result) {
         res.status(200).json(result);
       } else {

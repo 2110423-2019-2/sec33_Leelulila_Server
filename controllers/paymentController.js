@@ -19,7 +19,6 @@ exports.makeTransaction = catchAsync(async (req, res, next) => {
     const emails = currentJob.job.CurrentAcceptedEmployee;
     const amount = parseInt(currentJob.job.Wages);
     const employer = currentJob.job.Employer;
-    // console.log(emails);
     if (emails.length == 0) {
       // res.json(`Your employee is like this[                  ], so does your love life ${emails}`)
       return 0;
@@ -30,21 +29,17 @@ exports.makeTransaction = catchAsync(async (req, res, next) => {
       .findOne({
         email: employerEmail,
       });
-
-    console.log(findEmployer);
-
-
-    if (findEmployer.wallet < amount * emails.length) {
-      res.json(`Employee has not enough money`)
-      // return next(new AppError('Employee has not enough money', 405));
-      return 0;
-    }
+    // if (findEmployer.wallet < amount * emails.length) {
+    //   res.json(`Employee has not enough money`)
+    //   return next(new AppError('Employee has not enough money', 405));
+    //   return 0;
+    // }
     console.log('St Balance dec');
     await payment.shiftOneWallet(mongo, amount * emails.length, employerEmail, res);
     console.log('Balance dec');
     //    shiftManyWallet(mongo, amount, emails, res)
-    //    console.log(amount)
-    const result = await payment.shiftManyWallet(amount, emails, employer, res);
+    const result = await payment.shiftManyWallet(mongo, amount, emails, employer, res);
+
     const payload = {
       timestamp: Date.now(),
       jobId: jobId,

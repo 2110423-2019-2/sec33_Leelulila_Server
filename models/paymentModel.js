@@ -7,6 +7,9 @@ exports.shiftOneWallet = (async (mongo, amount, email, res) => {
     });
     const balance =
       currentUser.wallet - amount < 0 ? 0 : currentUser.wallet - amount;
+    // console.log('balance: ', balance);
+    // console.log('email: ', email);
+
     const result = await mongo
       .db('CUPartTime')
       .collection('Users')
@@ -17,6 +20,8 @@ exports.shiftOneWallet = (async (mongo, amount, email, res) => {
           wallet: balance,
         },
       });
+    // console.log(result);
+
     if (result.matchedCount == 0) {
       // res.send("Cannot find user with email:", email)
       return new AppError('Not found user with email.', 404);
@@ -25,6 +30,8 @@ exports.shiftOneWallet = (async (mongo, amount, email, res) => {
     throw new Error(err.message);
   }
 });
+
+// payment.shiftManyWallet(mongo, amount, emails, employer, res);
 
 exports.shiftManyWallet = (async (mongo, amount, emails, employer, res) => {
   try {
@@ -46,14 +53,14 @@ exports.shiftManyWallet = (async (mongo, amount, emails, employer, res) => {
       // return new AppError('Not found user with the emails.', 404);
     }
     console.log('modified wallet done');
-    notifyPaymentUser(mongo, amount, emails, employer, res);
-    // return 1;
+    await notifyPaymentUser(mongo, amount, emails, employer, res);
+    return 1;
   } catch (err) {
     throw new Error(err.message);
   }
 });
 
-exports.notifyPaymentUser = (
+const notifyPaymentUser = (
   async (mongo, amount, emails, employer, res) => {
     try {
       const string =
@@ -83,10 +90,10 @@ exports.notifyPaymentUser = (
         });
       if (result) {
         console.log('successfully notify the users');
-        res.json(result);
+        // res.json(result);
       } else {
         console.log('unsuccessfully notify the users');
-        res.json(`modified users wallet but cannot notify user`);
+        // res.json(`modified users wallet but cannot notify user`);
       }
     } catch (err) {
       throw new Error(err.message);
