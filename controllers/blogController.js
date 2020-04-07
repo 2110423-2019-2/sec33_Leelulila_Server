@@ -124,10 +124,11 @@ exports.getAllComments = catchAsync(async (req, res, next) => {
 exports.postComment = catchAsync(async (req, res, next) => {
   const mongo = req.app.locals.db;
   const blogId = parseInt(req.params.id);
-  const payload = req.body;
+  let payload = req.body;
   const currentBlog = await mongo.db('CUPartTime').collection('Blogs').findOne({
     _id: blogId,
   });
+
   const cid = currentBlog.comment_seq;
   await mongo
     .db('CUPartTime')
@@ -146,14 +147,13 @@ exports.postComment = catchAsync(async (req, res, next) => {
   const result = await mongo
     .db('CUPartTime')
     .collection('Blogs')
-    .updateOne({
+    .findOneAndUpdate({
       _id: blogId,
     }, {
       $push: {
         comments: payload,
       },
     });
-  // console.log(result);
 
   if (result) {
     payload = {
@@ -162,7 +162,7 @@ exports.postComment = catchAsync(async (req, res, next) => {
       status: 0,
       BlogId: blogId,
     };
-    //console.log(cid)
+
     await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
     console.log('comment', cid, 'added');
     // res.json(`${result.modifiedCount} commented`)
