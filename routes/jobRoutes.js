@@ -36,7 +36,7 @@ router
   )
   .delete(
     decryptController.getDecryptedData,
-    authController.protect,
+    // authController.protect,
     jobController.deleteEmployee
   );
 
