@@ -2,11 +2,11 @@ const dotenv = require('dotenv');
 const MongoClient = require('mongodb').MongoClient;
 
 // Catch UNCAUGHT EXCEPTION ERROR
-process.on('uncaughtException', err => {
-    console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    process.exit(1);
-});
+// process.on('uncaughtException', err => {
+//     console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+//     console.log(err.name, err.message);
+//     process.exit(1);
+// });
 
 // ENV configuration
 dotenv.config({
@@ -51,11 +51,11 @@ connectDB(uri).then(() => {
 
 
 // UNHANDLED ERROR handler
-process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    console.log(err.name, err.message);
-    client.close();
-    server.close(() => {
-        process.exit(1);
-    });
-});
+// process.on('unhandledRejection', err => {
+//     console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+//     console.log(err.name, err.message);
+//     client.close();
+//     server.close(() => {
+//         process.exit(1);
+//     });
+// });

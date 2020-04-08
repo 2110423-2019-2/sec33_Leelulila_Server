@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 
 const signToken = (id) => {
-  return jwt.sign({
+  return jwt.sign(
+    {
       id,
     },
-    process.env.JWT_SECRET, {
+    process.env.JWT_SECRET,
+    {
       expiresIn: process.env.JWT_EXPIRES_IN,
     }
   );
@@ -38,29 +40,34 @@ exports.createSendToken = (user, statusCode, res) => {
 };
 
 exports.protect = (req, res, next) => {
-// 1) Getting token and check of it's there
-let token;
+  // 1) Getting token and check of it's there
+  let token;
 
-if (
-  req.headers.authorization &&
-  req.headers.authorization.startsWith('Bearer')
-) {
-  token = req.headers.authorization.split(' ')[1];
-} else if (req.cookies.jwt) {
-  token = req.cookies.jwt;
-}
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
-if (!token) {
-  console.log(req.headers);
-  return res.status(401).json({
-    status: 'fail',
-    message: 'You are not logged in! Please log in to get access',
-  });
-  // throw new Error('You are not logged in! Please log in to get access', 401);
-}
+  if (!token) {
+    console.log(req.headers);
+    return res.status(401).json({
+      status: 'fail',
+      message: 'You are not logged in! Please log in to get access',
+    });
+    // throw new Error('You are not logged in! Please log in to get access', 401);
+  }
 
+<<<<<<< Updated upstream
 // GRANT ACCESS TO PROTECTED ROUTE
 next();
+=======
+  // GRANT ACCESS TO PROTECTED ROUTE
+  next();
+>>>>>>> Stashed changes
 };
 
 exports.logout = (req, res) => {
@@ -69,6 +76,6 @@ exports.logout = (req, res) => {
     // httpOnly: true
   });
   res.status(200).json({
-    status: 'success'
+    status: 'success',
   });
 };
