@@ -39,16 +39,13 @@ exports.createBlog = async (req, res, next) => {
     await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateOne(
-        {
-          email: newBlog.WriterEmail,
+      .updateOne({
+        email: newBlog.WriterEmail,
+      }, {
+        $push: {
+          blogOwn: sequenceValue,
         },
-        {
-          $push: {
-            blogOwn: sequenceValue,
-          },
-        }
-      );
+      });
     console.log(result);
 
     if (result) {
@@ -91,14 +88,11 @@ exports.editBlog = async (req, res, next) => {
     const mongo = req.app.locals.db;
     const _id = parseInt(req.params.id);
     const newContent = req.body;
-    const result = await mongo.db('CUPartTime').collection('Blogs').updateOne(
-      {
-        _id,
-      },
-      {
-        $set: newContent,
-      }
-    );
+    const result = await mongo.db('CUPartTime').collection('Blogs').updateOne({
+      _id,
+    }, {
+      $set: newContent,
+    });
     if (result) {
       console.log('job', _id, 'updated');
       res.status(200).json(result);
@@ -155,6 +149,8 @@ exports.postComment = async (req, res, next) => {
     const mongo = req.app.locals.db;
     const blogId = parseInt(req.params.id);
     let payload = req.body;
+    const [firstName, lastName] = payload.name.split(' ');
+
     const currentBlog = await mongo
       .db('CUPartTime')
       .collection('Blogs')
@@ -166,16 +162,13 @@ exports.postComment = async (req, res, next) => {
     await mongo
       .db('CUPartTime')
       .collection('Blogs')
-      .updateOne(
-        {
-          _id: blogId,
+      .updateOne({
+        _id: blogId,
+      }, {
+        $inc: {
+          comment_seq: 1,
         },
-        {
-          $inc: {
-            comment_seq: 1,
-          },
-        }
-      );
+      });
 
     payload.cid = cid;
     payload.timestamp = Date.now();
@@ -183,16 +176,13 @@ exports.postComment = async (req, res, next) => {
     const result = await mongo
       .db('CUPartTime')
       .collection('Blogs')
-      .findOneAndUpdate(
-        {
-          _id: blogId,
+      .findOneAndUpdate({
+        _id: blogId,
+      }, {
+        $push: {
+          comments: payload,
         },
-        {
-          $push: {
-            comments: payload,
-          },
-        }
-      );
+      });
 
     if (result) {
       payload = {
@@ -202,7 +192,16 @@ exports.postComment = async (req, res, next) => {
         BlogId: blogId,
       };
 
-      await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
+      // Call to get currentUser and not notify to myself
+      const currentUser = await mongo.db('CUPartTime').collection('Users').findOne({
+        firstName,
+        lastName
+      });
+
+      if (currentBlog.Employer !== currentUser.email) {
+        await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
+      };
+
       console.log('comment', cid, 'added');
       // res.json(`${result.modifiedCount} commented`)
       res.status(201).json('comment is created');
@@ -253,17 +252,14 @@ exports.editComment = async (req, res, next) => {
     const result = await mongo
       .db('CUPartTime')
       .collection('Blogs')
-      .updateOne(
-        {
-          _id: blogId,
-          'comments.cid': cid,
+      .updateOne({
+        _id: blogId,
+        'comments.cid': cid,
+      }, {
+        $set: {
+          'comments.$.msg': payload.msg,
         },
-        {
-          $set: {
-            'comments.$.msg': payload.msg,
-          },
-        }
-      );
+      });
     if (result.modifiedCount > 0) {
       console.log('comment', cid, 'edited');
       // res.json(`${result.modifiedCount} edited`)
@@ -288,18 +284,15 @@ exports.deleteComment = async (req, res, next) => {
     const result = await mongo
       .db('CUPartTime')
       .collection('Blogs')
-      .updateOne(
-        {
-          _id: blogId,
-        },
-        {
-          $pull: {
-            comments: {
-              cid,
-            },
+      .updateOne({
+        _id: blogId,
+      }, {
+        $pull: {
+          comments: {
+            cid,
           },
-        }
-      );
+        },
+      });
     if (result.modifiedCount > 0) {
       console.log('comment', cid, 'deleted');
       // res.json(`${result.modifiedCount} deleted`)
