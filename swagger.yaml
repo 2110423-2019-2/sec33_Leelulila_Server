@@ -46,11 +46,11 @@ paths:
         name: "body"
         description: "User object that needs to be added to the database"
         required: true
+        schema:
+            $ref: "#/definitions/newUser"
       responses:
         200:
           description: "Create user successfully"
-          schema:
-            $ref: "#/definitions/Success"
         400:
           description: "Invalid Input"
 
@@ -72,11 +72,28 @@ paths:
         name: "body"
         description: "User that have login into the system"
         required: true
+        schema:
+            type: object
+              required: 
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+
       responses:
         200:
           description: "User login successfully"
           schema:
-            $ref: "#/definitions/Success"
+            type: object
+              properties:
+                status:
+                  type: string
+                data:
+                  $ref: "#/definitions/User"
         404:
           description: "Incorrect email or password"
       security:
@@ -98,7 +115,10 @@ paths:
         200:
           description: "successful logout"
           schema:
-            $ref: "#/definitions/Success"
+            type: object
+              properties:
+                status:
+                  type: string
         400:
           description: "Invalid status value"
       security:
@@ -127,7 +147,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Success"
+            $ref: "#/definitions/User"
         400:
           description: "Invalid tag value"
       security:
@@ -156,7 +176,12 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Success"
+            type: object
+              properties:
+                status:
+                  type: string
+                data:
+                  $ref: "#/definitions/User"
         400:
           description: "Invalid tag value"
       security:
@@ -176,12 +201,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "id"
+      - name: "email"
         in: "parameters"
-        description: "ID of user to return"
+        description: "email of user to return"
         required: true
         type: "string"
-        format: "int64"
+        format: "email"
       responses:
         200:
           description: "successful operation"
