@@ -61,7 +61,7 @@ if (!token) {
 
 // GRANT ACCESS TO PROTECTED ROUTE
 next();
-});
+};
 
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
