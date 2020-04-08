@@ -1,7 +1,7 @@
 const notification = require('../models/notificationModel');
 const Counter = require('../models/counterModel');
 const AppError = require('../utils/appError');
-
+const noti = require('../models/notifyOOP')
 exports.getAllBlogs = async (req, res, next) => {
   try {
     const mongo = req.app.locals.db;
@@ -195,14 +195,16 @@ exports.postComment = async (req, res, next) => {
       );
 
     if (result) {
-      payload = {
+      /*payload = {
         timestamp: Date.now(),
         string: 'You have new comment',
         status: 0,
         BlogId: blogId,
       };
+      await notification.notifyPayload(mongo, [currentBlog.Employer], payload);*/
+      var notifyComment = new noti.CommentNotification(blogId)
+      notifyComment.notify(mongo, [currentBlog.Employer])
 
-      await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
       console.log('comment', cid, 'added');
       // res.json(`${result.modifiedCount} commented`)
       res.status(201).json('comment is created');

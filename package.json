@@ -12,6 +12,7 @@
   "author": "Leelulila Group",
   "license": "ISC",
   "dependencies": {
+    "babel": "^6.23.0",
     "chai": "^4.2.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",

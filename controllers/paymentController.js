@@ -2,7 +2,7 @@ const notification = require('../models/notificationModel');
 const jobController = require('../models/jobModel');
 const payment = require('../models/paymentModel');
 const AppError = require('../utils/appError');
-
+const noti = require('../models/notifyOOP')
 // Only makeTransaction use as middleware
 exports.makeTransaction = async (req, res, next) => {
   try {
@@ -51,14 +51,16 @@ exports.makeTransaction = async (req, res, next) => {
         res
       );
 
-      const payload = {
+      /*const payload = {
         timestamp: Date.now(),
         jobId: jobId,
         jobName: currentJob.job.JobName,
         string: 'Review ' + currentJob.job.JobName + '?',
         status: 2,
       };
-      await notification.notifyPayload(mongo, emails, payload);
+      await notification.notifyPayload(mongo, emails, payload);*/
+      const notiReview = new noti.ReviewNotification(jobId, jobName)
+      notiReview.notify(mongo, emails)
       if (result) {
         await jobController.updateJobStatus(mongo, jobId, 'Finish', res);
         res.status(200).json(result);

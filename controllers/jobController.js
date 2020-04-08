@@ -2,7 +2,7 @@ const suggestion = require('../models/suggestionModel');
 const notification = require('../models/notificationModel');
 const Counter = require('../models/counterModel');
 const AppError = require('../utils/appError');
-
+const noti = require('../models/notifyOOP')
 // This function NOT use as middleware. JUST normal function
 exports.updateJobStatus = async (req, res, next) => {
   try {
@@ -223,7 +223,9 @@ exports.deleteJob = async (req, res, next) => {
       _id,
     });
     if (result) {
+      const id = _id
       console.log(`Deleted Job with the ID: ${id}`);
+      
       const pending = await mongo
         .db('CUPartTime')
         .collection('Users')
@@ -267,15 +269,21 @@ exports.deleteJob = async (req, res, next) => {
             },
           }
         );
-      await notification.notifyMany(
+     /* await notification.notifyMany(
         mongo,
         pendingList,
         find.job.JobName + ' which you applied has been deleted'
-      );
-      await notification.notifyMany(
+      );*/
+      const notifyPending = new noti.Notification(currentJob.job.JobName + ' which you applied has been deleted')
+      notifyPending.notify(mongo, pendingList)
+
+     /* await notification.notifyMany(
         acceptedList,
         find.job.JobName + ' has been deleted'
-      );
+      );*/
+      const notifyAccepted= new noti.Notification(currentJob.job.JobName + ' which you applied has been deleted')
+      notifyAccepted.notify(mongo, acceptedList)
+
       console.log(pending.modifiedCount);
       console.log(accepted.modifiedCount);
       // res.send('success');
@@ -286,7 +294,7 @@ exports.deleteJob = async (req, res, next) => {
       return next(new AppError('Not found this job!', 404));
     }
   } catch (err) {
-    throw new Error(err.message);
+    console.error(err)
   }
 };
 
@@ -329,7 +337,9 @@ exports.updateEmployeeByEmail = async (req, res, next) => {
           $set: currentJob,
         }
       );
-      await notification.jobNotify(mongo, _id, currentJob.job.Employer, 0);
+      //await notification.jobNotify(mongo, _id, currentJob.job.Employer, 0);
+      const jobNoti0 = new noti.JobNotification(0, _id)
+      jobNoti0.notify(mongo, [currentJob.job.Employer])
       console.log(
         `${result.matchedCount} document(s) matched the query criteria.`
       );
@@ -358,7 +368,7 @@ exports.deleteEmployee = async (req, res, next) => {
     if (currentJob.job.CurrentEmployee) {
       // input email in current employee
       const idx = currentJob.job.CurrentEmployee.indexOf(email);
-      console.log(idx);
+      //console.log(idx);
       if (idx > -1) {
         currentJob.job.CurrentEmployee.splice(idx, 1);
       } else {
@@ -372,7 +382,10 @@ exports.deleteEmployee = async (req, res, next) => {
           $set: currentJob,
         }
       );
-      await notification.jobNotify(mongo, jobId, email, 1);
+     // await notification.jobNotify(mongo, jobId, email, 1);
+     const jobNoti1 = new noti.JobNotification(1, jobId)
+     jobNoti1.notify(mongo, [email])
+     console.log("+++++++++++++++++++++++++++++++++++++++")
       res.status(200).json(result);
     } else {
       return next(new AppError(`Not found this job!`), 404);
@@ -459,7 +472,9 @@ exports.updateAcceptedEmployeeByEmail = async (req, res, next) => {
             },
           }
         );
-      await notification.jobNotify(mongo, _id, email, 2);
+     // await notification.jobNotify(mongo, _id, email, 2);
+      const jobNoti2 = new noti.JobNotification(2, _id)
+      jobNoti2.notify(mongo, [email])
       console.log(
         `${result.matchedCount} document(s) matched the query criteria.`
       );

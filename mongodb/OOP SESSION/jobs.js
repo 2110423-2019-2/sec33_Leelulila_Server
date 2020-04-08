@@ -1,4 +1,4 @@
-const {Notification, JobNotification} = require('./notifyOOP.js');
+const {Notification, JobNotification} = require('../../models/notifyOOP.js');
 
 async function createJob(client, newJob, res) {
     try {

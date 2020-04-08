@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser');
 
 
 const cash = require('./cash.js');
-const notify = require('./notify.js');
+const noti = require('/mongodb/OOP SESSION/notifyOOP.js');
 const suggest = require('./suggestion.js');
 const blog = require('./blog.js');
 const review = require('./review.js');
 const authController = require('./authController');
 const users = require('./users.js')
 const jobs = require('./jobs.js')
+
 // var cors = require('cors');
 
 dotenv.config({
@@ -118,6 +119,7 @@ async function main() {
   try {
     //connect to db eiei
     await client.connect();
+
 
     //await client.db('CUPartTime').collection('Users').updateMany({},{$set : { pendingJob : []}})
    // await client.db('CUPartTime').collection('Users').updateMany({},{$set : { currentJob : []}})
@@ -266,7 +268,7 @@ async function main() {
     if (process.env.NODE_ENV === 'production') {
       payload = decryptData(payload.data);
     }
-    notify.readNotify(client, payload.Email, res);
+    noti.readNotify(client, payload.Email, res);
   });
   /////////Blog
   app.post('/newblog', (req, res) => {
