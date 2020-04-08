@@ -61,13 +61,8 @@ exports.protect = (req, res, next) => {
     // throw new Error('You are not logged in! Please log in to get access', 401);
   }
 
-<<<<<<< Updated upstream
-// GRANT ACCESS TO PROTECTED ROUTE
-next();
-=======
   // GRANT ACCESS TO PROTECTED ROUTE
   next();
->>>>>>> Stashed changes
 };
 
 exports.logout = (req, res) => {
