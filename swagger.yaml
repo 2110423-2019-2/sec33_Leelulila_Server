@@ -899,10 +899,9 @@ securityDefinitions:
 
 definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
 #------------[James]---------------- 16 fucking attributes WTF!
-  User:
+  newUser:
     type: object
     required: 
-    - _id
     - email
     - password
     - confirmPasssword
@@ -910,18 +909,8 @@ definitions:  #-----------------------------------------------------------------
     - lastname
     - gender
     - birthday
-    - currentJob
-    - pendingJob
-    - notification
-    - TFvector
-    - wallet
-    - jobOwn
-    - blogOwn
-    - reviewOwn
 
     properties:
-      _id:
-        type: integer
       email:
         type: string
         format: email
@@ -938,37 +927,68 @@ definitions:  #-----------------------------------------------------------------
       birthday:
         type: string
         format: date
-      currentJob:
-        type: array
-      pendingJob:
-        type: array
-      notification:
-        type: array
-      TFvector:
-        type: array
-      wallet:
-        type: integer
-      jobOwn:
-        type: array
-      blogOwn:
-        type: array
-      reviewOwn:
-        type: array
-
-      # role:
-      #   type: string
-      #   description: User role for authorization
-      #   enum:
-      #   - admin
-      #   - customer
-      #   - photographer
-
-      # createTime:
-      #   type: string
-      #   format: time
 
     xml:
       name: User
+
+      User:
+        type: object
+        required: 
+        - _id
+        - email
+        - password
+        - confirmPasssword
+        - firstname
+        - lastname
+        - gender
+        - birthday
+        - currentJob
+        - pendingJob
+        - notification
+        - TFvector
+        - wallet
+        - jobOwn
+        - blogOwn
+        - reviewOwn
+    
+        properties:
+          _id:
+            type: integer
+          email:
+            type: string
+            format: email
+          password:
+            type: string
+          confirmPassword:
+            type: string
+          firstname:
+            type: string
+          lastname:
+            type: string
+          gender:
+            type: string
+          birthday:
+            type: string
+            format: date
+          currentJob:
+            type: array
+          pendingJob:
+            type: array
+          notification:
+            type: array
+          TFvector:
+            type: array
+          wallet:
+            type: integer
+          jobOwn:
+            type: array
+          blogOwn:
+            type: array
+          reviewOwn:
+            type: array
+    
+        xml:
+          name: User
 
 #------------[Teemo]----------------
   newBlog:
