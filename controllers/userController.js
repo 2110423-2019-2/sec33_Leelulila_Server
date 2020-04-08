@@ -2,10 +2,10 @@ const Counter = require('../models/counterModel');
 const {
   createSendToken
 } = require('./authController');
-const catchAsync = require('../utils/catchAsync');
+
 const AppError = require('../utils/appError');
 
-exports.signup = catchAsync(async (req, res, next) => {
+exports.signup = (async (req, res, next) => {
   const mongo = req.app.locals.db;
   const newUser = req.body;
 
@@ -30,7 +30,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   createSendToken(result.ops[0], 201, res);
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+exports.login = (async (req, res, next) => {
   const mongo = req.app.locals.db;
   const {
     email,
@@ -59,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(currentUser, 200, res);
 });
 
-exports.getUser = catchAsync(async (req, res, next) => {
+exports.getUser = (async (req, res, next) => {
   const mongo = req.app.locals.db;
   const id = parseInt(req.params.id);
   result = await mongo.db('CUPartTime').collection('Users').findOne({
@@ -75,7 +75,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.getUserByEmail = catchAsync(async (req, res, next) => {
+exports.getUserByEmail = (async (req, res, next) => {
   const mongo = req.app.locals.db;
   const email = req.params.email;
   result = await mongo.db('CUPartTime').collection('Users').findOne({
@@ -90,7 +90,7 @@ exports.getUserByEmail = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.updateUser = catchAsync(async (req, res, next) => {
+exports.updateUser = (async (req, res, next) => {
   const mongo = req.app.locals.db;
   const id = parseInt(req.params.id);
   result = await mongo.db('CUPartTime').collection('Users').updateOne({
