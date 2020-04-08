@@ -16,7 +16,7 @@ const app = express();
 // Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
-}
+};
 
 // Body parser, reading data from body into req.body and set Limit
 app.use(

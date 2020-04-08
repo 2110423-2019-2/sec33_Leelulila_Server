@@ -13,26 +13,11 @@ router.get('/logout', authController.logout);
 // Protect all routes after this middleware
 // router.use(authController.protect);
 
-// router.get('/me', userController.getMe, userController.getUser);
-
-// From Frontend is called put to update
-// router.put(
-//     '/updateMe',
-//     decryptController.getDecryptedData,
-//     userController.updateMe
-// );
-// router.delete('/deleteMe', userController.deleteMe);
-
 router.get('/useremail/:email', userController.getUserByEmail);
-
-// router
-//     .route('/')
-//     .get(userController.getAllUsers)
 
 router
     .route('/:id')
     .get(userController.getUser)
-    .put(decryptController.getDecryptedData, userController.updateUser)
-// .delete(userController.deleteUser);
+    .put(decryptController.getDecryptedData, userController.updateUser);
 
 module.exports = router;

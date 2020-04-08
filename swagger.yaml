@@ -977,10 +977,141 @@ definitions:  #-----------------------------------------------------------------
 
 
 #------------[Nai]----------------
-
+ job:
+    type: "object"
+    required:
+    - "_id"
+    - "JobName"
+    - "JobDetail"
+    - "Wages"
+    - "Amount"
+    - "Location"
+    - "BeginTime"
+    - "EndTime"
+    - "Date"
+    - "CurrentEmployee"
+    - "CurrentAcceptedEmployee"
+    - "Employer"
+    - "Status"
+    - "TFVector"
+    - "notify1"
+    - "notify2"
+    - "notify3"
+    properties:
+      _id:
+        type: "int32"
+      JobName:
+        type: "string"
+      JobDetail:
+        type: "string"
+      Wages:
+        type: "string"
+      Amount:
+        type: "string"
+      Location:
+        type: "string"
+      BeginTime:
+        type: "string"
+      EndTime:
+        type: "string"
+      Date:
+        type: "string"
+      CurrentEmployee:
+        type: "array"
+      CurrentAcceptedEmployee:
+        type: "array"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      TFVector:
+        type: "array"
+      notify1:
+        type: "array"
+      notify2:
+        type: "array"
+      notify3:
+        type: "array"
+    xml:
+      name: "job"
 #------------[Drive]----------------
-
+  newjob:
+    type: "object"
+    required:
+    - "JobName"
+    - "JobDetail"
+    - "Wages"
+    - "Amount"
+    - "Location"
+    - "BeginTime"
+    - "EndTime"
+    - "Date"
+    - "CurrentEmployee"
+    - "CurrentAcceptedEmployee"
+    - "Employer"
+    - "Status"
+    - "TFVector"
+    properties:
+      JobName:
+        type: "string"
+      JobDetail:
+        type: "string"
+      Wages:
+        type: "string"
+      Amount:
+        type: "string"
+      Location:
+        type: "string"
+      BeginTime:
+        type: "string"
+      EndTime:
+        type: "string"
+      Date:
+        type: "string"
+      CurrentEmployee:
+        type: "array"
+      CurrentAcceptedEmployee:
+        type: "array"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      TFVector:
+        type: "array"
+    xml:
+      name: "newjob"
 #------------[porsch]----------------
+  newreview:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      timestamp:
+        type: double
+
+  review:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      Status:
+        type: string
+      timestamp:
+        type: double
 
   Pet:
     type: "object"
