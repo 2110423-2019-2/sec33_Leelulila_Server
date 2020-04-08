@@ -300,8 +300,8 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
+      - in: ""
+        name: ""
         description: ""
         required: ""
         schema:
@@ -309,6 +309,9 @@ paths:
       responses:
         200:
           description: "successful get all blogs "
+          schema:
+          type: "array"
+            $ref: "#/definitions/blog"
         404:
           description: "Not found any blogs"
     post:
@@ -324,12 +327,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: ""
-        name: ""
+      - in: "body"
+        name: "body"
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/newBlog"
+          $ref: "#/definitions/blog"
       responses:
         201:
           description: "blog created with id"
@@ -359,6 +362,8 @@ paths:
       responses:
         200:
           description: "success to get blog"
+          schema:
+            $ref: "#/definitions/blog"
         404:
           description: "Can not get this blog with this id."
     put:
@@ -433,6 +438,9 @@ paths:
       responses:
         200:
           description: "successful to get all comments from blog by id "
+          schema:
+          type: "array"
+            $ref: "#/definitions/comment"
         404:
           description: "Can not found with this blog id."
     post:
@@ -453,7 +461,7 @@ paths:
         description: "post comment"
         required: true
         schema:
-          $ref: "#/definitions/comment"
+          $ref: "#/definitions/newComment"
       responses:
         201:
           description: "comment is created"
@@ -477,6 +485,10 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/job"
         404:
           description: "Can't get All jobs!"
     post:
@@ -497,7 +509,7 @@ paths:
         description: "newJob"
         required: true
         schema:
-          type: "array"
+          type: "object"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -519,6 +531,10 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "object"
+          items:
+            $ref: "#/definitions/job"
         404:
           description: "Can't get this job!"
     put:
@@ -534,12 +550,20 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
+      - in: "params"
+        name: "id"
+        description: "update job by id"
+        required: true
+        schema:
+          type: "int"
+          items:
+            $ref: "#/definitions/Job"
       - in: "body"
         name: "body"
         description: "jobData"
         required: true
         schema:
-          type: "array"
+          type: "object"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -562,12 +586,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "currentStatus"
+      - in: "params"
+        name: "id"
+        description: "delete job by id"
         required: true
         schema:
-          type: "array"
+          type: "int"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -588,6 +612,23 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "params"
+        name: "id"
+        description: "update job status by id"
+        required: true
+        schema:
+          type: "int"
+          items:
+            $ref: "#/definitions/Job"
+      - in: "body"
+        name: "Status"
+        description: "current status"
+        required: true
+        schema:
+          type: "string"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
@@ -705,17 +746,6 @@ paths:
       responses:
         200:
           description: "successful operation"
-          schema:
-            type: "string"
-          headers:
-            X-Rate-Limit:
-              type: "integer"
-              format: "int32"
-              description: "calls per hour allowed by the user"
-            X-Expires-After:
-              type: "string"
-              format: "date-time"
-              description: "date in UTC when token expires"
         400:
           description: "Invalid username/password supplied"
 #-------------------------------------------------------------[porsche]---------------------------------------------------------------------------
@@ -741,7 +771,7 @@ paths:
         400:
           description: ""
 
-  /api/reviews/:
+  /api/reviews:
     get:
       tags:
       - "reviews"
@@ -755,6 +785,9 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "array"
+            $ref: "#/definations/reviews"
         404:
           description: "Not found any reviews."
     post:
@@ -771,6 +804,8 @@ paths:
         name: "body"
         description: "create user review"
         required: true
+        schema:
+            $ref: "#/definitions/review"
       responses:
         200:
           description: "successful operation"
@@ -795,6 +830,9 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "review"
+            $ref: "#/definations/review"
         400:
           description: "Can not get review with this id."
     put:
@@ -933,12 +971,202 @@ definitions:  #-----------------------------------------------------------------
       name: User
 
 #------------[Teemo]----------------
+  newBlog:
+    type: "object"
+    properties:
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+
+  blog:
+    type: "object"
+    properties:
+      _id:
+        type: "integer"
+        format: "int64"
+      BlogName:
+        type: "string"
+      BlogDetail:
+        type: "string"
+      BlogImage:
+        type: "string"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      timestamp:
+        type: "double"
+      comments: 
+        type: "array"
+      comment_seq: 
+        type: "integer"  
+        format: "Int32"    
+
+  newComment:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      comment:
+        type: "string"
+
+  comment:
+    type: "object"
+    properties:
+      cid:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      comment:
+        type: "string"
+      timestamp:
+        type: "double"
+
 
 #------------[Nai]----------------
-
+ job:
+    type: "object"
+    required:
+    - "_id"
+    - "JobName"
+    - "JobDetail"
+    - "Wages"
+    - "Amount"
+    - "Location"
+    - "BeginTime"
+    - "EndTime"
+    - "Date"
+    - "CurrentEmployee"
+    - "CurrentAcceptedEmployee"
+    - "Employer"
+    - "Status"
+    - "TFVector"
+    - "notify1"
+    - "notify2"
+    - "notify3"
+    properties:
+      _id:
+        type: "int32"
+      JobName:
+        type: "string"
+      JobDetail:
+        type: "string"
+      Wages:
+        type: "string"
+      Amount:
+        type: "string"
+      Location:
+        type: "string"
+      BeginTime:
+        type: "string"
+      EndTime:
+        type: "string"
+      Date:
+        type: "string"
+      CurrentEmployee:
+        type: "array"
+      CurrentAcceptedEmployee:
+        type: "array"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      TFVector:
+        type: "array"
+      notify1:
+        type: "array"
+      notify2:
+        type: "array"
+      notify3:
+        type: "array"
+    xml:
+      name: "job"
 #------------[Drive]----------------
-
+  newjob:
+    type: "object"
+    required:
+    - "JobName"
+    - "JobDetail"
+    - "Wages"
+    - "Amount"
+    - "Location"
+    - "BeginTime"
+    - "EndTime"
+    - "Date"
+    - "CurrentEmployee"
+    - "CurrentAcceptedEmployee"
+    - "Employer"
+    - "Status"
+    - "TFVector"
+    properties:
+      JobName:
+        type: "string"
+      JobDetail:
+        type: "string"
+      Wages:
+        type: "string"
+      Amount:
+        type: "string"
+      Location:
+        type: "string"
+      BeginTime:
+        type: "string"
+      EndTime:
+        type: "string"
+      Date:
+        type: "string"
+      CurrentEmployee:
+        type: "array"
+      CurrentAcceptedEmployee:
+        type: "array"
+      Employer:
+        type: "string"
+      Status:
+        type: "string"
+      TFVector:
+        type: "array"
+    xml:
+      name: "newjob"
 #------------[porsch]----------------
+  newreview:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      timestamp:
+        type: double
+
+  review:
+    type: object
+    properties:
+      _id:
+        type: integer
+      JobName:
+        type: string
+      ReviewDetail:
+        type: string
+      Writer:
+        type: string
+        format: email
+      Status:
+        type: string
+      timestamp:
+        type: double
 
   Pet:
     type: "object"
