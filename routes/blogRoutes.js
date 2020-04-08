@@ -30,8 +30,7 @@ router
 router
     .route('/:id/comments')
     .get(blogController.getAllComments)
-    .post(decryptController.getDecryptedData, blogController.postComment)
-// .delete(blogController.deleteAllComments);
+    .post(decryptController.getDecryptedData, blogController.postComment);
 
 router
     .route('/:id/comment')

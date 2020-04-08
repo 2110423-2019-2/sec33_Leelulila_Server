@@ -284,6 +284,9 @@ paths:
       responses:
         200:
           description: "successful get all blogs "
+          schema:
+          type: "array"
+            $ref: "#/definitions/blog"
         404:
           description: "Not found any blogs"
     post:
@@ -334,6 +337,8 @@ paths:
       responses:
         200:
           description: "success to get blog"
+          schema:
+            $ref: "#/definitions/blog"
         404:
           description: "Can not get this blog with this id."
     put:
@@ -408,6 +413,9 @@ paths:
       responses:
         200:
           description: "successful to get all comments from blog by id "
+          schema:
+          type: "array"
+            $ref: "#/definitions/comment"
         404:
           description: "Can not found with this blog id."
     post:
@@ -428,7 +436,7 @@ paths:
         description: "post comment"
         required: true
         schema:
-          $ref: "#/definitions/comment"
+          $ref: "#/definitions/newComment"
       responses:
         201:
           description: "comment is created"
@@ -934,6 +942,28 @@ definitions:  #-----------------------------------------------------------------
       comment_seq: 
         type: "integer"  
         format: "Int32"    
+
+  newComment:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      comment:
+        type: "string"
+
+  comment:
+    type: "object"
+    properties:
+      cid:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      comment:
+        type: "string"
+      timestamp:
+        type: "double"
+
 
 #------------[Nai]----------------
  job:

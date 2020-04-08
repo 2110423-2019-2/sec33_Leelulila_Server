@@ -1,4 +1,4 @@
-exports.jobNotify = (async (mongo, jobId, email, type) => {
+exports.jobNotify = async (mongo, jobId, email, type) => {
   try {
     const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
       _id: jobId,
@@ -37,13 +37,16 @@ exports.jobNotify = (async (mongo, jobId, email, type) => {
     const result = await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateMany({
-        email,
-      }, {
-        $push: {
-          notification: payload,
+      .updateMany(
+        {
+          email,
         },
-      });
+        {
+          $push: {
+            notification: payload,
+          },
+        }
+      );
     if (result) {
       console.log('Successfully notify to', email);
     } else {
@@ -52,10 +55,9 @@ exports.jobNotify = (async (mongo, jobId, email, type) => {
   } catch (err) {
     throw new Error(err.message);
   }
+};
 
-});
-
-exports.notifyIncomingJob = (async (mongo) => {
+exports.notifyIncomingJob = async (mongo) => {
   try {
     const allJobs = await mongo.db('CUPartTime').collection('Job').find({});
     //console.log(find)
@@ -97,42 +99,51 @@ exports.notifyIncomingJob = (async (mongo) => {
               const result = await mongo
                 .db('CUPartTime')
                 .collection('Users')
-                .updateMany({
-                  email: {
-                    $in: emails,
+                .updateMany(
+                  {
+                    email: {
+                      $in: emails,
+                    },
                   },
-                }, {
-                  $push: {
-                    notification: payload,
-                  },
-                });
+                  {
+                    $push: {
+                      notification: payload,
+                    },
+                  }
+                );
               if (result.modifiedCount > 0) {
                 console.log('notified', msg);
               }
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $pull: {
-                    notify1: {
-                      $in: emails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $pull: {
+                      notify1: {
+                        $in: emails,
+                      },
+                    },
+                  }
+                );
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $push: {
-                    notify2: {
-                      $each: emails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $push: {
+                      notify2: {
+                        $each: emails,
+                      },
+                    },
+                  }
+                );
             } else if (length < 86400000 && length > 43200000) {
               let nmails = [];
               if (jobs.notify1.length > 0) {
@@ -140,27 +151,33 @@ exports.notifyIncomingJob = (async (mongo) => {
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $pull: {
-                      notify1: {
-                        $in: nmails,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $pull: {
+                        notify1: {
+                          $in: nmails,
+                        },
+                      },
+                    }
+                  );
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $push: {
-                      notify2: {
-                        $each: nmails,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $push: {
+                        notify2: {
+                          $each: nmails,
+                        },
+                      },
+                    }
+                  );
               }
               const emails = jobs.notify2.concat(nmails);
               msg = 'Your work at ' + jobs.job.JobName + ' starts in 1 day';
@@ -172,42 +189,51 @@ exports.notifyIncomingJob = (async (mongo) => {
               const result = await mongo
                 .db('CUPartTime')
                 .collection('Users')
-                .updateMany({
-                  email: {
-                    $in: emails,
+                .updateMany(
+                  {
+                    email: {
+                      $in: emails,
+                    },
                   },
-                }, {
-                  $push: {
-                    notification: payload,
-                  },
-                });
+                  {
+                    $push: {
+                      notification: payload,
+                    },
+                  }
+                );
               if (result.modifiedCount > 0) {
                 console.log('notified', msg);
               }
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $pull: {
-                    notify2: {
-                      $in: emails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $pull: {
+                      notify2: {
+                        $in: emails,
+                      },
+                    },
+                  }
+                );
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $push: {
-                    notify3: {
-                      $each: emails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $push: {
+                      notify3: {
+                        $each: emails,
+                      },
+                    },
+                  }
+                );
             } else if (length < 43200000) {
               let nmails1 = [];
               let nmails2 = [];
@@ -216,27 +242,33 @@ exports.notifyIncomingJob = (async (mongo) => {
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $pull: {
-                      notify1: {
-                        $in: nmails1,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $pull: {
+                        notify1: {
+                          $in: nmails1,
+                        },
+                      },
+                    }
+                  );
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $push: {
-                      notify3: {
-                        $each: nmails1,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $push: {
+                        notify3: {
+                          $each: nmails1,
+                        },
+                      },
+                    }
+                  );
                 console.log('eiei');
               }
               if (jobs.notify2.length > 0) {
@@ -244,27 +276,33 @@ exports.notifyIncomingJob = (async (mongo) => {
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $pull: {
-                      notify2: {
-                        $in: nmails2,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $pull: {
+                        notify2: {
+                          $in: nmails2,
+                        },
+                      },
+                    }
+                  );
                 await mongo
                   .db('CUPartTime')
                   .collection('Job')
-                  .updateOne({
-                    _id: jobs._id,
-                  }, {
-                    $push: {
-                      notify3: {
-                        $each: nmails2,
-                      },
+                  .updateOne(
+                    {
+                      _id: jobs._id,
                     },
-                  });
+                    {
+                      $push: {
+                        notify3: {
+                          $each: nmails2,
+                        },
+                      },
+                    }
+                  );
               }
               let emails = jobs.notify3.concat(nmails1);
               emails = emails.concat(nmails2);
@@ -278,27 +316,33 @@ exports.notifyIncomingJob = (async (mongo) => {
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $pull: {
-                    notify3: {
-                      $in: emails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $pull: {
+                      notify3: {
+                        $in: emails,
+                      },
+                    },
+                  }
+                );
               const result3 = await mongo
                 .db('CUPartTime')
                 .collection('Users')
-                .updateMany({
-                  email: {
-                    $in: emails,
+                .updateMany(
+                  {
+                    email: {
+                      $in: emails,
+                    },
                   },
-                }, {
-                  $push: {
-                    notification: payload,
-                  },
-                });
+                  {
+                    $push: {
+                      notification: payload,
+                    },
+                  }
+                );
 
               if (result3.modifiedCount > 0) {
                 console.log('successfully notify 12 hours');
@@ -311,54 +355,66 @@ exports.notifyIncomingJob = (async (mongo) => {
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $pull: {
-                    notify1: {
-                      $in: nmails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $pull: {
+                      notify1: {
+                        $in: nmails,
+                      },
+                    },
+                  }
+                );
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $push: {
-                    notify3: {
-                      $each: nmails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $push: {
+                      notify3: {
+                        $each: nmails,
+                      },
+                    },
+                  }
+                );
             }
             if (jobs.notify2.length > 0) {
               const nmails = jobs.notify2;
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $pull: {
-                    notify2: {
-                      $in: nmails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $pull: {
+                      notify2: {
+                        $in: nmails,
+                      },
+                    },
+                  }
+                );
               await mongo
                 .db('CUPartTime')
                 .collection('Job')
-                .updateOne({
-                  _id: jobs._id,
-                }, {
-                  $push: {
-                    notify3: {
-                      $each: nmails,
-                    },
+                .updateOne(
+                  {
+                    _id: jobs._id,
                   },
-                });
+                  {
+                    $push: {
+                      notify3: {
+                        $each: nmails,
+                      },
+                    },
+                  }
+                );
             }
           }
         }
@@ -367,13 +423,12 @@ exports.notifyIncomingJob = (async (mongo) => {
         console.log('job corrupted');
       }
     });
-
   } catch (err) {
     throw new Error(err.message);
   }
-});
+};
 
-exports.notifyMany = (async (mongo, email, msg) => {
+exports.notifyMany = async (mongo, email, msg) => {
   try {
     const payload = {
       timestamp: Date.now(),
@@ -383,15 +438,18 @@ exports.notifyMany = (async (mongo, email, msg) => {
     const result = await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateMany({
-        email: {
-          $in: email,
+      .updateMany(
+        {
+          email: {
+            $in: email,
+          },
         },
-      }, {
-        $push: {
-          notification: payload,
-        },
-      });
+        {
+          $push: {
+            notification: payload,
+          },
+        }
+      );
     if (result) {
       console.log('notified the users', result.modifiedCount);
     } else {
@@ -400,22 +458,28 @@ exports.notifyMany = (async (mongo, email, msg) => {
   } catch (err) {
     throw new Error(err.message);
   }
-});
+};
 
-exports.notifyPayload = (async (mongo, email, payload) => {
+exports.notifyPayload = async (mongo, email, payload) => {
   try {
     const result = await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateMany({
-        email: {
-          $in: email,
+      .updateMany(
+        {
+          email: {
+            $in: email,
+          },
         },
-      }, {
-        $push: {
-          notification: payload,
-        },
-      });
+        {
+          $push: {
+            notification: payload,
+          },
+        }
+      );
+    // console.log('notify: ',
+    //   result);
+
     if (result) {
       console.log('notified the users', result.modifiedCount, payload.string);
     } else {
@@ -424,4 +488,4 @@ exports.notifyPayload = (async (mongo, email, payload) => {
   } catch (err) {
     throw new Error(err.message);
   }
-});
+};
