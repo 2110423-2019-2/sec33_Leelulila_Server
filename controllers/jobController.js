@@ -21,36 +21,30 @@ exports.updateJobStatus = async (req, res, next) => {
         pending = await mongo
           .db('CUPartTime')
           .collection('Users')
-          .updateMany(
-            {
-              email: {
-                $in: pendingList,
-              },
+          .updateMany({
+            email: {
+              $in: pendingList,
             },
-            {
-              $pull: {
-                pendingJob: _id,
-              },
-            }
-          );
+          }, {
+            $pull: {
+              pendingJob: _id,
+            },
+          });
         currentJob.job.CurrentEmployee = [];
       } else if (currentStatus == 'Finish') {
         acceptedList = currentJob.job.CurrentAcceptedEmployee;
         await mongo
           .db('CUPartTime')
           .collection('Users')
-          .updateMany(
-            {
-              email: {
-                $in: acceptedList,
-              },
+          .updateMany({
+            email: {
+              $in: acceptedList,
             },
-            {
-              $pull: {
-                currentJob: _id,
-              },
-            }
-          );
+          }, {
+            $pull: {
+              currentJob: _id,
+            },
+          });
         currentJob.job.CurrentAcceptedEmployee = [];
       } else {
         return next(
@@ -60,14 +54,11 @@ exports.updateJobStatus = async (req, res, next) => {
           )
         );
       }
-      const result = await mongo.db('CUPartTime').collection('Job').updateOne(
-        {
-          _id,
-        },
-        {
-          $set: currentJob,
-        }
-      );
+      const result = await mongo.db('CUPartTime').collection('Job').updateOne({
+        _id,
+      }, {
+        $set: currentJob,
+      });
 
       if (result) {
         console.log(
@@ -119,16 +110,13 @@ exports.createJob = async (req, res, next) => {
     await mongo
       .db('CUPartTime')
       .collection('Users')
-      .updateOne(
-        {
-          email: newJob.Employer,
+      .updateOne({
+        email: newJob.Employer,
+      }, {
+        $push: {
+          jobOwn: sequenceValue,
         },
-        {
-          $push: {
-            jobOwn: sequenceValue,
-          },
-        }
-      );
+      });
     console.log(`New Job created with the following id: ${result.insertedId}`);
     res.status(201).json(result);
   } catch (err) {
@@ -179,14 +167,11 @@ exports.updateJob = async (req, res, next) => {
         currentJob.job.Date = jobData.Date;
         currentJob.job.EndTime = jobData.EndTime;
         //console.log(currentJob.job)
-        const result = await mongo.db('CUPartTime').collection('Job').updateOne(
-          {
-            _id,
-          },
-          {
-            $set: currentJob,
-          }
-        );
+        const result = await mongo.db('CUPartTime').collection('Job').updateOne({
+          _id,
+        }, {
+          $set: currentJob,
+        });
 
         if (result) {
           res.status(200).json(result);
@@ -227,46 +212,37 @@ exports.deleteJob = async (req, res, next) => {
       const pending = await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateMany(
-          {
-            email: {
-              $in: pendingList,
-            },
+        .updateMany({
+          email: {
+            $in: pendingList,
           },
-          {
-            $pull: {
-              pendingJob: id,
-            },
-          }
-        );
+        }, {
+          $pull: {
+            pendingJob: id,
+          },
+        });
       const accepted = await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateMany(
-          {
-            email: {
-              $in: acceptedList,
-            },
+        .updateMany({
+          email: {
+            $in: acceptedList,
           },
-          {
-            $pull: {
-              currentJob: id,
-            },
-          }
-        );
+        }, {
+          $pull: {
+            currentJob: id,
+          },
+        });
       await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateOne(
-          {
-            email: employer,
+        .updateOne({
+          email: employer,
+        }, {
+          $pull: {
+            jobOwn: id,
           },
-          {
-            $pull: {
-              jobOwn: id,
-            },
-          }
-        );
+        });
       await notification.notifyMany(
         mongo,
         pendingList,
@@ -302,16 +278,13 @@ exports.updateEmployeeByEmail = async (req, res, next) => {
       const updatedUser = await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateOne(
-          {
-            email,
+        .updateOne({
+          email,
+        }, {
+          $push: {
+            pendingJob: _id,
           },
-          {
-            $push: {
-              pendingJob: _id,
-            },
-          }
-        );
+        });
       await suggestion.addTFvector(mongo, email, currentJob.job.TFvector);
       console.log(updatedUser.modifiedCount);
       if (updatedUser.matchedCount == 0) {
@@ -321,14 +294,11 @@ exports.updateEmployeeByEmail = async (req, res, next) => {
       }
       currentJob.job.CurrentEmployee.push(email);
       console.log(currentJob);
-      const result = await mongo.db('CUPartTime').collection('Job').updateOne(
-        {
-          _id,
-        },
-        {
-          $set: currentJob,
-        }
-      );
+      const result = await mongo.db('CUPartTime').collection('Job').updateOne({
+        _id,
+      }, {
+        $set: currentJob,
+      });
       await notification.jobNotify(mongo, _id, currentJob.job.Employer, 0);
       console.log(
         `${result.matchedCount} document(s) matched the query criteria.`
@@ -351,10 +321,12 @@ exports.deleteEmployee = async (req, res, next) => {
   try {
     const mongo = req.app.locals.db;
     const jobId = parseInt(req.params.id);
-    const email = req.body;
+    const email = req.body.Email;
+
     const currentJob = await mongo.db('CUPartTime').collection('Job').findOne({
       _id: jobId,
-    });
+    })
+
     if (currentJob.job.CurrentEmployee) {
       // input email in current employee
       const idx = currentJob.job.CurrentEmployee.indexOf(email);
@@ -364,14 +336,11 @@ exports.deleteEmployee = async (req, res, next) => {
       } else {
         return next(new AppError('This job has no current employee.', 404));
       }
-      const result = await mongo.db('CUPartTime').collection('Job').updateOne(
-        {
-          _id: jobId,
-        },
-        {
-          $set: currentJob,
-        }
-      );
+      const result = await mongo.db('CUPartTime').collection('Job').updateOne({
+        _id: jobId,
+      }, {
+        $set: currentJob,
+      });
       await notification.jobNotify(mongo, jobId, email, 1);
       res.status(200).json(result);
     } else {
@@ -403,16 +372,13 @@ exports.updateAcceptedEmployeeByEmail = async (req, res, next) => {
       const updatedUser = await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateOne(
-          {
-            email,
+        .updateOne({
+          email,
+        }, {
+          $pull: {
+            pendingJob: _id,
           },
-          {
-            $pull: {
-              pendingJob: _id,
-            },
-          }
-        );
+        });
       if (updatedUser.matchedCount == 0) {
         return next(new AppError('Not found user with the email', 404));
       }
@@ -420,16 +386,13 @@ exports.updateAcceptedEmployeeByEmail = async (req, res, next) => {
       await mongo
         .db('CUPartTime')
         .collection('Users')
-        .updateOne(
-          {
-            email,
+        .updateOne({
+          email,
+        }, {
+          $push: {
+            currentJob: _id,
           },
-          {
-            $push: {
-              currentJob: _id,
-            },
-          }
-        );
+        });
       const idx = currentJob.job.CurrentEmployee.indexOf(email);
       // console.log(email);
       if (idx > -1) {
@@ -438,27 +401,21 @@ exports.updateAcceptedEmployeeByEmail = async (req, res, next) => {
       //push to job after everything is confirmed
       currentJob.job.CurrentAcceptedEmployee.push(email);
       console.log(currentJob.job.CurrentAcceptedEmployee);
-      const result = await mongo.db('CUPartTime').collection('Job').updateOne(
-        {
-          _id,
-        },
-        {
-          $set: currentJob,
-        }
-      );
+      const result = await mongo.db('CUPartTime').collection('Job').updateOne({
+        _id,
+      }, {
+        $set: currentJob,
+      });
       await mongo
         .db('CUPartTime')
         .collection('Job')
-        .updateOne(
-          {
-            _id,
+        .updateOne({
+          _id,
+        }, {
+          $push: {
+            notify1: email,
           },
-          {
-            $push: {
-              notify1: email,
-            },
-          }
-        );
+        });
       await notification.jobNotify(mongo, _id, email, 2);
       console.log(
         `${result.matchedCount} document(s) matched the query criteria.`

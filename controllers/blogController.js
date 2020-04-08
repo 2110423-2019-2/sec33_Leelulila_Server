@@ -200,7 +200,7 @@ exports.postComment = async (req, res, next) => {
 
       if (currentBlog.Employer !== currentUser.email) {
         await notification.notifyPayload(mongo, [currentBlog.Employer], payload);
-      };
+      }
 
       console.log('comment', cid, 'added');
       // res.json(`${result.modifiedCount} commented`)
