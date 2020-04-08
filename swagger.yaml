@@ -716,7 +716,7 @@ paths:
         400:
           description: ""
 
-  /api/reviews/:
+  /api/reviews:
     get:
       tags:
       - "reviews"
@@ -730,6 +730,9 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "array"
+            $ref: "#/definations/reviews"
         404:
           description: "Not found any reviews."
     post:
@@ -746,6 +749,8 @@ paths:
         name: "body"
         description: "create user review"
         required: true
+        schema:
+            $ref: "#/definitions/review"
       responses:
         200:
           description: "successful operation"
@@ -770,6 +775,9 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "review"
+            $ref: "#/definations/review"
         400:
           description: "Can not get review with this id."
     put:
