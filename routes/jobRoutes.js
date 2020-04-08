@@ -8,7 +8,6 @@ const router = express.Router();
 router
   .route('/')
   .get(jobController.getAllJobs)
-  // Frontend will called /newjob
   .post(
     decryptController.getDecryptedData,
     authController.protect,
@@ -26,7 +25,6 @@ router
 
 router
   .route('/jobstatus/:id')
-  // .get(jobController.getJobStatus)
   .put(decryptController.getDecryptedData, authController.protect, jobController.updateJobStatus);
 
 router
