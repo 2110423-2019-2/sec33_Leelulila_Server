@@ -460,6 +460,10 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "array"
+          items:
+            $ref: "#/definitions/job"
         404:
           description: "Can't get All jobs!"
     post:
@@ -480,7 +484,7 @@ paths:
         description: "newJob"
         required: true
         schema:
-          type: "array"
+          type: "object"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -502,6 +506,10 @@ paths:
       responses:
         200:
           description: "successful operation"
+          schema:
+          type: "object"
+          items:
+            $ref: "#/definitions/job"
         404:
           description: "Can't get this job!"
     put:
@@ -517,12 +525,20 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
+      - in: "params"
+        name: "id"
+        description: "update job by id"
+        required: true
+        schema:
+          type: "int"
+          items:
+            $ref: "#/definitions/Job"
       - in: "body"
         name: "body"
         description: "jobData"
         required: true
         schema:
-          type: "array"
+          type: "object"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -545,12 +561,12 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "body"
-        name: "body"
-        description: "currentStatus"
+      - in: "params"
+        name: "id"
+        description: "delete job by id"
         required: true
         schema:
-          type: "array"
+          type: "int"
           items:
             $ref: "#/definitions/Job"
       responses:
@@ -571,6 +587,23 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
+      parameters:
+      - in: "params"
+        name: "id"
+        description: "update job status by id"
+        required: true
+        schema:
+          type: "int"
+          items:
+            $ref: "#/definitions/Job"
+      - in: "body"
+        name: "Status"
+        description: "current status"
+        required: true
+        schema:
+          type: "string"
+          items:
+            $ref: "#/definitions/Job"
       responses:
         200:
           description: "successful operation"
