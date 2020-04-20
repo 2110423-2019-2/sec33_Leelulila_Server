@@ -13,3 +13,10 @@ exports.getDecryptedData = (req, res, next) => {
   }
   next();
 };
+
+exports.encryptedData = data => {
+  if (process.env.NODE_ENV === 'development') {
+    data = CryptoJS.AES.encrypt(JSON.stringify(data), '123456').toString();
+  }
+  return data;
+};
