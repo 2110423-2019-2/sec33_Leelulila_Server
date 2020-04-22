@@ -59,7 +59,7 @@ exports.makeTransaction = async (req, res, next) => {
         status: 2,
       };
       await notification.notifyPayload(mongo, emails, payload);*/
-      const notiReview = new noti.ReviewNotification(jobId, jobName)
+      const notiReview = new noti.ReviewNotification(jobId, currentJob.job.JobName)
       notiReview.notify(mongo, emails)
       if (result) {
         await jobController.updateJobStatus(mongo, jobId, 'Finish', res);

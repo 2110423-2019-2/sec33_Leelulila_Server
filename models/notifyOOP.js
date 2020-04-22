@@ -153,7 +153,7 @@ exports.ReviewNotification = class extends Notification{
         super();
         this.jobName = jobName;
         this.jobId = jobId;
-        this.text = "Review " + this.JobName +  "?";
+        this.text = "Review " + this.jobName +  " ?";
         this.status = 2;
     }
 
