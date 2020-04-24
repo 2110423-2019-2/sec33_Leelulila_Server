@@ -1,0 +1,1676 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is an api for CUPartTime Project",
+    "version": "1.0.0",
+    "title": "CUPartTime",
+    "license": {
+      "name": "ISC",
+      "url": "https://opensource.org/licenses/ISC"
+    }
+  },
+  "host": "localhost:9000",
+  "basePath": "/api/api-docs",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Operations about user"
+    },
+    {
+      "name": "job",
+      "description": "Operations about job"
+    },
+    {
+      "name": "cash",
+      "description": "Operations about cash"
+    },
+    {
+      "name": "notification",
+      "description": "Operations about notify"
+    },
+    {
+      "name": "blogs",
+      "description": "Operations about blog"
+    },
+    {
+      "name": "reviews",
+      "description": "Operations about review"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/api/user/signup": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Add a new user to the database",
+        "description": "",
+        "operationId": "signup",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be added to the database",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Create user successfully"
+          },
+          "400": {
+            "description": "Invalid Input"
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Create token to user that have login into system",
+        "description": "",
+        "operationId": "login",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User that have login into the system",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User login successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Incorrect email or password"
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Expires token that give to user when logout from the system",
+        "description": "User that have logout into the system",
+        "operationId": "logout",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful logout",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/api/user/:id": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Finds User by ID",
+        "description": "Find user by ID",
+        "operationId": "getUser",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UserID to filter by",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid tag value"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update User by ID",
+        "description": "update user by ID",
+        "operationId": "updateUser",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UserID to filter by",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tag value"
+          }
+        }
+      }
+    },
+    "/api/user/useremail/:email": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Find user by email",
+        "description": "Returns a single user",
+        "operationId": "getUserByEmail",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "email of user to return",
+            "required": true,
+            "type": "string",
+            "format": "email"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/api/blogs/": {
+      "get": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "get all blogs",
+        "description": "",
+        "operationId": "get all blogs",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful get all blogs ",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/blog"
+              }
+            }
+          },
+          "404": {
+            "description": "Not found any blogs"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "create blog",
+        "description": "",
+        "operationId": "create blog",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newBlog"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "blog created with id"
+          },
+          "404": {
+            "description": "Fail to create a blog"
+          }
+        }
+      }
+    },
+    "/api/blogs/:id": {
+      "get": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "get blogs by id",
+        "description": "",
+        "operationId": "get blog",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of blog",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success to get blog",
+            "schema": {
+              "$ref": "#/definitions/blog"
+            }
+          },
+          "404": {
+            "description": "Can not get this blog with this id."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "edit blog information",
+        "description": "",
+        "operationId": "edit blog",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of blog",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful edit blog by id "
+          },
+          "404": {
+            "description": "Not found this blog with id"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "delete blog",
+        "description": "",
+        "operationId": "delete blog by id",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of blog",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful to delete blog by id "
+          },
+          "404": {
+            "description": "Not found this blog with id"
+          }
+        }
+      }
+    },
+    "/api/blogs/:id/comments": {
+      "get": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "get all comments in blog by id",
+        "description": "",
+        "operationId": "getAllComments",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of blog",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful to get all comments from blog by id ",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/comment"
+              }
+            }
+          },
+          "404": {
+            "description": "Can not found with this blog id."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "blogs"
+        ],
+        "summary": "post comment in blog",
+        "description": "",
+        "operationId": "postComment",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "post comment",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newComment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "comment is created"
+          },
+          "404": {
+            "description": "Fail to comment on this blog."
+          }
+        }
+      }
+    },
+    "/api/jobs/": {
+      "get": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Get all jobs",
+        "description": "Get all jobs from mogoDB",
+        "operationId": "getAllJobs",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/job"
+              }
+            }
+          },
+          "404": {
+            "description": "Can't get All jobs!"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Create job",
+        "description": "Create job and add it to mongoDB",
+        "operationId": "createJob",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "newJob",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newjob"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/jobs/:id": {
+      "get": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Get job by id",
+        "description": "Return job by id from mongoDB",
+        "operationId": "getJob",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of job",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/job"
+            }
+          },
+          "404": {
+            "description": "Can't get this job!"
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Update job",
+        "description": "Update job information on mongoDB",
+        "operationId": "updateJob",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "update job by id",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "jobData",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/job"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Please provide enough information."
+          },
+          "404": {
+            "description": "Can't update this job."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Delete job",
+        "description": "Delete job from mongoDB",
+        "operationId": "deleteJob",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "delete job by id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Not found this job!"
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/jobs/jobstatus/:id": {
+      "put": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Update job status",
+        "description": "Update job information on mongoDB",
+        "operationId": "updateJobStatus",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "update job status by id",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "Status",
+            "description": "current status",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Status": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "This status don't match with criteria."
+          },
+          "404": {
+            "description": "Can't updata this job status."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/jobs/employee/:id": {
+      "put": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Push Employee Email To Array Of CurrentEmployee DB",
+        "description": "",
+        "operationId": "updateEmployeeByEmail",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of job",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "Email",
+            "description": "employeeEmail",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "${result.matchedCount} document(s) matched the query criteria"
+          },
+          "400": {
+            "description": "Not found user with the email: ${email}"
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "job"
+        ],
+        "summary": "Delete Applicant In CurrentEmlpoyee DB",
+        "description": "",
+        "operationId": "deleteUserfromCurrentEmployee",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of job",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "Email",
+            "description": "employeeEmail",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "This job has no current employee."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/jobs/:id/addAcceptedEmployee": {
+      "put": {
+        "tags": [
+          "job"
+        ],
+        "summary": "add employee who apply job to acceptedemployee DB",
+        "description": "",
+        "operationId": "updateAcceptedEmployeeByEmail",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "id of job",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "Email",
+            "description": "employeeEmail",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "No document(s) matched the query criteria."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/wallet/job/:id": {
+      "post": {
+        "tags": [
+          "cash"
+        ],
+        "summary": "Employer pay for emlpoyees",
+        "description": "",
+        "operationId": "makeTransaction",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "The user name for login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password for login in clear text",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid username/password supplied"
+          }
+        }
+      }
+    },
+    "/api/read": {
+      "get": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "read notification",
+        "description": "",
+        "operationId": "readNotification",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Email",
+            "description": "Email of user who read noti",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/reviews": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "Get all reviews",
+        "description": "",
+        "operationId": "getAllReviews",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/review"
+              }
+            }
+          },
+          "404": {
+            "description": "Not found any reviews."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "create review",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createReview",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "create user review",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newreview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "404": {
+            "description": "Can not create a review."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    },
+    "/api/reviews/:id": {
+      "get": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "get review",
+        "description": "get review with this id",
+        "operationId": "getReview",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id for create review",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/review"
+            }
+          },
+          "400": {
+            "description": "Can not get review with this id."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "reviews"
+        ],
+        "summary": "update review",
+        "description": "ีupdate review with this id",
+        "operationId": "updateReview",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID for update review",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "update user review",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newreview"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Cannot edit this review."
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "delete user review",
+        "description": "delete review with this ID",
+        "operationId": "deleteReview",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "description": "ID for delete review",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Can not delete this review"
+          }
+        },
+        "security": [
+          {
+            "auth": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "auth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "auth": []
+    }
+  ],
+  "definitions": {
+    "newUser": {
+      "type": "object",
+      "required": [
+        "email",
+        "password",
+        "confirmPasssword",
+        "firstname",
+        "lastname",
+        "gender",
+        "birthday"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "_id",
+        "email",
+        "password",
+        "confirmPasssword",
+        "firstname",
+        "lastname",
+        "gender",
+        "birthday",
+        "currentJob",
+        "pendingJob",
+        "notification",
+        "TFvector",
+        "wallet",
+        "jobOwn",
+        "blogOwn",
+        "reviewOwn"
+      ],
+      "properties": {
+        "_id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "firstname": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string",
+          "format": "date"
+        },
+        "currentJob": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "pendingJob": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "notification": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": {
+                "type": "integer"
+              },
+              "string": {
+                "type": "string"
+              },
+              "status": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "TFvector": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "wallet": {
+          "type": "integer"
+        },
+        "jobOwn": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "blogOwn": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "reviewOwn": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "newBlog": {
+      "type": "object",
+      "properties": {
+        "BlogName": {
+          "type": "string"
+        },
+        "BlogDetail": {
+          "type": "string"
+        },
+        "BlogImage": {
+          "type": "string"
+        },
+        "Employer": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "string"
+        }
+      }
+    },
+    "blog": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "BlogName": {
+          "type": "string"
+        },
+        "BlogDetail": {
+          "type": "string"
+        },
+        "BlogImage": {
+          "type": "string"
+        },
+        "Employer": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/comment"
+          }
+        },
+        "comment_seq": {
+          "type": "integer",
+          "format": "Int32"
+        }
+      }
+    },
+    "newComment": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    },
+    "comment": {
+      "type": "object",
+      "properties": {
+        "cid": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        }
+      }
+    },
+    "job": {
+      "type": "object",
+      "required": [
+        "_id",
+        "JobName",
+        "JobDetail",
+        "Wages",
+        "Amount",
+        "Location",
+        "BeginTime",
+        "EndTime",
+        "Date",
+        "CurrentEmployee",
+        "CurrentAcceptedEmployee",
+        "Employer",
+        "Status",
+        "TFVector",
+        "notify1",
+        "notify2",
+        "notify3"
+      ],
+      "properties": {
+        "_id": {
+          "type": "integer"
+        },
+        "JobName": {
+          "type": "string"
+        },
+        "JobDetail": {
+          "type": "string"
+        },
+        "Wages": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "BeginTime": {
+          "type": "string"
+        },
+        "EndTime": {
+          "type": "string"
+        },
+        "Date": {
+          "type": "string"
+        },
+        "CurrentEmployee": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "CurrentAcceptedEmployee": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "Employer": {
+          "type": "string",
+          "format": "email"
+        },
+        "Status": {
+          "type": "string"
+        },
+        "TFVector": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "notify1": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "notify2": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "notify3": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      }
+    },
+    "newjob": {
+      "type": "object",
+      "required": [
+        "JobName",
+        "JobDetail",
+        "Wages",
+        "Amount",
+        "Location",
+        "BeginTime",
+        "EndTime",
+        "Date",
+        "CurrentEmployee",
+        "CurrentAcceptedEmployee",
+        "Employer",
+        "Status",
+        "TFVector"
+      ],
+      "properties": {
+        "JobName": {
+          "type": "string"
+        },
+        "JobDetail": {
+          "type": "string"
+        },
+        "Wages": {
+          "type": "string"
+        },
+        "Amount": {
+          "type": "string"
+        },
+        "Location": {
+          "type": "string"
+        },
+        "BeginTime": {
+          "type": "string"
+        },
+        "EndTime": {
+          "type": "string"
+        },
+        "Date": {
+          "type": "string"
+        },
+        "CurrentEmployee": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "CurrentAcceptedEmployee": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "Employer": {
+          "type": "string",
+          "format": "email"
+        },
+        "Status": {
+          "type": "string"
+        },
+        "TFVector": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "newreview": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "integer"
+        },
+        "JobName": {
+          "type": "string"
+        },
+        "ReviewDetail": {
+          "type": "string"
+        },
+        "Writer": {
+          "type": "string",
+          "format": "email"
+        },
+        "timestamp": {
+          "type": "integer"
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "integer"
+        },
+        "JobName": {
+          "type": "string"
+        },
+        "ReviewDetail": {
+          "type": "string"
+        },
+        "Writer": {
+          "type": "string",
+          "format": "email"
+        },
+        "Status": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

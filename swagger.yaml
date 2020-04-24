@@ -7,7 +7,7 @@ info:
     name: "ISC"
     url: "https://opensource.org/licenses/ISC"
 host: "localhost:9000"
-basePath: "/v2"
+basePath: "/api/api-docs"
 tags:
 - name: "user"
   description: "Operations about user"
@@ -15,18 +15,18 @@ tags:
   description: "Operations about job"
 - name: "cash"
   description: "Operations about cash"
-- name: "notify"
+- name: "notification"
   description: "Operations about notify"
-- name: "blog"
+- name: "blogs"
   description: "Operations about blog"
-- name: "review"
+- name: "reviews"
   description: "Operations about review"
 
 schemes:
 - "https"
 - "http"
 
-#-------------------------------------------------------------[JAMES]---------------------------------------------------------------------------
+# #-------------------------------------------------------------[JAMES]---------------------------------------------------------------------------
 paths:
   /api/user/signup:
     post:
@@ -74,26 +74,26 @@ paths:
         required: true
         schema:
             type: object
-              required: 
+            properties:
+              email:
+                type: string
+                format: email
+              password:
+                type: string
+            required: 
               - email
               - password
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
 
       responses:
         200:
           description: "User login successfully"
           schema:
             type: object
-              properties:
-                status:
-                  type: string
-                data:
-                  $ref: "#/definitions/User"
+            properties:
+              status:
+                type: string
+              data:
+                $ref: "#/definitions/User"
         404:
           description: "Incorrect email or password"
 
@@ -112,15 +112,11 @@ paths:
           description: "successful logout"
           schema:
             type: object
-              properties:
-                status:
-                  type: string
+            properties:
+              status:
+                type: string
         400:
           description: "Invalid status value"
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
 
   /api/user/:id:
     get:
@@ -134,7 +130,7 @@ paths:
       - "application/json"
       parameters:
       - name: "id"
-        in: "parameters"
+        in: "path"
         description: "UserID to filter by"
         required: true
         type: "integer"
@@ -158,7 +154,7 @@ paths:
       - "application/json"
       parameters:
       - name: "id"
-        in: "parameters"
+        in: "path"
         description: "UserID to filter by"
         required: true
         type: "integer"
@@ -168,11 +164,11 @@ paths:
           description: "successful operation"
           schema:
             type: object
-              properties:
-                status:
-                  type: string
-                data:
-                  $ref: "#/definitions/User"
+            properties:
+              status:
+                type: string
+              data:
+                $ref: "#/definitions/User"
         400:
           description: "Invalid tag value"
   
@@ -188,7 +184,7 @@ paths:
       - "application/json"
       parameters:
       - name: "email"
-        in: "parameters"
+        in: "path"
         description: "email of user to return"
         required: true
         type: "string"
@@ -203,7 +199,7 @@ paths:
         404:
           description: "User not found"
 
-#------------------------------------------------------------------ [Teemo] ------------------------------------------------------------------
+# #------------------------------------------------------------------ [Teemo] ------------------------------------------------------------------
   /api/blogs/:
     get:
       tags:
@@ -217,20 +213,13 @@ paths:
       produces:
       - "application/xml"
       - "application/json"
-      parameters:
-      - in: ""
-        name: ""
-        description: ""
-        required: ""
-        schema:
-          $ref: ""
       responses:
         200:
           description: "successful get all blogs "
           schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/blog"
+            type: "array"
+            items:
+              $ref: "#/definitions/blog"
         404:
           description: "Not found any blogs"
     post:
@@ -251,7 +240,7 @@ paths:
         description: ""
         required: true
         schema:
-          $ref: "#/definitions/newblog"
+          $ref: "#/definitions/newBlog"
       responses:
         201:
           description: "blog created with id"
@@ -272,8 +261,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "param"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of blog"
         required: true
       responses:
@@ -296,8 +286,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "param"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of blog"
         required: true
       responses:
@@ -318,8 +309,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "param"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of blog"
         required: true
       responses:
@@ -342,17 +334,18 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "param"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of blog"
         required: true
       responses:
         200:
           description: "successful to get all comments from blog by id "
           schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/comment"
+            type: "array"
+            items:
+              $ref: "#/definitions/comment"
         404:
           description: "Can not found with this blog id."
     post:
@@ -380,11 +373,11 @@ paths:
         404:
           description: "Fail to comment on this blog."
 
-#-------------------------------------------------------------[Nai]---------------------------------------------------------------------------
+# #-------------------------------------------------------------[Nai]---------------------------------------------------------------------------
   /api/jobs/:
     get:
       tags:
-      - "Job"
+      - "job"
       summary: "Get all jobs"
       description: "Get all jobs from mogoDB"
       operationId: "getAllJobs"
@@ -398,14 +391,14 @@ paths:
         200:
           description: "successful operation"
           schema:
-          type: "array"
-          items:
-            $ref: "#/definitions/job"
+            type: "array"
+            items:
+              $ref: "#/definitions/job"
         404:
           description: "Can't get All jobs!"
     post:
       tags:
-      - "Job"
+      - "job"
       summary: "Create job"
       description: "Create job and add it to mongoDB"
       operationId: "createJob"
@@ -421,18 +414,17 @@ paths:
         description: "newJob"
         required: true
         schema:
-          $ref: "#/definitions/Job"
+          $ref: "#/definitions/newjob"
       responses:
         200:
           description: "successful operation"
       security:
-      - auth:
-        - "read:job"
+      - auth: []
 
   /api/jobs/:id:
     get:
       tags:
-      - "Job"
+      - "job"
       summary: "Get job by id"
       description: "Return job by id from mongoDB"
       operationId: "getJob"
@@ -443,8 +435,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-        - in: "param"
+        - in: "path"
           name: "id"
+          type: "string"
           description: "id of job"
           required: true
       responses:
@@ -455,12 +448,11 @@ paths:
         404:
           description: "Can't get this job!"
       security:
-      - auth:
-        - "read:job"
+      - auth: []
       
     put:
       tags:
-      - "Job"
+      - "job"
       summary: "Update job"
       description: "Update job information on mongoDB"
       operationId: "updateJob"
@@ -471,8 +463,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "update job by id"
         required: true
       - in: "body"
@@ -480,7 +473,7 @@ paths:
         description: "jobData"
         required: true
         schema:
-          $ref: "#/definitions/Job"
+          $ref: "#/definitions/job"
       responses:
         200:
           description: "successful operation"
@@ -489,12 +482,10 @@ paths:
         404:
           description: "Can't update this job."
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
     delete:
       tags:
-      - "Job"
+      - "job"
       summary: "Delete job"
       description: "Delete job from mongoDB"
       operationId: "deleteJob"
@@ -505,8 +496,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "delete job by id"
         required: true
       responses:
@@ -514,15 +506,14 @@ paths:
           description: "successful operation"
         404:
           description: "Not found this job!"
-    security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      security:
+        - auth: []
+        
 
   /api/jobs/jobstatus/:id:
     put:
       tags:
-      - "Job"
+      - "job"
       summary: "Update job status"
       description: "Update job information on mongoDB"
       operationId: "updateJobStatus"
@@ -533,8 +524,9 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "update job status by id"
         required: true
 
@@ -542,6 +534,13 @@ paths:
         name: "Status"
         description: "current status"
         required: true
+        schema: 
+          type: object
+          properties:
+            Status:
+              type: string
+        
+        
       responses:
         200:
           description: "successful operation"
@@ -550,10 +549,8 @@ paths:
         404:
           description: "Can't updata this job status."
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
-#------------------------------------------------------------[Drive]------------------------------------------------
+      - auth: []
+# #------------------------------------------------------------[Drive]------------------------------------------------
   /api/jobs/employee/:id:
     put:
       tags:
@@ -568,29 +565,35 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of job"
         required: true
       - in: "body"
         name: "Email"
         description: "employeeEmail"
         required: true
+        schema: 
+          type: object
+          properties:
+            Email:
+              type: string
+              format: email
       responses:
         200:
           description: "${result.matchedCount} document(s) matched the query criteria"
         400:
           description: "Not found user with the email: ${email}"
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
+      
     delete:
       tags:
       - "job"
       summary: "Delete Applicant In CurrentEmlpoyee DB"
       description: ""
-      operationId: "createUsersWithListInput"
+      operationId: "deleteUserfromCurrentEmployee"
       consumes:
       - "application/json"
       - "application/xml"
@@ -598,23 +601,28 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of job"
         required: true
       - in: "body"
-        name: "body"
-        description: "String Of Email"
+        name: "Email"
+        description: "employeeEmail"
         required: true
+        schema: 
+          type: object
+          properties:
+            Email:
+              type: string
+              format: email
       responses:
         200:
           description: "successful operation"
         404:
           description: "This job has no current employee."
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
 
   /api/jobs/:id/addAcceptedEmployee:
     put:
@@ -630,28 +638,33 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - in: "params"
+      - in: "path"
         name: "id"
+        type: "string"
         description: "id of job"
         required: true
       - in: "body"
         name: "Email"
         description: "employeeEmail"
         required: true
+        schema: 
+          type: object
+          properties:
+            Email:
+              type: string
+              format: email
       responses:
         200:
           description: "successful operation"
         400:
           description: "No document(s) matched the query criteria."
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
 
   /api/wallet/job/:id:
     post:
       tags:
-      - "other"
+      - "cash"
       summary: "Employer pay for emlpoyees"
       description: ""
       operationId: "makeTransaction"
@@ -677,7 +690,7 @@ paths:
           description: "successful operation"
         400:
           description: "Invalid username/password supplied"
-#-------------------------------------------------------------[porsche]---------------------------------------------------------------------------
+# #-------------------------------------------------------------[porsche]---------------------------------------------------------------------------
 
   /api/read:
     get:
@@ -694,6 +707,12 @@ paths:
         name: "Email"
         description: "Email of user who read noti"
         required: true
+        schema: 
+          type: object
+          properties:
+            Email:
+              type: string
+              format: email
       responses:
         200:
           description: "successful operation"
@@ -714,13 +733,13 @@ paths:
         200:
           description: "successful operation"
           schema:
-          type: "array"
-            $ref: "#/definations/reviews"
+            type: "array"
+            items:
+              $ref: "#/definitions/review"
         404:
           description: "Not found any reviews."
       security:
-      - auth:
-        - "read:review"
+      - auth: []
     post:
       tags:
       - "reviews"
@@ -743,9 +762,8 @@ paths:
         404:
           description: "Can not create a review."
       security:
-      - auth:
-        - "read:review"
-        - "write:review"
+      - auth: []
+      
   /api/reviews/:id:
     get:
       tags:
@@ -757,8 +775,8 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "id"
-        in: "params"
+      - in: "path"
+        name: "id"
         description: "Id for create review"
         required: true
         type: "string"
@@ -766,13 +784,12 @@ paths:
         200:
           description: "successful operation"
           schema:
-          type: "review"
-            $ref: "#/definations/review"
+            $ref: "#/definitions/review"
         400:
           description: "Can not get review with this id."
       security:
-      - auth:
-        - "read:review"
+      - auth: []
+
     put:
       tags:
       - "reviews"
@@ -783,8 +800,8 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "id"
-        in: "params"
+      - in: "path"
+        name: "id"
         description: "ID for update review"
         required: true
         type: "string"
@@ -792,15 +809,16 @@ paths:
         name: "body"
         description: "update user review"
         required: true
+        schema:
+          $ref: "#/definitions/newreview"
       responses:
         200:
           description: "successful operation"
         400:
           description: "Cannot edit this review."
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
+      
     delete:
       tags:
       - "user"
@@ -811,38 +829,37 @@ paths:
       - "application/xml"
       - "application/json"
       parameters:
-      - name: "id"
-        in: "params"
+      - in: "path"
+        name: "id"
+        type: "string"
         description: "ID for delete review"
         required: true
-        type: "string"
       responses:
         200:
           description: "successful operation"
         400:
           description: "Can not delete this review"
       security:
-      - auth:
-        - "read:job"
-        - "write:job"
+      - auth: []
 
 
 
 
 securityDefinitions:
   auth:
-    type: "jwt"
-    authorizationUrl: "/api/user/login"
-    flow: "implicit"
-    scopes:
-      write:job: "modify jobs in your account"
-      read:job: "read your jobs"
-      write:review: "modify reviews in your account"
-      read:review: "read your reviews"
+    type: "basic"
+    # authorizationUrl: "/api/user/login"
+    # flow: "implicit"
+    # scopes:
+        # write:job: "modify jobs in your account"
+        # read:job: "read your jobs"
+        # write:review: "modify reviews in your account"
+        # read:review: "read your reviews"
+security:
+  - auth: []
 
 
-definitions:  #-----------------------------------------------------------------------------------------------------------------------------------
-#------------[James]---------------- 16 fucking attributes WTF!
+definitions:
   newUser:
     type: object
     required: 
@@ -872,69 +889,87 @@ definitions:  #-----------------------------------------------------------------
         type: string
         format: date
 
-    xml:
-      name: User
 
-      User:
-        type: object
-        required: 
-        - _id
-        - email
-        - password
-        - confirmPasssword
-        - firstname
-        - lastname
-        - gender
-        - birthday
-        - currentJob
-        - pendingJob
-        - notification
-        - TFvector
-        - wallet
-        - jobOwn
-        - blogOwn
-        - reviewOwn
+  User:
+   type: object
+   required: 
+    - _id
+    - email
+    - password
+    - confirmPasssword
+    - firstname
+    - lastname
+    - gender
+    - birthday
+    - currentJob
+    - pendingJob
+    - notification
+    - TFvector
+    - wallet
+    - jobOwn
+    - blogOwn
+    - reviewOwn
     
-        properties:
-          _id:
-            type: integer
-          email:
-            type: string
-            format: email
-          password:
-            type: string
-          confirmPassword:
-            type: string
-          firstname:
-            type: string
-          lastname:
-            type: string
-          gender:
-            type: string
-          birthday:
-            type: string
-            format: date
-          currentJob:
-            type: array
-          pendingJob:
-            type: array
-          notification:
-            type: array
-          TFvector:
-            type: array
-          wallet:
-            type: integer
-          jobOwn:
-            type: array
-          blogOwn:
-            type: array
-          reviewOwn:
-            type: array
-    
-        xml:
-          name: User
+   properties:
+      _id:
+        type: integer
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+      confirmPassword:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender:
+        type: string
+      birthday:
+        type: string
+        format: date
+      currentJob:
+        type: array
+        items:
+          type: integer
+      pendingJob:
+        type: array
+        items:
+          type: integer
+      notification:
+        type: array
+        items:
+          type: object
+          properties:
+            timestamp:
+              type: integer
+            string:
+              type: string
+            status:
+              type: integer
+      TFvector:
+        type: array
+        items:
+          type: integer
+      wallet:
+        type: integer
+      jobOwn:
+        type: array
+        items:
+          type: integer
+      blogOwn:
+        type: array
+        items:
+          type: integer
+      reviewOwn:
+        type: array
+        items:
+          type: integer
+          
+  
 
-#------------[Teemo]----------------
+# #------------[Teemo]----------------
   newBlog:
     type: "object"
     properties:
@@ -966,9 +1001,11 @@ definitions:  #-----------------------------------------------------------------
       Status:
         type: "string"
       timestamp:
-        type: "double"
+        type: "integer"
       comments: 
         type: "array"
+        items:
+          $ref: "#/definitions/comment"
       comment_seq: 
         type: "integer"  
         format: "Int32"    
@@ -992,11 +1029,11 @@ definitions:  #-----------------------------------------------------------------
       comment:
         type: "string"
       timestamp:
-        type: "double"
+        type: "integer"
 
 
-#------------[Nai]----------------
- job:
+# #------------[Nai]----------------
+  job:
     type: "object"
     required:
     - "_id"
@@ -1018,7 +1055,7 @@ definitions:  #-----------------------------------------------------------------
     - "notify3"
     properties:
       _id:
-        type: "int32"
+        type: "integer"
       JobName:
         type: "string"
       JobDetail:
@@ -1037,23 +1074,41 @@ definitions:  #-----------------------------------------------------------------
         type: "string"
       CurrentEmployee:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       CurrentAcceptedEmployee:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       Employer:
         type: "string"
+        format: "email"
       Status:
         type: "string"
       TFVector:
         type: "array"
+        items:
+          type: "integer"
       notify1:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       notify2:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       notify3:
         type: "array"
-    xml:
-      name: "job"
-#------------[Drive]----------------
+        items:
+          type: "string"
+          format: "email"
+# #     xml:
+# #       name: "job"
+# #------------[Drive]----------------
   newjob:
     type: "object"
     required:
@@ -1089,17 +1144,26 @@ definitions:  #-----------------------------------------------------------------
         type: "string"
       CurrentEmployee:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       CurrentAcceptedEmployee:
         type: "array"
+        items:
+          type: "string"
+          format: "email"
       Employer:
         type: "string"
+        format: "email"
       Status:
         type: "string"
       TFVector:
         type: "array"
-    xml:
-      name: "newjob"
-#------------[porsch]----------------
+        items:
+          type: "integer"
+#     xml:
+#       name: "newjob"
+# #------------[porsch]----------------
   newreview:
     type: object
     properties:
@@ -1113,7 +1177,7 @@ definitions:  #-----------------------------------------------------------------
         type: string
         format: email
       timestamp:
-        type: double
+        type: integer
 
   review:
     type: object
@@ -1130,4 +1194,4 @@ definitions:  #-----------------------------------------------------------------
       Status:
         type: string
       timestamp:
-        type: double
+        type: integer
