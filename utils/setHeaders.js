@@ -1,7 +1,13 @@
 exports.setHeaders = (function (req, res, next) {
 
+    var frontendHost = process.env.FRONTEND || 'localhost';
+
+    var frontendPort = process.env.FRONTENDPORT || '3000';
+
+    var frontendProxy = "http://"+ frontendHost +":"+ frontendPort;
+
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Origin', frontendProxy);
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
