@@ -18,7 +18,6 @@ describe('ApplyJob Test', function () {
             data: ciphertext
         };
 
-
         await fetch("http://localhost:9000/job/addemployee/173", {
                 method: 'PUT',
                 headers: {
