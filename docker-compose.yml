@@ -1,0 +1,22 @@
+version: '2'
+services:
+    
+  cupt_frontend:
+    build: ./sec33_Leelulila
+    links:
+        - cupt_backend:cupt_backend
+    ports:
+      - '80:3000'
+    depends_on:
+      - cupt_backend
+    # environment:
+    #   - HOST=cupt_backend
+    #   - PORT=9000
+
+  cupt_backend:
+    build: ./sec33_Leelulila_Server
+    ports:
+      - '9000:9000'
+    environment:
+      - FRONTEND=cupt_frontend
+      - FRONTENDPORT=3000
